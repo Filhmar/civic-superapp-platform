@@ -6,3 +6,4 @@ logs/
 .env.production
 .env.staging
 **/generated/
+build-ca.crt

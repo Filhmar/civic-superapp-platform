@@ -2,6 +2,13 @@
 ARG NODE_IMAGE=node:22.22-alpine3.23
 
 FROM ${NODE_IMAGE} AS base
+# Optional corporate/sandbox MITM CA: the [t] glob keeps the COPY valid when
+# build-ca.crt is absent (package.json always matches). No-op in normal CI.
+COPY package.json build-ca.cr[t] /tmp/build-ca/
+RUN if [ -f /tmp/build-ca/build-ca.crt ]; then \
+      cat /tmp/build-ca/build-ca.crt >> /etc/ssl/certs/ca-certificates.crt; \
+    fi && rm -rf /tmp/build-ca
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 # CVE refresh of the base image; non-fatal so sandboxed/offline builds still work.
 RUN apk upgrade --no-cache || echo "apk upgrade skipped (no repo access)"
 WORKDIR /app
@@ -9,7 +16,11 @@ WORKDIR /app
 # --- deps: full install (dev) + prisma clients -------------------------------
 FROM base AS deps
 COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+# npm intermittently dies with "Exit handler never called" under container
+# network conditions — retry with progressively lower fetch concurrency.
+RUN npm ci --no-audit --no-fund --maxsockets 8 \
+ || (sleep 5 && npm ci --no-audit --no-fund --maxsockets 4) \
+ || (sleep 10 && npm ci --no-audit --no-fund --maxsockets 2)
 COPY tsconfig.json tsconfig.build.json nest-cli.json ./
 COPY libs ./libs
 COPY apps ./apps
@@ -27,7 +38,8 @@ RUN npm prune --omit=dev --no-audit --no-fund
 
 # --- runtime base: non-root, prod deps ----------------------------------------
 FROM base AS runtime-base
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
+ && mkdir -p /app/logs && chown -R appuser:appgroup /app/logs
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package.json ./
 

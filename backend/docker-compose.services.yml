@@ -45,6 +45,7 @@ x-service-defaults: &service-defaults
 services:
   api-gateway:
     <<: *service-defaults
+    image: civic/api-gateway
     build:
       context: .
       target: api-gateway
@@ -55,14 +56,19 @@ services:
 
   tenancy-service:
     <<: *service-defaults
+    image: civic/tenancy-service
     build:
       context: .
       target: tenancy-service
     environment:
       <<: *service-env
+    ports:
+      # control-plane TCP for staff tooling (scripts/toggle-module.ts etc.)
+      - "3006:3006"
 
   identity-service:
     <<: *service-defaults
+    image: civic/identity-service
     build:
       context: .
       target: identity-service
@@ -71,6 +77,7 @@ services:
 
   egov-service:
     <<: *service-defaults
+    image: civic/egov-service
     build:
       context: .
       target: egov-service
@@ -79,6 +86,7 @@ services:
 
   reports-service:
     <<: *service-defaults
+    image: civic/reports-service
     build:
       context: .
       target: reports-service
@@ -87,6 +95,7 @@ services:
 
   assistance-service:
     <<: *service-defaults
+    image: civic/assistance-service
     build:
       context: .
       target: assistance-service
@@ -95,6 +104,7 @@ services:
 
   emergency-service:
     <<: *service-defaults
+    image: civic/emergency-service
     build:
       context: .
       target: emergency-service
@@ -103,6 +113,7 @@ services:
 
   content-service:
     <<: *service-defaults
+    image: civic/content-service
     build:
       context: .
       target: content-service
@@ -111,6 +122,7 @@ services:
 
   places-service:
     <<: *service-defaults
+    image: civic/places-service
     build:
       context: .
       target: places-service
@@ -119,6 +131,7 @@ services:
 
   notification-service:
     <<: *service-defaults
+    image: civic/notification-service
     build:
       context: .
       target: notification-service
@@ -127,6 +140,7 @@ services:
 
   media-service:
     <<: *service-defaults
+    image: civic/media-service
     build:
       context: .
       target: media-service
@@ -135,6 +149,7 @@ services:
 
   integration-service:
     <<: *service-defaults
+    image: civic/integration-service
     build:
       context: .
       target: integration-service
