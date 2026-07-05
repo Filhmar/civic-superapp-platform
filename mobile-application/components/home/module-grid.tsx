@@ -1,19 +1,83 @@
 /**
- * 12-tile home grid: the 10 config-driven module tiles plus 2 platform
- * utility tiles (Digital ID, My Reports). Disabled modules are dimmed with a
- * "Coming soon" badge and NEVER call their endpoint.
+ * Home module grid per DESIGN_SPEC §4: 4 columns, 52px pastel rounded-square
+ * icon chips (r16) with saturated icons, 10.5/600 labels. The 10 config
+ * modules plus 2 platform tiles (Hotlines, Digital ID) = 12 tiles.
+ * Config-disabled tiles keep the required dimmed "Soon" treatment.
  */
 import { useRouter } from "expo-router";
-import { FileSearch, IdCard } from "lucide-react-native";
+import { IdCard, PhoneCall } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 
 import { useToast } from "@/components/ui/toast";
-import { AppText } from "@/components/ui/typography";
 import { palette } from "@/constants/colors";
-import { MODULE_ROUTES } from "@/constants/modules";
+import {
+  MODULE_ROUTES,
+  TONE_COLORS,
+  type ModuleTone,
+} from "@/constants/modules";
+import { tileShadow } from "@/constants/shadows";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import { deriveModuleTiles } from "@/lib/modules";
+
+function toneColors(
+  tone: ModuleTone,
+  primary: string,
+  tint: string,
+): { bg: string; icon: string } {
+  if (tone === "brand") return { bg: tint, icon: primary };
+  return TONE_COLORS[tone];
+}
+
+function Tile({
+  label,
+  bg,
+  iconColor,
+  icon: Icon,
+  onPress,
+  dimmed,
+}: {
+  label: string;
+  bg: string;
+  iconColor: string;
+  icon: React.ComponentType<{
+    size?: number;
+    color?: string;
+    strokeWidth?: number;
+  }>;
+  onPress: () => void;
+  dimmed?: boolean;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      className="w-[23%] items-center py-1.5 active:opacity-70"
+    >
+      <View
+        style={[tileShadow, { backgroundColor: bg, opacity: dimmed ? 0.45 : 1 }]}
+        className="h-[52px] w-[52px] items-center justify-center rounded-2xl"
+      >
+        <Icon size={22} color={iconColor} strokeWidth={1.9} />
+      </View>
+      <View className="mt-[7px] flex-row items-center gap-1">
+        <Text
+          className={`text-[10.5px] font-semibold text-fg dark:text-fg-dark ${
+            dimmed ? "opacity-50" : ""
+          }`}
+          numberOfLines={1}
+        >
+          {label}
+        </Text>
+        {dimmed && (
+          <View className="rounded-full bg-line px-1.5 py-0.5">
+            <Text className="text-[8px] font-bold text-fg-2">Soon</Text>
+          </View>
+        )}
+      </View>
+    </Pressable>
+  );
+}
 
 export function ModuleGrid() {
   const router = useRouter();
@@ -22,6 +86,7 @@ export function ModuleGrid() {
   const { status } = useAuth();
 
   const primary = config?.brand.colors.primary ?? palette.brand;
+  const tint = config?.brand.colors.tint ?? palette.tint;
   const tiles = deriveModuleTiles(config?.modules);
 
   const onModulePress = (tile: (typeof tiles)[number]) => {
@@ -30,77 +95,46 @@ export function ModuleGrid() {
       return;
     }
     const route = MODULE_ROUTES[tile.key];
-    if (route) {
-      router.push(route as never);
-    } else {
-      toast.show(`${tile.label} is opening soon`);
-    }
+    if (route) router.push(route as never);
+    else toast.show(`${tile.label} is opening soon`);
   };
-
-  const onDigitalId = () => {
-    if (status === "resident") router.push("/digital-id");
-    else router.push("/(auth)/login");
-  };
-
-  const onMyReports = () => {
-    if (status === "resident") router.push("/report/mine");
-    else router.push("/(auth)/login");
-  };
-
-  const tileClass =
-    "w-[31%] items-center rounded-2xl bg-surface px-1 py-4 active:opacity-70 dark:bg-surface-dark";
 
   return (
-    <View className="flex-row flex-wrap justify-between gap-y-3">
+    <View className="flex-row flex-wrap justify-between">
       {tiles.map((tile) => {
-        const Icon = tile.icon;
+        const colors = toneColors(tile.tone, primary, tint);
         return (
-          <Pressable
+          <Tile
             key={tile.key}
-            accessibilityRole="button"
+            label={tile.label}
+            bg={colors.bg}
+            iconColor={colors.icon}
+            icon={tile.icon}
+            dimmed={!tile.enabled}
             onPress={() => onModulePress(tile)}
-            className={`${tileClass} ${tile.enabled ? "" : "opacity-50"}`}
-          >
-            <Icon size={24} color={tile.enabled ? primary : palette["fg-2"]} />
-            <AppText
-              variant="caption"
-              className="mt-2 text-center font-medium"
-              numberOfLines={1}
-            >
-              {tile.label}
-            </AppText>
-            {!tile.enabled && (
-              <View className="mt-1 rounded-full bg-tint px-2 py-0.5">
-                <Text className="text-[9px] font-medium text-fg-2">
-                  Coming soon
-                </Text>
-              </View>
-            )}
-          </Pressable>
+          />
         );
       })}
 
       {/* Platform utility tiles (same for every tenant) */}
-      <Pressable
-        accessibilityRole="button"
-        onPress={onDigitalId}
-        className={tileClass}
-      >
-        <IdCard size={24} color={primary} />
-        <AppText variant="caption" className="mt-2 text-center font-medium">
-          Digital ID
-        </AppText>
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        onPress={onMyReports}
-        className={tileClass}
-      >
-        <FileSearch size={24} color={primary} />
-        <AppText variant="caption" className="mt-2 text-center font-medium">
-          My Reports
-        </AppText>
-      </Pressable>
+      <Tile
+        label="Hotlines"
+        bg={TONE_COLORS.blue.bg}
+        iconColor={TONE_COLORS.blue.icon}
+        icon={PhoneCall}
+        onPress={() => router.push("/hotlines" as never)}
+      />
+      <Tile
+        label="Digital ID"
+        bg={tint}
+        iconColor={primary}
+        icon={IdCard}
+        onPress={() =>
+          status === "resident"
+            ? router.push("/digital-id")
+            : router.push("/(auth)/login")
+        }
+      />
     </View>
   );
 }

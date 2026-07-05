@@ -1,6 +1,6 @@
 /**
- * PLATFORM module metadata — generic labels/icons, identical for every tenant.
- * Whether a module is enabled comes from the fetched TenantConfig
+ * PLATFORM module metadata — generic labels/icons/tones, identical for every
+ * tenant. Whether a module is enabled comes from the fetched TenantConfig
  * (`config.modules`), never from here. Tenancy is data, never code.
  */
 import {
@@ -19,23 +19,40 @@ import {
 
 import type { ModuleKey } from "@/types/config";
 
+/**
+ * DESIGN_SPEC §4 tile tint families. `brand` uses the runtime tenant tint +
+ * primary; the rest are fixed platform pastels with saturated icon colors.
+ */
+export type ModuleTone = "brand" | "red" | "gold" | "blue" | "purple";
+
+export const TONE_COLORS: Record<
+  Exclude<ModuleTone, "brand">,
+  { bg: string; icon: string }
+> = {
+  red: { bg: "#FDEDEC", icon: "#E53935" },
+  gold: { bg: "#FEF3D9", icon: "#D4A017" },
+  blue: { bg: "#E8F1FA", icon: "#2274A5" },
+  purple: { bg: "#F1ECFA", icon: "#7E57C2" },
+};
+
 export interface ModuleMeta {
   key: ModuleKey;
   label: string;
   icon: LucideIcon;
+  tone: ModuleTone;
 }
 
 export const MODULES: readonly ModuleMeta[] = [
-  { key: "egov", label: "e-Services", icon: FileText },
-  { key: "reports311", label: "Report", icon: Megaphone },
-  { key: "assistance", label: "Assistance", icon: HeartHandshake },
-  { key: "sos", label: "SOS", icon: Siren },
-  { key: "news", label: "News", icon: Newspaper },
-  { key: "tourism", label: "Tourism", icon: MapPin },
-  { key: "directory", label: "Directory", icon: BookUser },
-  { key: "transport", label: "Transport", icon: Bus },
-  { key: "health", label: "Health", icon: Stethoscope },
-  { key: "jobs", label: "Jobs", icon: BriefcaseBusiness },
+  { key: "egov", label: "Gov Services", icon: FileText, tone: "brand" },
+  { key: "reports311", label: "Report", icon: Megaphone, tone: "red" },
+  { key: "assistance", label: "Assistance", icon: HeartHandshake, tone: "gold" },
+  { key: "sos", label: "SOS", icon: Siren, tone: "red" },
+  { key: "news", label: "News", icon: Newspaper, tone: "brand" },
+  { key: "tourism", label: "Tourism", icon: MapPin, tone: "gold" },
+  { key: "directory", label: "Directory", icon: BookUser, tone: "purple" },
+  { key: "transport", label: "Transport", icon: Bus, tone: "blue" },
+  { key: "health", label: "Health", icon: Stethoscope, tone: "red" },
+  { key: "jobs", label: "Jobs", icon: BriefcaseBusiness, tone: "brand" },
 ] as const;
 
 /**

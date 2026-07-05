@@ -5,8 +5,10 @@ One platform, many LGUs. A single **Expo React Native** codebase and a single
 difference — branding, slogan, executive, onboarding, module set, hotlines,
 fees, categories, content — is **data (tenant config), never code**.
 
-Two tenants are seeded as proof of pattern: **MyDasma** (`com.dasmarinas.app`,
-green/DSM) and **MySorsogon** (`com.sorsogon.app`, blue/SOR).
+Three tenants are seeded as proof of pattern: **MyDasma** (`com.dasmarinas.app`,
+green/DSM), **MySorsogon** (`com.sorsogon.app`, blue/SOR), and **MyLegazpi**
+(`com.legazpi.app`, teal/LGZ — onboarded end-to-end through the admin plane
+with zero code changes). Design sources + extracted spec: `docs/designs/`.
 
 - `docs/` — sources of truth: platform reference (scope), backend stack, mobile stack
 - `backend/` — API gateway + 11 TCP microservices (Postgres/Prisma, MongoDB, Redis, MinIO)

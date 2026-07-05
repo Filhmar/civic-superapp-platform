@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { ChevronRight } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
@@ -12,24 +13,32 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AssetImage } from "@/components/ui/asset-image";
+import { AppText } from "@/components/ui/typography";
+import { palette } from "@/constants/colors";
+import { primaryGlow } from "@/constants/shadows";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import type { OnboardingSlide } from "@/types/config";
 
 /**
- * 3-slide carousel rendered entirely from the fetched TenantConfig
- * (title / body / bg color / optional image per slide). Tenancy is data,
- * never code. Slide images and the seal render only for real http(s) assets.
+ * Onboarding per DESIGN_SPEC §4: full-bleed tenant photo with a brand duotone
+ * overlay (slide bg color), glass circle mark, bottom white sheet with
+ * Display/800 title, dots and a primary Next pill. All content is config
+ * data — tenancy is data, never code.
  */
 export default function Onboarding() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  // Photo area = viewport minus the bottom sheet (~280px incl. insets).
+  const slideHeight = Math.max(height - 300, 320);
   const { config } = useTenantConfig();
   const listRef = useRef<FlatList<OnboardingSlide>>(null);
   const [index, setIndex] = useState(0);
 
   const slides = config?.onboarding ?? [];
   const isLast = index >= slides.length - 1;
+  const primary = config?.brand.colors.primary ?? palette.brand;
+  const seal = config?.brand.logo.assets.seal;
 
   const finish = useCallback(() => {
     void AsyncStorage.setItem("onboarded", "1");
@@ -51,38 +60,18 @@ export default function Onboarding() {
     },
   ).current;
 
-  // Config guarantees 3 slides; if absent, skip straight to the app.
+  // Config guarantees 3 slides; if absent, skip straight to login.
   useEffect(() => {
     if (slides.length === 0) finish();
   }, [slides.length, finish]);
 
   if (slides.length === 0) return null;
 
-  const activeBg = slides[Math.min(index, slides.length - 1)]?.bg;
+  const activeSlide = slides[Math.min(index, slides.length - 1)];
 
   return (
-    <View
-      className="flex-1"
-      style={{
-        backgroundColor: activeBg,
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-      }}
-    >
-      {/* City seal mark (only when a real asset) */}
-      <AssetImage
-        uri={config?.brand.logo.assets.seal}
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 24,
-          alignSelf: "center",
-          marginTop: 12,
-        }}
-        resizeMode="contain"
-        accessibilityLabel="City seal"
-      />
-
+    <View className="flex-1" style={{ backgroundColor: activeSlide?.bg }}>
+      {/* Slides: photo (when a real asset) under a duotone brand overlay */}
       <FlatList
         ref={listRef}
         data={slides}
@@ -94,58 +83,95 @@ export default function Onboarding() {
         viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
         getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
         renderItem={({ item }) => (
-          <View
-            style={{ width, backgroundColor: item.bg }}
-            className="flex-1 items-center justify-center px-10"
-          >
-            {/* Slide illustration (bg color stays underneath) */}
+          <View style={{ width, height: slideHeight, backgroundColor: item.bg }}>
             <AssetImage
               uri={item.image}
               style={{
-                width: width - 120,
-                height: 180,
-                borderRadius: 20,
-                marginBottom: 28,
+                position: "absolute",
+                width,
+                height: "100%",
+                opacity: 0.35,
               }}
               resizeMode="cover"
               accessibilityLabel={item.title}
             />
-            <Text className="text-center text-3xl font-bold text-white">
-              {item.title}
-            </Text>
-            <Text className="mt-4 text-center text-base leading-6 text-white/90">
-              {item.body}
-            </Text>
+            {/* Glass circle mark */}
+            <View className="flex-1 items-center justify-center">
+              <View
+                className="items-center justify-center rounded-full"
+                style={{
+                  width: 150,
+                  height: 150,
+                  backgroundColor: "rgba(255,255,255,0.18)",
+                }}
+              >
+                <AssetImage
+                  uri={seal}
+                  style={{ width: 96, height: 96, borderRadius: 48 }}
+                  resizeMode="contain"
+                  fallback={
+                    <Text className="text-3xl font-extrabold text-white">
+                      {config?.app.name?.slice(0, 2).toUpperCase()}
+                    </Text>
+                  }
+                />
+              </View>
+            </View>
           </View>
         )}
       />
 
-      {/* Dots */}
-      <View className="flex-row items-center justify-center gap-2 pb-6">
-        {slides.map((slide, i) => (
-          <View
-            key={slide.title}
-            className={`h-2 rounded-full bg-white ${
-              i === index ? "w-6 opacity-100" : "w-2 opacity-40"
-            }`}
-          />
-        ))}
-      </View>
+      {/* Skip */}
+      <Pressable
+        accessibilityRole="button"
+        onPress={finish}
+        hitSlop={12}
+        style={{ position: "absolute", top: insets.top + 10, right: 20 }}
+      >
+        <Text className="text-[13px] font-semibold text-white">Skip</Text>
+      </Pressable>
 
-      {/* Skip / Next */}
-      <View className="flex-row items-center justify-between px-8 pb-8">
-        <Pressable accessibilityRole="button" onPress={finish} hitSlop={12}>
-          <Text className="text-base font-medium text-white/80">Skip</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={next}
-          className="rounded-full bg-white px-8 py-3 active:opacity-80"
-        >
-          <Text className="text-base font-semibold" style={{ color: activeBg }}>
-            {isLast ? "Get Started" : "Next"}
-          </Text>
-        </Pressable>
+      {/* Bottom white sheet */}
+      <View
+        className="bg-surface px-6 pt-7 dark:bg-surface-dark"
+        style={{
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+          paddingBottom: insets.bottom + 20,
+        }}
+      >
+        <AppText variant="display">{activeSlide?.title}</AppText>
+        <Text className="mt-3 font-sans text-[15px] leading-6 text-fg-2 dark:text-fg-2-dark">
+          {activeSlide?.body}
+        </Text>
+
+        <View className="mt-7 flex-row items-center justify-between">
+          {/* Dots — active is a 28px bar */}
+          <View className="flex-row items-center gap-1.5">
+            {slides.map((slide, i) => (
+              <View
+                key={slide.title}
+                className="h-[6px] rounded-[3px]"
+                style={{
+                  width: i === index ? 28 : 6,
+                  backgroundColor: i === index ? primary : palette.line,
+                }}
+              />
+            ))}
+          </View>
+          {/* Next pill */}
+          <Pressable
+            accessibilityRole="button"
+            onPress={next}
+            style={[primaryGlow(primary), { backgroundColor: primary }]}
+            className="flex-row items-center gap-1 rounded-[14px] px-7 py-3.5 active:opacity-85"
+          >
+            <Text className="text-[15px] font-bold text-white">
+              {isLast ? "Get Started" : "Next"}
+            </Text>
+            <ChevronRight size={16} color="white" strokeWidth={2.4} />
+          </Pressable>
+        </View>
       </View>
     </View>
   );

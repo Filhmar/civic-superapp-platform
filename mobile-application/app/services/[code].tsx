@@ -1,6 +1,6 @@
 import * as Crypto from "expo-crypto";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { CircleCheck, QrCode } from "lucide-react-native";
+import { CircleCheck } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,11 +12,13 @@ import {
 } from "react-native";
 
 import { StatusChip } from "@/components/reports/status-chip";
+import { QrPlaceholder } from "@/components/ui/qr-placeholder";
 import { Screen } from "@/components/ui/screen";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useToast } from "@/components/ui/toast";
 import { AppText } from "@/components/ui/typography";
 import { palette } from "@/constants/colors";
+import { cardShadow } from "@/constants/shadows";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import {
@@ -25,6 +27,7 @@ import {
 } from "@/hooks/mutations/use-egov-mutations";
 import { useServiceCatalogQuery } from "@/hooks/queries/use-egov";
 import type { Application, PaymentMethod, PaymentResult } from "@/types/egov";
+import { formatPeso } from "@/utils/currency";
 import { formatDate } from "@/utils/format-date";
 
 type Step = "requirements" | "form" | "review" | "pay" | "success";
@@ -138,7 +141,7 @@ export default function ServiceFlow() {
                 ))}
               </View>
               <View className="mt-4 flex-row gap-4">
-                <AppText variant="caption">Fee: ₱{service.fee}</AppText>
+                <AppText variant="caption">Fee: {formatPeso(service.fee)}</AppText>
                 <AppText variant="caption">
                   Processing: {service.processing_days} day(s)
                 </AppText>
@@ -188,10 +191,10 @@ export default function ServiceFlow() {
               <ReviewRow label="Full name" value={fullName} />
               <ReviewRow label="Purpose" value={purpose} />
               <View className="my-3 h-px bg-tint" />
-              <ReviewRow label="Service fee" value={`₱${service.fee}`} />
-              <ReviewRow label="Convenience fee" value="₱20" />
+              <ReviewRow label="Service fee" value={formatPeso(service.fee)} />
+              <ReviewRow label="Convenience fee" value={formatPeso(20)} />
               <View className="my-3 h-px bg-tint" />
-              <ReviewRow label="Total" value={`₱${service.fee + 20}`} bold />
+              <ReviewRow label="Total" value={formatPeso(service.fee + 20)} bold />
             </View>
             <PrimaryButton
               label={
@@ -213,12 +216,12 @@ export default function ServiceFlow() {
               <AppText variant="caption">Application</AppText>
               <AppText variant="subtitle">{application.stub_id}</AppText>
               <View className="my-3 h-px bg-tint" />
-              <ReviewRow label="Service fee" value={`₱${application.fees.fee}`} />
+              <ReviewRow label="Service fee" value={formatPeso(application.fees.fee)} />
               <ReviewRow
                 label="Convenience fee"
-                value={`₱${application.fees.convenience_fee}`}
+                value={formatPeso(application.fees.convenience_fee)}
               />
-              <ReviewRow label="Total due" value={`₱${application.fees.total}`} bold />
+              <ReviewRow label="Total due" value={formatPeso(application.fees.total)} bold />
             </View>
             <AppText variant="subtitle" className="mt-6 text-sm">
               Pay with
@@ -251,41 +254,50 @@ export default function ServiceFlow() {
 
         {step === "success" && application && (
           <View className="items-center pt-6">
-            <CircleCheck size={48} color={config?.brand.colors.primary ?? palette.brand} />
-            <AppText variant="title" className="mt-3 text-xl">
-              Payment received
+            {/* Mist circle + check (spec §4 payment success) */}
+            <View className="h-[72px] w-[72px] items-center justify-center rounded-full bg-tint">
+              <CircleCheck
+                size={34}
+                color={config?.brand.colors.primary ?? palette.brand}
+                strokeWidth={2.2}
+              />
+            </View>
+            <AppText variant="display" className="mt-4 text-center text-[22px]">
+              Payment Successful!
             </AppText>
             {payment && (
-              <AppText variant="caption" className="mt-1">
-                OR {payment.payment.receipt_no} · ₱{payment.payment.amount}
+              <AppText variant="caption" className="mt-1.5">
+                OR {payment.payment.receipt_no} ·{" "}
+                {formatPeso(payment.payment.amount)}
               </AppText>
             )}
 
-            {/* QR claim stub */}
-            <View className="mt-6 w-full items-center rounded-3xl bg-surface p-6 dark:bg-surface-dark">
-              <View className="items-center justify-center rounded-2xl bg-tint p-8">
-                <QrCode size={110} color="#0F172A" />
+            {/* QR claim stub — r20 card, kicker, checkerboard QR */}
+            <View
+              style={cardShadow}
+              className="mt-6 w-full items-center rounded-stub border border-line bg-surface p-[22px] dark:border-line-dark dark:bg-surface-dark"
+            >
+              <AppText variant="kicker">Claim Stub</AppText>
+              <View className="mt-4">
+                <QrPlaceholder payload={application.qr_payload} size={170} />
               </View>
-              <Text className="mt-4 text-xl font-bold tracking-widest text-fg dark:text-fg-dark">
+              <AppText variant="caption" className="mt-4">
+                Reference No.
+              </AppText>
+              <Text
+                className="mt-0.5 text-[20px] font-extrabold tracking-tight-2"
+                style={{ color: config?.brand.colors.primary ?? palette.brand }}
+              >
                 {application.stub_id}
               </Text>
               <View className="mt-2">
                 <StatusChip status={application.status} />
               </View>
-              <View className="mt-4 w-full gap-2">
-                <ReviewRow
-                  label="Claim window"
-                  value={application.window_no ?? "TBA"}
-                />
-                <ReviewRow
-                  label="Ready by"
-                  value={
-                    application.ready_eta
-                      ? formatDate(application.ready_eta)
-                      : "TBA"
-                  }
-                />
-              </View>
+              <View className="my-4 h-px w-full border-t border-dashed border-line dark:border-line-dark" />
+              <AppText variant="caption" className="text-center">
+                Window {application.window_no ?? "TBA"} · Ready by{" "}
+                {application.ready_eta ? formatDate(application.ready_eta) : "TBA"}
+              </AppText>
             </View>
             <PrimaryButton
               label="View my applications"
@@ -320,6 +332,8 @@ function ReviewRow({
   );
 }
 
+import { PrimaryButton as PrimaryCta } from "@/components/ui/primary-button";
+
 function PrimaryButton({
   label,
   onPress,
@@ -330,15 +344,11 @@ function PrimaryButton({
   disabled?: boolean;
 }) {
   return (
-    <Pressable
-      accessibilityRole="button"
+    <PrimaryCta
+      label={label}
       onPress={onPress}
       disabled={disabled}
-      className={`mt-6 w-full items-center rounded-full bg-brand py-4 active:opacity-80 ${
-        disabled ? "opacity-50" : ""
-      }`}
-    >
-      <Text className="text-base font-semibold text-white">{label}</Text>
-    </Pressable>
+      className="mt-6 w-full"
+    />
   );
 }

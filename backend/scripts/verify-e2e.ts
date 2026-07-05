@@ -309,8 +309,10 @@ async function verifyAdminPlane(): Promise<void> {
   check('non-admin token rejected on admin plane 401', residentOnAdmin.status === 401, residentOnAdmin.status);
 
   // Branding patch by the scoped admin bumps a config version the app sees.
-  const before = (await tenantAdmin.get('/admin/tenants/ph-cavite-dasmarinas/config')).data.data
-    .version as number;
+  const beforeCfg = (await tenantAdmin.get('/admin/tenants/ph-cavite-dasmarinas/config')).data
+    .data as { version: number; config: { brand: { executive: { greeting: string } } } };
+  const before = beforeCfg.version;
+  const originalGreeting = beforeCfg.config.brand.executive.greeting;
   const patch = await tenantAdmin.patch('/admin/tenants/ph-cavite-dasmarinas/config/branding', {
     branding: { brand: { executive: { greeting: `Mabuhay! (e2e ${before + 1})` } } },
   });
@@ -324,6 +326,10 @@ async function verifyAdminPlane(): Promise<void> {
       (appCfg.data.data.config.brand.executive.greeting as string).includes(`e2e ${before + 1}`),
     appCfg.data.data.version,
   );
+  // Leave data as found: restore the original greeting (appends one more version).
+  await tenantAdmin.patch('/admin/tenants/ph-cavite-dasmarinas/config/branding', {
+    branding: { brand: { executive: { greeting: originalGreeting } } },
+  });
   // Brand assets uploaded by admins are live URLs in the app payload.
   const seal = appCfg.data.data.config.brand.logo.assets.seal as string;
   if (/^https?:\/\//.test(seal)) {

@@ -70,3 +70,13 @@ test inputs).
 | Panels containerized and served with the stack | 19-container compose up; headless Chromium smoke vs :8090/:8091 (login, data, no cross-tenant leak) | 🔁 |
 | Mobile renders admin-uploaded assets, falls back cleanly | 34 mobile tests incl. asset-url policy + live URL 200 | 🔁 |
 | Full regression | scripts/verify-e2e.ts vs containerized stack: 115/0 | 🔁 |
+
+## Design fidelity (Claude Design prototypes) + third tenant
+
+| Proof | Evidence | Status |
+|---|---|---|
+| Design system extracted from the 3 prototypes | docs/designs/extracted/ (DESIGN_SPEC.md, 114 screen PNGs, tenant marks) | 🔁 |
+| App restyled to the design system (Plus Jakarta Sans, gradient header w/ overlap search, floating tab bar w/ raised SOS, pastel tile chips, glow shadows, spec radii) | mobile-application/design-check/*.png vs screens/dasma/*.png — visual loop, verified side-by-side | 🔁 |
+| Deliberate deviations kept (coming-soon tiles, settings/FAQ per §10, ₱20 added to total — prototype shows it un-added) | DESIGN_SPEC notes + code review | 🔁 |
+| MyLegazpi onboarded as tenant #3 with ZERO platform-code change (admin API + Mayon SVG via asset pipeline + seed data) | config v2 w/ seal URL; only seeds/test-inputs/tenant-variants.json changed | 🔁 |
+| Full regression across THREE tenants | scripts/verify-e2e.ts: 166 passed, 0 failed vs container stack | 🔁 |

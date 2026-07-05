@@ -13,11 +13,14 @@ import {
   View,
 } from "react-native";
 
+import { PrimaryButton } from "@/components/ui/primary-button";
 import { Screen } from "@/components/ui/screen";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import { StepTimeline } from "@/components/ui/step-timeline";
 import { useToast } from "@/components/ui/toast";
 import { AppText } from "@/components/ui/typography";
 import { palette } from "@/constants/colors";
+import { rowShadow } from "@/constants/shadows";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import {
@@ -74,35 +77,67 @@ function CategoryPicker({ onPick }: { onPick: (c: ReportCategory) => void }) {
   const { data: categories, isPending } = useReportCategoriesQuery();
   const { data: mine } = useMyReportsQuery({ enabled: status === "resident" });
   const primary = config?.brand.colors.primary ?? palette.brand;
+  const tint = config?.brand.colors.tint ?? palette.tint;
+  const [selected, setSelected] = useState<ReportCategory | null>(null);
 
   return (
-    <ScrollView contentContainerClassName="px-5 pb-8">
-      <AppText variant="caption">
-        What would you like to report? Your ticket is routed straight to the
+    <ScrollView contentContainerClassName="px-5 pb-8 pt-4">
+      <AppText variant="title" className="text-lg">
+        What would you like to report?
+      </AppText>
+      <AppText variant="caption" className="mt-1">
+        Pick a problem category — your ticket is routed straight to the
         responsible department.
       </AppText>
       {isPending && <ActivityIndicator className="mt-8" />}
+      {/* 2-col category cards; selected = mist bg + primary border */}
       <View className="mt-4 flex-row flex-wrap justify-between gap-y-3">
         {(categories ?? []).map((cat) => {
           const Icon = getReportCategoryIcon(cat.icon);
+          const active = selected?.key === cat.key;
           return (
             <Pressable
               key={cat.key}
               accessibilityRole="button"
-              onPress={() => onPick(cat)}
-              className="w-[48%] rounded-2xl bg-surface p-4 active:opacity-70 dark:bg-surface-dark"
+              accessibilityState={active ? { selected: true } : {}}
+              onPress={() => setSelected(cat)}
+              style={
+                active
+                  ? { backgroundColor: tint, borderColor: primary, borderWidth: 1.5 }
+                  : undefined
+              }
+              className={`w-[48%] items-center rounded-card px-3 py-6 active:opacity-70 ${
+                active
+                  ? ""
+                  : "border border-line bg-surface dark:border-line-dark dark:bg-surface-dark"
+              }`}
             >
-              <Icon size={24} color={primary} />
-              <AppText variant="subtitle" className="mt-2 text-sm">
+              <Icon
+                size={26}
+                color={active ? primary : palette["fg-2"]}
+                strokeWidth={1.8}
+              />
+              <AppText variant="subtitle" className="mt-3 text-center">
                 {cat.label}
               </AppText>
-              <AppText variant="caption" className="mt-0.5 text-[10px]">
+              <AppText
+                variant="caption"
+                className="mt-0.5 text-center text-[10px]"
+                numberOfLines={1}
+              >
                 {cat.department}
               </AppText>
             </Pressable>
           );
         })}
       </View>
+
+      <PrimaryButton
+        label="Continue"
+        disabled={!selected}
+        onPress={() => selected && onPick(selected)}
+        className="mt-6"
+      />
 
       {/* My recent reports (residents) */}
       {status === "resident" && (mine?.length ?? 0) > 0 && (
@@ -370,22 +405,13 @@ function ReportForm({
       />
 
       {/* Submit */}
-      <Pressable
-        accessibilityRole="button"
+      <PrimaryButton
+        label={status === "resident" ? "Submit Report" : "Sign in to submit"}
         onPress={submit}
         disabled={status === "resident" && !canSubmit}
-        className={`mt-6 items-center rounded-full bg-brand py-4 active:opacity-80 ${
-          status === "resident" && !canSubmit ? "opacity-50" : ""
-        }`}
-      >
-        {createReport.isPending ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-base font-semibold text-white">
-            {status === "resident" ? "Submit Report" : "Sign in to submit"}
-          </Text>
-        )}
-      </Pressable>
+        loading={createReport.isPending}
+        className="mt-6"
+      />
     </ScrollView>
   );
 }
@@ -402,31 +428,50 @@ function SuccessView({
   const primary = config?.brand.colors.primary ?? palette.brand;
 
   return (
-    <View className="flex-1 items-center justify-center px-8">
-      <CircleCheck size={56} color={primary} />
-      <AppText variant="title" className="mt-4 text-center text-xl">
-        Report submitted
-      </AppText>
-      <AppText variant="caption" className="mt-1 text-center">
-        Keep this ticket number to track progress:
-      </AppText>
-      <View className="mt-4 rounded-2xl bg-surface px-8 py-4 dark:bg-surface-dark">
-        <Text className="text-2xl font-bold tracking-widest text-fg dark:text-fg-dark">
-          {report.ticket_id}
-        </Text>
+    <ScrollView contentContainerClassName="px-5 pb-10 pt-8 items-center">
+      {/* Mist circle + check */}
+      <View className="h-[72px] w-[72px] items-center justify-center rounded-full bg-tint">
+        <CircleCheck size={34} color={primary} strokeWidth={2.2} />
       </View>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => router.push(`/report/${report.ticket_id}` as never)}
-        className="mt-6 items-center rounded-full bg-brand px-8 py-3.5 active:opacity-80"
+      <AppText variant="display" className="mt-4 text-center text-[22px]">
+        Report Submitted!
+      </AppText>
+      <AppText variant="caption" className="mt-1.5 text-center">
+        We'll keep you posted as your ticket moves.
+      </AppText>
+
+      {/* Ticket card with inline timeline */}
+      <View
+        style={rowShadow}
+        className="mt-6 w-full rounded-stub border border-line bg-surface p-5 dark:border-line-dark dark:bg-surface-dark"
       >
-        <Text className="font-semibold text-white">Track my report</Text>
-      </Pressable>
+        <View className="flex-row items-center justify-between">
+          <AppText variant="caption">Ticket No.</AppText>
+          <Text
+            className="text-lg font-extrabold tracking-tight-2"
+            style={{ color: primary }}
+          >
+            {report.ticket_id}
+          </Text>
+        </View>
+        <View className="my-4 h-px bg-line dark:bg-line-dark" />
+        <StepTimeline
+          steps={["SUBMITTED", "UNDER_REVIEW", "RESOLVED"]}
+          timeline={report.timeline}
+          status={report.status}
+        />
+      </View>
+
+      <PrimaryButton
+        label="Track my report"
+        onPress={() => router.push(`/report/${report.ticket_id}` as never)}
+        className="mt-6 w-full"
+      />
       <Pressable accessibilityRole="button" onPress={onNew} className="mt-3 py-2">
         <Text className="text-sm font-medium text-fg-2 dark:text-fg-2-dark">
           Report another issue
         </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
