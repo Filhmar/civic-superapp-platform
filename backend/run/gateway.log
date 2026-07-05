@@ -1,44 +1,52 @@
-2026-07-05T17:57:45.331Z [api-gateway] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
-2026-07-05T17:57:45.343Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
-2026-07-05T17:57:45.344Z [api-gateway] [32minfo[39m [InstanceLoader] [32mJwtModule dependencies initialized[39m
-2026-07-05T17:57:45.344Z [api-gateway] [32minfo[39m [InstanceLoader] [32mThrottlerModule dependencies initialized[39m
-2026-07-05T17:57:45.344Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
-2026-07-05T17:57:45.346Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
-2026-07-05T17:57:45.347Z [api-gateway] [32minfo[39m [InstanceLoader] [32mClientsModule dependencies initialized[39m
-2026-07-05T17:57:45.347Z [api-gateway] [32minfo[39m [InstanceLoader] [32mRedisModule dependencies initialized[39m
-2026-07-05T17:57:45.348Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppModule dependencies initialized[39m
-2026-07-05T17:57:45.366Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/health/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
-2026-07-05T17:57:45.366Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/verify/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
-2026-07-05T17:57:45.369Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/*". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
-2026-07-05T17:57:45.373Z [api-gateway] [32minfo[39m [RoutesResolver] [32mConfigController {/v1/config}:[39m
-2026-07-05T17:57:45.375Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/config, GET} route[39m
-2026-07-05T17:57:45.375Z [api-gateway] [32minfo[39m [RoutesResolver] [32mHealthController {/v1/health}:[39m
-2026-07-05T17:57:45.376Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/health, GET} route[39m
-2026-07-05T17:57:45.376Z [api-gateway] [32minfo[39m [RoutesResolver] [32mAuthController {/v1}:[39m
-2026-07-05T17:57:45.376Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/otp/request, POST} route[39m
-2026-07-05T17:57:45.377Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/otp/verify, POST} route[39m
-2026-07-05T17:57:45.377Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/guest, POST} route[39m
-2026-07-05T17:57:45.377Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/refresh, POST} route[39m
-2026-07-05T17:57:45.378Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/logout, POST} route[39m
-2026-07-05T17:57:45.378Z [api-gateway] [32minfo[39m [RoutesResolver] [32mProfileController {/v1/profile}:[39m
-2026-07-05T17:57:45.378Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/profile, GET} route[39m
-2026-07-05T17:57:45.378Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/profile, PATCH} route[39m
-2026-07-05T17:57:45.379Z [api-gateway] [32minfo[39m [RoutesResolver] [32mDigitalIdController {/v1/digital-id}:[39m
-2026-07-05T17:57:45.379Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/digital-id, GET} route[39m
-2026-07-05T17:57:45.379Z [api-gateway] [32minfo[39m [RoutesResolver] [32mVerifyController {/v1/verify}:[39m
-2026-07-05T17:57:45.379Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/verify/:token, GET} route[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RoutesResolver] [32mPostsController {/v1/posts}:[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/posts, GET} route[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/posts/:id, GET} route[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RoutesResolver] [32mContentMiscController {/v1}:[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/faq, GET} route[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/feedback, POST} route[39m
-2026-07-05T17:57:45.380Z [api-gateway] [32minfo[39m [RoutesResolver] [32mNotificationsController {/v1/notifications}:[39m
-2026-07-05T17:57:45.381Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications, GET} route[39m
-2026-07-05T17:57:45.381Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/unread-count, GET} route[39m
-2026-07-05T17:57:45.381Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/:id/read, POST} route[39m
-2026-07-05T17:57:45.381Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/read-all, POST} route[39m
-2026-07-05T17:57:45.381Z [api-gateway] [32minfo[39m [RoutesResolver] [32mWeatherController {/v1/weather}:[39m
-2026-07-05T17:57:45.382Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/weather, GET} route[39m
-2026-07-05T17:57:45.384Z [api-gateway] [32minfo[39m [NestApplication] [32mNest application successfully started[39m
+2026-07-05T18:02:57.754Z [api-gateway] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T18:02:57.766Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T18:02:57.766Z [api-gateway] [32minfo[39m [InstanceLoader] [32mJwtModule dependencies initialized[39m
+2026-07-05T18:02:57.767Z [api-gateway] [32minfo[39m [InstanceLoader] [32mThrottlerModule dependencies initialized[39m
+2026-07-05T18:02:57.767Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T18:02:57.769Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T18:02:57.769Z [api-gateway] [32minfo[39m [InstanceLoader] [32mClientsModule dependencies initialized[39m
+2026-07-05T18:02:57.770Z [api-gateway] [32minfo[39m [InstanceLoader] [32mRedisModule dependencies initialized[39m
+2026-07-05T18:02:57.771Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppModule dependencies initialized[39m
+2026-07-05T18:02:57.784Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/health/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T18:02:57.785Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/verify/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T18:02:57.787Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/*". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T18:02:57.788Z [api-gateway] [32minfo[39m [RoutesResolver] [32mConfigController {/v1/config}:[39m
+2026-07-05T18:02:57.790Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/config, GET} route[39m
+2026-07-05T18:02:57.790Z [api-gateway] [32minfo[39m [RoutesResolver] [32mHealthController {/v1/health}:[39m
+2026-07-05T18:02:57.790Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/health, GET} route[39m
+2026-07-05T18:02:57.790Z [api-gateway] [32minfo[39m [RoutesResolver] [32mAuthController {/v1}:[39m
+2026-07-05T18:02:57.794Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/otp/request, POST} route[39m
+2026-07-05T18:02:57.795Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/otp/verify, POST} route[39m
+2026-07-05T18:02:57.795Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/guest, POST} route[39m
+2026-07-05T18:02:57.796Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/refresh, POST} route[39m
+2026-07-05T18:02:57.796Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/auth/logout, POST} route[39m
+2026-07-05T18:02:57.796Z [api-gateway] [32minfo[39m [RoutesResolver] [32mProfileController {/v1/profile}:[39m
+2026-07-05T18:02:57.797Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/profile, GET} route[39m
+2026-07-05T18:02:57.797Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/profile, PATCH} route[39m
+2026-07-05T18:02:57.797Z [api-gateway] [32minfo[39m [RoutesResolver] [32mDigitalIdController {/v1/digital-id}:[39m
+2026-07-05T18:02:57.797Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/digital-id, GET} route[39m
+2026-07-05T18:02:57.798Z [api-gateway] [32minfo[39m [RoutesResolver] [32mVerifyController {/v1/verify}:[39m
+2026-07-05T18:02:57.798Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/verify/:token, GET} route[39m
+2026-07-05T18:02:57.798Z [api-gateway] [32minfo[39m [RoutesResolver] [32mPostsController {/v1/posts}:[39m
+2026-07-05T18:02:57.798Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/posts, GET} route[39m
+2026-07-05T18:02:57.798Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/posts/:id, GET} route[39m
+2026-07-05T18:02:57.799Z [api-gateway] [32minfo[39m [RoutesResolver] [32mContentMiscController {/v1}:[39m
+2026-07-05T18:02:57.799Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/faq, GET} route[39m
+2026-07-05T18:02:57.799Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/feedback, POST} route[39m
+2026-07-05T18:02:57.799Z [api-gateway] [32minfo[39m [RoutesResolver] [32mNotificationsController {/v1/notifications}:[39m
+2026-07-05T18:02:57.799Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications, GET} route[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/unread-count, GET} route[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/:id/read, POST} route[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/notifications/read-all, POST} route[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RoutesResolver] [32mWeatherController {/v1/weather}:[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/weather, GET} route[39m
+2026-07-05T18:02:57.800Z [api-gateway] [32minfo[39m [RoutesResolver] [32mReportsGatewayController {/v1/reports}:[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/reports/categories, GET} route[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/reports, POST} route[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/reports, GET} route[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/reports/:ticketId, GET} route[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RoutesResolver] [32mMediaGatewayController {/v1/media}:[39m
+2026-07-05T18:02:57.801Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/media/presign, POST} route[39m
+2026-07-05T18:02:57.802Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/media/:id/confirm, POST} route[39m
+2026-07-05T18:02:57.804Z [api-gateway] [32minfo[39m [NestApplication] [32mNest application successfully started[39m
 [metrics] api-gateway metrics server error: listen EADDRINUSE: address already in use 0.0.0.0:9464

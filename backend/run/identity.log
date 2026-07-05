@@ -8,3 +8,5 @@
 2026-07-05T17:52:14.125Z [identity-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m
 2026-07-05T17:52:17.759Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639170000003: 184067[39m
 2026-07-05T17:52:32.607Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639170000004: 003126[39m
+2026-07-05T18:03:21.625Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639171234567: 171514[39m
+2026-07-05T18:04:28.051Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639179876543: 935792[39m

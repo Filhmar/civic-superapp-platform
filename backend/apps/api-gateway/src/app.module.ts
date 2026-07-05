@@ -18,6 +18,8 @@ import { PostsController } from './public/posts.controller';
 import { ContentMiscController } from './public/content-misc.controller';
 import { NotificationsController } from './protected/notifications.controller';
 import { WeatherController } from './public/weather.controller';
+import { ReportsGatewayController } from './protected/reports.controller';
+import { MediaGatewayController } from './protected/media.controller';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { WeatherController } from './public/weather.controller';
     ContentMiscController,
     NotificationsController,
     WeatherController,
+    ReportsGatewayController,
+    MediaGatewayController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

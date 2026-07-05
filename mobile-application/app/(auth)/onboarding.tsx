@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
@@ -49,11 +49,12 @@ export default function Onboarding() {
     },
   ).current;
 
-  if (slides.length === 0) {
-    // Config guarantees 3 slides; if absent, skip straight to the app.
-    finish();
-    return null;
-  }
+  // Config guarantees 3 slides; if absent, skip straight to the app.
+  useEffect(() => {
+    if (slides.length === 0) finish();
+  }, [slides.length, finish]);
+
+  if (slides.length === 0) return null;
 
   const activeBg = slides[Math.min(index, slides.length - 1)]?.bg;
 
