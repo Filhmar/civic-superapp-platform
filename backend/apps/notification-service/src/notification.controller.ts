@@ -27,6 +27,11 @@ export class NotificationController {
     return this.notifications.markAllRead(p.tenant, p.data.user_id);
   }
 
+  @MessagePattern({ cmd: 'audit.list' })
+  auditLog(@Payload() p: TenantScoped<{ category?: string; limit?: number }>) {
+    return this.notifications.auditLog(p.tenant, p.data.category, p.data.limit);
+  }
+
   @MessagePattern({ cmd: 'notifications.create' })
   create(
     @Payload()

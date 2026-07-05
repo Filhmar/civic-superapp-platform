@@ -33,10 +33,32 @@ export class JwtGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (isPublic) return true;
-
     const req = context.switchToHttp().getRequest<TenantRequest & { user?: AuthUser }>();
     const header = req.headers.authorization;
+
+    if (isPublic) {
+      // Public routes still personalize when a valid token is present
+      // (favorites on place lists, recent searches) — best-effort, non-fatal.
+      if (header?.startsWith('Bearer ')) {
+        try {
+          const payload = this.jwt.verify<AccessPayload>(header.slice(7), {
+            secret: this.config.require('JWT_ACCESS_SECRET'),
+          });
+          if (!req.tenant || payload.tenantId === req.tenant.tenantId) {
+            req.user = {
+              userId: payload.sub,
+              tenantId: payload.tenantId,
+              scope: payload.scope,
+              sessionId: payload.sessionId,
+            };
+          }
+        } catch {
+          // ignore: public route, invalid token just means anonymous
+        }
+      }
+      return true;
+    }
+
     if (!header?.startsWith('Bearer ')) throw new UnauthorizedException('Missing bearer token');
 
     let payload: AccessPayload;

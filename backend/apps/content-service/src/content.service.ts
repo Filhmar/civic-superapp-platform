@@ -53,6 +53,20 @@ export class ContentService {
     return this.publicPost(doc.toObject() as unknown as Record<string, unknown>);
   }
 
+  async searchPosts(tenant: TenantContext, query: string) {
+    const rx = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    const docs = await this.posts
+      .find({
+        tenantId: tenant.tenantId,
+        publishedAt: { $lte: new Date() },
+        $or: [{ title: rx }, { body: rx }],
+      })
+      .sort({ publishedAt: -1 })
+      .limit(10)
+      .lean();
+    return docs.map((d) => this.publicPost(d));
+  }
+
   async listFaq(tenant: TenantContext, locale: string) {
     const docs = await this.faqs
       .find({ tenantId: tenant.tenantId, locale })

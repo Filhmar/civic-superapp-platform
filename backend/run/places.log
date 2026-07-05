@@ -1,0 +1,10 @@
+2026-07-05T18:19:43.001Z [places-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T18:19:43.012Z [places-service] [32minfo[39m [InstanceLoader] [32mMongodbModule dependencies initialized[39m
+2026-07-05T18:19:43.013Z [places-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:19:43.013Z [places-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T18:19:43.013Z [places-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T18:19:43.014Z [places-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T18:19:43.045Z [places-service] [32minfo[39m [InstanceLoader] [32mMongooseCoreModule dependencies initialized[39m
+2026-07-05T18:19:43.046Z [places-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:19:43.047Z [places-service] [32minfo[39m [InstanceLoader] [32mPlacesModule dependencies initialized[39m
+2026-07-05T18:19:43.059Z [places-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

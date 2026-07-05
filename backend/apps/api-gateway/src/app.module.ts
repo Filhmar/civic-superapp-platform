@@ -24,6 +24,8 @@ import { EgovGatewayController } from './protected/egov.controller';
 import { AssistanceGatewayController } from './protected/assistance.controller';
 import { EmergencyGatewayController } from './protected/emergency.controller';
 import { SosGateway } from './gateways/sos.gateway';
+import { PlacesGatewayController, TransportGatewayController } from './public/places.controller';
+import { SearchGatewayController } from './public/search.controller';
 
 @Module({
   imports: [
@@ -52,6 +54,9 @@ import { SosGateway } from './gateways/sos.gateway';
     EgovGatewayController,
     AssistanceGatewayController,
     EmergencyGatewayController,
+    PlacesGatewayController,
+    TransportGatewayController,
+    SearchGatewayController,
   ],
   providers: [
     SosGateway,

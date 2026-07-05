@@ -1,10 +1,10 @@
-2026-07-05T17:57:44.352Z [notification-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
-2026-07-05T17:57:44.363Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongodbModule dependencies initialized[39m
-2026-07-05T17:57:44.363Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
-2026-07-05T17:57:44.364Z [notification-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
-2026-07-05T17:57:44.364Z [notification-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
-2026-07-05T17:57:44.365Z [notification-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
-2026-07-05T17:57:44.395Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseCoreModule dependencies initialized[39m
-2026-07-05T17:57:44.395Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
-2026-07-05T17:57:44.396Z [notification-service] [32minfo[39m [InstanceLoader] [32mNotificationModule dependencies initialized[39m
-2026-07-05T17:57:44.409Z [notification-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m
+2026-07-05T18:25:26.999Z [notification-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T18:25:27.010Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongodbModule dependencies initialized[39m
+2026-07-05T18:25:27.011Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:25:27.011Z [notification-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T18:25:27.012Z [notification-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T18:25:27.012Z [notification-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T18:25:27.044Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseCoreModule dependencies initialized[39m
+2026-07-05T18:25:27.044Z [notification-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:25:27.045Z [notification-service] [32minfo[39m [InstanceLoader] [32mNotificationModule dependencies initialized[39m
+2026-07-05T18:25:27.057Z [notification-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

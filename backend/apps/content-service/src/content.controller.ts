@@ -23,6 +23,11 @@ export class ContentController {
     return this.content.createPost(p.tenant, p.data);
   }
 
+  @MessagePattern({ cmd: 'content.posts.search' })
+  searchPosts(@Payload() p: TenantScoped<{ query: string }>) {
+    return this.content.searchPosts(p.tenant, p.data.query);
+  }
+
   @MessagePattern({ cmd: 'content.faq.list' })
   listFaq(@Payload() p: TenantScoped<{ locale: string }>) {
     return this.content.listFaq(p.tenant, p.data.locale);

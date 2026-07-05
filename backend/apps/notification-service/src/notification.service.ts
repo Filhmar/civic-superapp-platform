@@ -3,11 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TenantContext, rpcError } from '@app/common';
 import { Notification } from './schemas/notification.schema';
+import { AuditEvent } from './schemas/audit-event.schema';
 
 @Injectable()
 export class NotificationService {
   constructor(
     @InjectModel(Notification.name) private readonly notifications: Model<Notification>,
+    @InjectModel(AuditEvent.name) private readonly auditEvents: Model<AuditEvent>,
   ) {}
 
   async list(tenant: TenantContext, userId: string, limit = 20, before?: string) {
@@ -72,6 +74,29 @@ export class NotificationService {
       category,
       data,
     });
+    // Append-only audit trail: every dispatched status/payment event is
+    // recorded and never mutated (Reference §5.13).
+    await this.auditEvents
+      .create({ tenantId: tenant.tenantId, category, title, userId, data })
+      .catch(() => undefined);
     return { id: String(doc._id) };
+  }
+
+  async auditLog(tenant: TenantContext, category?: string, limit = 50) {
+    const filter: Record<string, unknown> = { tenantId: tenant.tenantId };
+    if (category) filter.category = category;
+    const docs = await this.auditEvents
+      .find(filter)
+      .sort({ _id: -1 })
+      .limit(Math.min(limit, 200))
+      .lean();
+    return docs.map((d) => ({
+      id: String(d._id),
+      category: d.category,
+      title: d.title,
+      user_id: d.userId,
+      data: d.data ?? null,
+      at: (d as { createdAt?: Date }).createdAt,
+    }));
   }
 }
