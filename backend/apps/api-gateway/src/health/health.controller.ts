@@ -3,8 +3,10 @@ import { ClientProxy } from '@nestjs/microservices';
 import { RedisService } from '@app/redis';
 import { SERVICE_CLIENT } from '../clients/clients.module';
 import { callService } from '../clients/call-service';
+import { Public } from '../auth/auth.decorators';
 
 @Controller('health')
+@Public()
 export class HealthController {
   constructor(
     private readonly redis: RedisService,

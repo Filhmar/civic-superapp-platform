@@ -1,0 +1,71 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String   @id @default(uuid())
+  tenantId         String   @map("tenant_id")
+  phoneNumber      String   @map("phone_number")
+  name             String?
+  unit             String?
+  language         String   @default("en")
+  avatarUrl        String?  @map("avatar_url")
+  residentId       String?  @unique @map("resident_id")
+  verifiedResident Boolean  @default(false) @map("verified_resident")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  sessions Session[]
+
+  @@unique([tenantId, phoneNumber])
+  @@index([tenantId])
+  @@map("users")
+}
+
+model Session {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  tenantId         String   @map("tenant_id")
+  refreshTokenHash String   @map("refresh_token_hash")
+  deviceInfo       String?  @map("device_info")
+  isActive         Boolean  @default(true) @map("is_active")
+  expiresAt        DateTime @map("expires_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  lastUsedAt       DateTime @default(now()) @map("last_used_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, isActive])
+  @@index([tenantId])
+  @@map("sessions")
+}
+
+model OtpRequest {
+  id          String   @id @default(uuid())
+  tenantId    String   @map("tenant_id")
+  phoneNumber String   @map("phone_number")
+  codeHash    String   @map("code_hash")
+  attempts    Int      @default(0)
+  isUsed      Boolean  @default(false) @map("is_used")
+  ip          String?
+  expiresAt   DateTime @map("expires_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([tenantId, phoneNumber, isUsed, expiresAt])
+  @@map("otp_requests")
+}
+
+model ResidentSequence {
+  tenantId String @map("tenant_id")
+  year     Int
+  seq      Int    @default(0)
+
+  @@id([tenantId, year])
+  @@map("resident_sequences")
+}

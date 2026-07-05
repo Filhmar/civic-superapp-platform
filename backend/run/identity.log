@@ -1,0 +1,10 @@
+2026-07-05T17:52:14.035Z [identity-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T17:52:14.046Z [identity-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T17:52:14.046Z [identity-service] [32minfo[39m [InstanceLoader] [32mJwtModule dependencies initialized[39m
+2026-07-05T17:52:14.047Z [identity-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T17:52:14.051Z [identity-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T17:52:14.051Z [identity-service] [32minfo[39m [InstanceLoader] [32mRedisModule dependencies initialized[39m
+2026-07-05T17:52:14.052Z [identity-service] [32minfo[39m [InstanceLoader] [32mIdentityModule dependencies initialized[39m
+2026-07-05T17:52:14.125Z [identity-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m
+2026-07-05T17:52:17.759Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639170000003: 184067[39m
+2026-07-05T17:52:32.607Z [identity-service] [32minfo[39m [SmsProvider] [32m[mock-sms via mock] OTP for +639170000004: 003126[39m

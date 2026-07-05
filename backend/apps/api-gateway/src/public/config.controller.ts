@@ -4,12 +4,14 @@ import { AppConfigService, TenantConfig } from '@app/common';
 import { SERVICE_CLIENT } from '../clients/clients.module';
 import { callService } from '../clients/call-service';
 import { TenantRequest } from '../tenant/tenant.types';
+import { Public } from '../auth/auth.decorators';
 
 /**
  * The app boots entirely from this response (Reference §3): brand, onboarding,
  * home flags, module grid — plus the force-update minimum version.
  */
 @Controller('config')
+@Public()
 export class ConfigController {
   constructor(
     @Inject(SERVICE_CLIENT('tenancy')) private readonly tenancyClient: ClientProxy,
