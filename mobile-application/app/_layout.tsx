@@ -12,9 +12,12 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 
+import { ForceUpdateGate } from "@/components/force-update-gate";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ToastProvider } from "@/components/ui/toast";
 import { palette } from "@/constants/colors";
 import { queryKeys } from "@/constants/query-keys";
+import { AuthProvider } from "@/contexts/auth-context";
 import { TenantConfigProvider } from "@/contexts/tenant-config-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { authEvents } from "@/lib/auth-events";
@@ -53,14 +56,19 @@ export default function RootLayout() {
         <NavigationThemeProvider value={navTheme}>
           <TenantConfigProvider>
             <ThemeProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  // Themed content bg: no white flash on screen pop.
-                  contentStyle: { backgroundColor: bg },
-                }}
-              />
-              <StatusBar style="auto" />
+              <AuthProvider>
+                <ToastProvider>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      // Themed content bg: no white flash on screen pop.
+                      contentStyle: { backgroundColor: bg },
+                    }}
+                  />
+                  <StatusBar style="auto" />
+                  <ForceUpdateGate />
+                </ToastProvider>
+              </AuthProvider>
             </ThemeProvider>
           </TenantConfigProvider>
         </NavigationThemeProvider>

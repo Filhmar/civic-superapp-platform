@@ -1,0 +1,10 @@
+2026-07-05T18:14:39.981Z [emergency-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T18:14:39.992Z [emergency-service] [32minfo[39m [InstanceLoader] [32mMongodbModule dependencies initialized[39m
+2026-07-05T18:14:39.992Z [emergency-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:14:39.992Z [emergency-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T18:14:39.993Z [emergency-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T18:14:39.993Z [emergency-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T18:14:40.022Z [emergency-service] [32minfo[39m [InstanceLoader] [32mMongooseCoreModule dependencies initialized[39m
+2026-07-05T18:14:40.023Z [emergency-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T18:14:40.023Z [emergency-service] [32minfo[39m [InstanceLoader] [32mEmergencyModule dependencies initialized[39m
+2026-07-05T18:14:40.035Z [emergency-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

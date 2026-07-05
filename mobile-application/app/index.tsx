@@ -35,8 +35,8 @@ export default function Index() {
 
   if (!state.onboarded) return <Redirect href="/(auth)/onboarding" />;
 
-  // M0: guest browsing is allowed — after onboarding everyone lands on the
-  // tabs, token or not. M1 gates authed-only flows via /(auth)/login.
+  // Tokens present (guest or resident) → straight into the app; the session
+  // refreshes itself in the background. Otherwise → login.
   if (state.hasToken) return <Redirect href="/(tabs)" />;
-  return <Redirect href="/(tabs)" />;
+  return <Redirect href="/(auth)/login" />;
 }

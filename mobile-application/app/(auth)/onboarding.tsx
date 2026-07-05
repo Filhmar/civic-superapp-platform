@@ -31,7 +31,7 @@ export default function Onboarding() {
 
   const finish = useCallback(() => {
     void AsyncStorage.setItem("onboarded", "1");
-    router.replace("/(tabs)");
+    router.replace("/(auth)/login");
   }, [router]);
 
   const next = useCallback(() => {

@@ -21,6 +21,9 @@ import { WeatherController } from './public/weather.controller';
 import { ReportsGatewayController } from './protected/reports.controller';
 import { MediaGatewayController } from './protected/media.controller';
 import { EgovGatewayController } from './protected/egov.controller';
+import { AssistanceGatewayController } from './protected/assistance.controller';
+import { EmergencyGatewayController } from './protected/emergency.controller';
+import { SosGateway } from './gateways/sos.gateway';
 
 @Module({
   imports: [
@@ -47,8 +50,11 @@ import { EgovGatewayController } from './protected/egov.controller';
     ReportsGatewayController,
     MediaGatewayController,
     EgovGatewayController,
+    AssistanceGatewayController,
+    EmergencyGatewayController,
   ],
   providers: [
+    SosGateway,
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: JwtGuard },
     { provide: APP_GUARD, useClass: ModuleFlagGuard },

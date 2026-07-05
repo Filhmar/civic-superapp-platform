@@ -37,3 +37,14 @@ export const MODULES: readonly ModuleMeta[] = [
   { key: "health", label: "Health", icon: Stethoscope },
   { key: "jobs", label: "Jobs", icon: BriefcaseBusiness },
 ] as const;
+
+/**
+ * Routes for modules that already have screens. Modules enabled in config but
+ * not yet built route nowhere (the UI shows an "opening soon" toast instead —
+ * it must never call a disabled module's endpoint).
+ */
+export const MODULE_ROUTES: Partial<Record<ModuleKey, string>> = {
+  reports311: "/report",
+  news: "/news",
+  sos: "/sos",
+};
