@@ -1,6 +1,14 @@
 import "@/global.css";
 
 import {
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
+  useFonts,
+} from "@expo-google-fonts/plus-jakarta-sans";
+import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider as NavigationThemeProvider,
@@ -26,6 +34,14 @@ import { persistOptions, queryClient } from "@/lib/query-client";
 
 // Provider tree per STACK_BASIS §16 (outer → inner).
 export default function RootLayout() {
+  // Fonts are bundled assets (no network) — gate per STACK_BASIS §16.
+  const [fontsLoaded] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
+  });
   const colorScheme = useColorScheme();
   const router = useRouter();
   const isDark = colorScheme === "dark";
@@ -38,6 +54,8 @@ export default function RootLayout() {
       router.replace("/(auth)/login");
     });
   }, [router]);
+
+  if (!fontsLoaded) return null; // bundled font load — local, never network
 
   const navTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),

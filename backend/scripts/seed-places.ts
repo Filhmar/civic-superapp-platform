@@ -34,6 +34,18 @@ const POIS: Record<string, object[]> = {
     { kind: 'civic', name: 'Sorsogon City Hall', description: 'Seat of the city government; permits, treasury, and civil registry.', category: 'Government', rating: 4.0, geo: { lat: 12.9714, lng: 124.0064 }, contact: '(056) 211-1234', hours: WEEKDAYS('08:00', '17:00'), order: 6 },
     { kind: 'civic', name: 'Sorsogon Provincial Hospital', description: 'Main public hospital serving the province.', category: 'Hospital', rating: 3.9, geo: { lat: 12.9768, lng: 124.0102 }, contact: '(056) 211-1717', hours: WEEK('00:00', '23:59'), order: 7 },
   ],
+  'ph-albay-legazpi': [
+    { kind: 'tourism', name: 'Mayon Volcano Skyline', description: 'Iconic near-perfect cone of Mayon Volcano — best viewed at sunrise from the city.', category: 'Nature', rating: 4.9, geo: { lat: 13.1624, lng: 123.7370 }, hours: WEEK('00:00', '23:59'), order: 1 },
+    { kind: 'tourism', name: 'Ligñon Hill Nature Park', description: 'Hilltop viewpoint with 360° views of Mayon, the city, and Albay Gulf; zipline and trails.', category: 'Viewpoint', rating: 4.6, geo: { lat: 13.1585, lng: 123.7411 }, hours: WEEK('08:00', '21:00'), order: 2 },
+    { kind: 'tourism', name: 'Legazpi Boulevard', description: 'Coastal boulevard for biking, jogging, and sunrise views over Albay Gulf.', category: 'Coastal', rating: 4.5, geo: { lat: 13.1290, lng: 123.7550 }, hours: WEEK('00:00', '23:59'), order: 3 },
+    { kind: 'tourism', name: 'Sleeping Lion (Kapuntukan) Hill', description: 'Lion-shaped hill by the port district with day-hike trails and harbor views.', category: 'Viewpoint', rating: 4.4, geo: { lat: 13.1310, lng: 123.7620 }, hours: WEEK('06:00', '18:00'), order: 4 },
+    { kind: 'tourism', name: 'Embarcadero de Legazpi', description: 'Waterfront lifestyle mall and boardwalk at the foot of Kapuntukan Hill.', category: 'Leisure', rating: 4.3, geo: { lat: 13.1418, lng: 123.7568 }, hours: WEEK('10:00', '22:00'), order: 5 },
+    { kind: 'tourism', name: 'Ibalong Centrum', description: 'Events and festival center hosting the Ibálong Festival programs.', category: 'Culture', rating: 4.2, geo: { lat: 13.1420, lng: 123.7330 }, hours: WEEK('08:00', '17:00'), order: 6 },
+    { kind: 'business', name: 'SM City Legazpi', description: 'Major shopping mall with supermarket, cinemas, and dining.', category: 'Mall', rating: 4.5, geo: { lat: 13.1370, lng: 123.7340 }, contact: '(052) 742-8888', hours: WEEK('10:00', '21:00'), order: 7 },
+    { kind: 'business', name: 'Legazpi Public Market', description: 'Fresh produce, pili nuts, sili ice cream, and Bicolano goods.', category: 'Market', rating: 4.2, geo: { lat: 13.1440, lng: 123.7360 }, hours: WEEK('04:00', '19:00'), order: 8 },
+    { kind: 'civic', name: 'Legazpi City Hall', description: 'Seat of the city government; permits, treasury, and civil registry.', category: 'Government', rating: 4.1, geo: { lat: 13.1391, lng: 123.7438 }, contact: '(052) 480-0421', hours: WEEKDAYS('07:00', '17:00'), order: 9 },
+    { kind: 'civic', name: 'Bicol Regional Hospital (BRHMC)', description: 'Regional hospital and medical center with 24/7 emergency room.', category: 'Hospital', rating: 4.0, geo: { lat: 13.1560, lng: 123.7290 }, contact: '(052) 483-0016', hours: WEEK('00:00', '23:59'), order: 10 },
+  ],
 };
 
 const ROUTES: Record<string, object[]> = {
@@ -49,6 +61,13 @@ const ROUTES: Record<string, object[]> = {
     { mode: 'tricycle', name: 'Centro–Talisay', stops: ['Public Market', 'Centro', 'Sirangan', 'Talisay'], fareMin: 15, fareMax: 25, popular: true, order: 2 },
     { mode: 'van', name: 'Sorsogon–Legazpi (Grand Terminal)', stops: ['Sorsogon Grand Terminal', 'Castilla', 'Daraga', 'Legazpi'], fareMin: 90, fareMax: 120, popular: true, order: 3 },
     { mode: 'jeepney', name: 'Centro–Bacon District', stops: ['Public Market', 'Cabid-an', 'Bacon Poblacion'], fareMin: 20, fareMax: 35, popular: false, order: 4 },
+  ],
+  'ph-albay-legazpi': [
+    { mode: 'jeepney', name: 'Legazpi–Daraga', stops: ['Grand Central Terminal', 'SM City Legazpi', 'Old Albay District', 'Daraga Centro'], fareMin: 13, fareMax: 15, popular: true, order: 1 },
+    { mode: 'van', name: 'Legazpi–Tabaco', stops: ['Grand Central Terminal', 'Sto. Domingo', 'Malilipot', 'Tabaco City'], fareMin: 70, fareMax: 90, popular: true, order: 2 },
+    { mode: 'tricycle', name: 'Downtown–Boulevard Loop', stops: ['Rizal St.', 'Peñaranda Park', 'Ibalong Centrum', 'Legazpi Boulevard'], fareMin: 15, fareMax: 25, popular: true, order: 3 },
+    { mode: 'jeepney', name: 'Rawis–Old Albay District', stops: ['Rawis Terminal', 'Bicol University', 'Peñaranda St.', 'Old Albay District'], fareMin: 13, fareMax: 18, popular: false, order: 4 },
+    { mode: 'van', name: 'Legazpi–Bicol Int’l Airport (Shuttle)', stops: ['Grand Central Terminal', 'Legazpi Boulevard', 'BIA, Daraga'], fareMin: 50, fareMax: 60, popular: false, order: 5 },
   ],
 };
 

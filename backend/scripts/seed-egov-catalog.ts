@@ -42,6 +42,19 @@ const CATALOGS: Record<string, { convenienceFee: number; items: Item[] }> = {
       { code: 'MCRT', group: 'Civil Registry', name: 'Marriage Certificate (Local Copy)', description: 'Certified local civil registry copy of marriage certificate.', fee: 140, requirements: ['Valid ID of requester'], processingDays: 2 },
     ],
   },
+  'ph-albay-legazpi': {
+    convenienceFee: 20,
+    items: [
+      { code: 'CTC', group: 'Taxes', name: 'Community Tax (Cedula)', description: 'Individual community tax certificate.', fee: 55, requirements: ['Valid government ID'], processingDays: 1 },
+      { code: 'RPT', group: 'Taxes', name: 'Real Property Tax (RPT)', description: 'Amilyar payment & clearance.', fee: 3240, requirements: ['Tax declaration number', 'Previous OR'], processingDays: 1 },
+      { code: 'EBOSS', group: 'Permits', name: 'Business Permit (EBOSS)', description: 'Online one-stop shop — no queues.', fee: 2150, requirements: ['Previous permit', 'BIR registration', 'Barangay business clearance'], processingDays: 5 },
+      { code: 'BLDG', group: 'Permits', name: 'Building Permit', description: 'Construction & occupancy.', fee: 4600, requirements: ['Lot title or tax declaration', 'Signed building plans', 'Barangay clearance'], processingDays: 10 },
+      { code: 'SANI', group: 'Permits', name: 'Sanitary Permit', description: 'Health & sanitation clearance.', fee: 350, requirements: ['Business permit', 'Health certificates of staff'], processingDays: 3 },
+      { code: 'BRGY', group: 'Clearances', name: 'Barangay Clearance', description: 'Residency / good standing.', fee: 50, requirements: ['Valid ID', 'Proof of residency'], processingDays: 2 },
+      { code: 'PLCE', group: 'Clearances', name: 'Police Clearance', description: 'PNP Legazpi clearance.', fee: 120, requirements: ['Barangay clearance', 'Valid ID', '2x2 photo'], processingDays: 3 },
+      { code: 'BCRT', group: 'Civil Registry', name: 'Birth Certificate', description: 'Certified true copy request.', fee: 155, requirements: ['Valid ID of requester'], processingDays: 2 },
+    ],
+  },
 };
 
 async function main(): Promise<void> {

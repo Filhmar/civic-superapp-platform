@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Plus Jakarta Sans everywhere (DESIGN_SPEC §1). RN needs one fontFamily per
+ * weight file, so the font-weight utilities are redefined to carry BOTH the
+ * weight and the matching family. Text that sets no font-* class should add
+ * `font-sans`.
+ */
+@layer utilities {
+  .font-sans,
+  .font-normal {
+    font-family: "PlusJakartaSans_400Regular";
+    font-weight: 400;
+  }
+  .font-medium {
+    font-family: "PlusJakartaSans_500Medium";
+    font-weight: 500;
+  }
+  .font-semibold {
+    font-family: "PlusJakartaSans_600SemiBold";
+    font-weight: 600;
+  }
+  .font-bold {
+    font-family: "PlusJakartaSans_700Bold";
+    font-weight: 700;
+  }
+  .font-extrabold {
+    font-family: "PlusJakartaSans_800ExtraBold";
+    font-weight: 800;
+  }
+}

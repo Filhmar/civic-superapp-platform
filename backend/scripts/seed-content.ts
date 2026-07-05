@@ -119,6 +119,62 @@ const CONTENT: TenantContent[] = [
       { locale: 'fil', question: 'Paano mag-report ng hindi nakolektang basura?', answer: 'Gamitin ang Report tab, piliin ang Garbage, maglagay ng larawan at lokasyon. Matatanggap ng ENRO ang ticket at masusubaybayan ang status.', order: 2 },
     ],
   },
+  {
+    tenantId: 'ph-albay-legazpi',
+    author: 'Legazpi City PIO',
+    posts: [
+      {
+        title: 'Ibálong Festival 2026 set on August 7–23',
+        body: 'The Ibálong Festival 2026 runs August 7–23 across Legazpi City, celebrating the epic of Baltog, Handyong, and Bantong with street presentations, trade fairs, and the grand Ibálong street parade along Rizal Street and Peñaranda Park.',
+        category: 'EVENT',
+        pinned: true,
+        publishedAt: daysAgo(1),
+      },
+      {
+        title: 'Ibálong 2026: follow only the official pages',
+        body: 'The City PIO advises the public to follow only the official Ibálong Festival and City Government of Legazpi pages for schedules and advisories. Report fake pages and unofficial ticket sellers to the City Information Office.',
+        category: 'ADVISORY',
+        pinned: true,
+        publishedAt: daysAgo(3),
+      },
+      {
+        title: 'Legazpi is Bicol’s Top Economic Powerhouse 2026',
+        body: 'Legazpi City ranks first in Bicol in the 2026 economic performance index, driven by tourism arrivals, EBOSS-enabled business registrations, and infrastructure growth around the Bicol International Airport corridor.',
+        category: 'GOVERNANCE',
+        pinned: true,
+        publishedAt: daysAgo(7),
+      },
+      {
+        title: 'Real Property Tax Amnesty under R.A. 12001',
+        body: 'The City Treasurer’s Office reminds property owners that penalties and interests on unpaid real property taxes are condoned under R.A. 12001. Settle amilyar at City Hall or via e-Services in the app before the amnesty period ends.',
+        category: 'GOVERNANCE',
+        pinned: false,
+        publishedAt: daysAgo(15),
+      },
+      {
+        title: 'Sunrise viewing decks open at Ligñon Hill and Legazpi Boulevard',
+        body: 'The City Tourism Office opens improved viewing decks for the Mayon Volcano skyline at Ligñon Hill Nature Park (8AM–9PM) and along Legazpi Boulevard. Best views at sunrise — tricycle loops run from downtown.',
+        category: 'TOURISM',
+        pinned: false,
+        publishedAt: daysAgo(9),
+      },
+      {
+        title: 'City scholarship and school supplies program now accepting applicants',
+        body: 'The City Government opens applications for the Legazpi scholarship and school supplies assistance program. Apply at CSWDO Legazpi or through Assistance in the app with your Form 138 and barangay indigency certificate.',
+        category: 'PROGRAM',
+        pinned: false,
+        publishedAt: daysAgo(11),
+      },
+    ],
+    faqs: [
+      { locale: 'en', question: 'How do I get a cedula (Community Tax Certificate)?', answer: 'Open e-Services, choose Community Tax Certificate (Cedula), fill in your details, pay ₱55 plus the ₱20 convenience fee via GCash or card, then claim at Window 4, City Hall — ready in 3–5 working days.', order: 1 },
+      { locale: 'en', question: 'How do I report a pothole, flooding, or garbage problem?', answer: 'Use the Report tab, pick a category, add a photo, and pin the location (e.g., Peñaranda St., Rawis). You will get an LGZ ticket number you can track from Submitted to Resolved.', order: 2 },
+      { locale: 'en', question: 'What happens when I hold the SOS button?', answer: 'Hold-to-SOS calls Legazpi City Rescue (CDRRMO) and Legazpi 911 while sharing your live location with dispatch. Quick dials for Police, Fire, and Medical are also on the SOS screen.', order: 3 },
+      { locale: 'en', question: 'How do I renew my business permit online?', answer: 'Choose Business Permit (EBOSS) under e-Services — Legazpi’s online one-stop shop. Submit the form, pay online, and claim at City Hall with your QR stub. No queues.', order: 4 },
+      { locale: 'fil', question: 'Paano kumuha ng cedula?', answer: 'Buksan ang e-Services, piliin ang Community Tax Certificate (Cedula), sagutan ang detalye, magbayad ng ₱55 kasama ang ₱20 convenience fee, at kunin sa Window 4 ng City Hall pagkalipas ng 3–5 araw.', order: 1 },
+      { locale: 'fil', question: 'Paano mag-report ng butas sa daan o baha?', answer: 'Gamitin ang Report tab, pumili ng kategorya, maglagay ng larawan at i-pin ang lokasyon. Makakatanggap ka ng LGZ ticket number na masusubaybayan hanggang ma-resolve.', order: 2 },
+    ],
+  },
 ];
 
 async function main(): Promise<void> {

@@ -1,5 +1,5 @@
 import { palette } from "@/constants/colors";
-import { buildThemeVars } from "@/lib/theme";
+import { buildThemeVars, lightenHex } from "@/lib/theme";
 import type { BrandColors } from "@/types/config";
 
 // A fake tenant config's brand colors — arbitrary values, no real tenant.
@@ -17,6 +17,7 @@ describe("buildThemeVars", () => {
     expect(buildThemeVars(fakeColors)).toEqual({
       "--color-brand": "#101010",
       "--color-brand-dark": "#202020",
+      "--color-brand-light": lightenHex("#101010", 0.28),
       "--color-accent": "#303030",
       "--color-accent-deep": "#404040",
       "--color-danger": "#505050",
@@ -28,6 +29,7 @@ describe("buildThemeVars", () => {
     expect(buildThemeVars(undefined)).toEqual({
       "--color-brand": palette.brand,
       "--color-brand-dark": palette["brand-dark"],
+      "--color-brand-light": palette["brand-light"],
       "--color-accent": palette.accent,
       "--color-accent-deep": palette["accent-deep"],
       "--color-danger": palette.danger,
@@ -40,5 +42,16 @@ describe("buildThemeVars", () => {
     expect(partial["--color-brand"]).toBe("#101010");
     expect(partial["--color-danger"]).toBe(palette.danger);
     expect(partial["--color-tint"]).toBe(palette.tint);
+  });
+});
+
+describe("lightenHex", () => {
+  it("mixes toward white", () => {
+    expect(lightenHex("#000000", 0.5)).toBe("#808080");
+    expect(lightenHex("#FFFFFF", 0.3)).toBe("#FFFFFF");
+  });
+
+  it("returns input unchanged when unparseable", () => {
+    expect(lightenHex("not-a-color", 0.3)).toBe("not-a-color");
   });
 });

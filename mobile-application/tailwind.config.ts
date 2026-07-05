@@ -26,12 +26,14 @@ export default {
           dark: palette["fg-dark"],
           "2-dark": palette["fg-2-dark"],
         },
+        line: { DEFAULT: palette.line, dark: palette["line-dark"] },
         // Brand tokens — CSS variables hydrated at runtime by ThemeProvider
         // from the fetched TenantConfig (defaults come from the placeholder
         // palette). `brand-dark` = darker brand shade, NOT dark mode.
         brand: {
           DEFAULT: "var(--color-brand)",
           dark: "var(--color-brand-dark)",
+          light: "var(--color-brand-light)",
         },
         accent: {
           DEFAULT: "var(--color-accent)",
@@ -39,6 +41,20 @@ export default {
         },
         danger: "var(--color-danger)",
         tint: "var(--color-tint)",
+      },
+      // DESIGN_SPEC §1 letter-spacing values (px).
+      letterSpacing: {
+        "tight-2": "-0.2px",
+        "tight-3": "-0.3px",
+        "tight-5": "-0.5px",
+        kicker: "1.2px",
+      },
+      borderRadius: {
+        card: "16px",
+        "card-lg": "18px",
+        stub: "20px",
+        banner: "22px",
+        sheet: "30px",
       },
     },
   },

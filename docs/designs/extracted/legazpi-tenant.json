@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "MyLegazpi",
+    "tagline": "City of Fun and Adventure"
+  },
+  "brand": {
+    "colors": {
+      "primary": "#0E5C74",
+      "primaryDark": "#083A4C",
+      "primaryLight": "#3E8FAB",
+      "accent": "#F26B21",
+      "accentDeep": "#C94F10",
+      "danger": "#E53935",
+      "tint": "#E6F2F5"
+    },
+    "colorNames": {
+      "primary": "Mayon Teal",
+      "primaryDark": "Deep Mayon",
+      "accent": "Lava Orange",
+      "accentDeep": "Ember",
+      "danger": "Danger / SOS",
+      "tint": "Mist"
+    },
+    "mark": "Mayon Mark — circular badge: white circle with Deep Mayon double ring, Lava Orange sun behind a Mayon Teal volcano triangle with white snow cap, light-blue smoke squiggle above, wavy water line below (see marks/legazpi-mark.svg)",
+    "slogan": "Bagong Legazpi! 🌋",
+    "executive": {
+      "title": "City Mayor",
+      "name": "Hon. Hisham Ismail",
+      "greeting": "\"Mabuhay, Legazpeño!\""
+    }
+  },
+  "identifiers": {
+    "ticket_prefix": "LGZ-",
+    "examples": {
+      "report_ticket": "LGZ-554487",
+      "payment_reference": "LGZ-rpt-7742",
+      "digital_city_id": "LGZ-2026-004821",
+      "notification_report": "LGZ-482910"
+    }
+  },
+  "onboarding": [
+    {
+      "title": "Lahat ng serbisyo ng lungsod, nasa isang app",
+      "body": "Bayad ng buwis, permit, sertipiko, at higit pa — mula sa Legazpi City Hall, diretso sa iyong telepono.",
+      "bg": "Aerial photo of Legazpi City with Mayon volcano, duotone primary (Mayon Teal #0E5C74) overlay; floating circular Mayon mark in glass circle"
+    },
+    {
+      "title": "Iulat ang problema, subaybayan ang aksyon",
+      "body": "Mag-report ng butas sa daan, baha, o basura. Makakakuha ka ng ticket at makikita ang status nito real-time.",
+      "bg": "Same aerial photo, duotone accent (Lava Orange #F26B21) overlay"
+    },
+    {
+      "title": "Tulong kapag emergency, isang tap lang",
+      "body": "Direktang linya sa City Rescue, pulisya, ospital, at bumbero. Hold-to-SOS para sa mabilis na saklolo.",
+      "bg": "Same aerial photo, duotone danger (#E53935) red overlay"
+    }
+  ],
+  "seed": {
+    "barangays": ["Rawis"],
+    "barangays_note": "No barangay picker exists in the prototype; Rawis is the only Legazpi barangay shown (profile, digital ID, report location 'Peñaranda St., Rawis').",
+    "hotlines": [
+      { "name": "City Rescue / CDRRMO", "description": "Disaster & emergency response", "number": "(052) 480-0911", "color": "red" },
+      { "name": "PNP Legazpi City", "description": "Philippine National Police", "number": "(052) 480-1670", "color": "blue" },
+      { "name": "Bureau of Fire (BFP)", "description": "Fire & rescue", "number": "(052) 480-1111", "color": "orange" },
+      { "name": "Bicol Regional Hospital (BRHMC)", "description": "Regional hospital ER", "number": "(052) 483-0016", "color": "teal" },
+      { "name": "Estevez Memorial Hospital", "description": "Private hospital", "number": "(052) 480-0320", "color": "teal" },
+      { "name": "CSWDO Child Protection", "description": "Report abuse · 24/7 · confidential", "number": "0912-030-6754", "color": "purple" },
+      { "name": "ALECO", "description": "Power interruption", "number": "(052) 481-0182", "color": "orange" },
+      { "name": "Legazpi City Water District", "description": "Water service", "number": "(052) 480-6034", "color": "blue" }
+    ],
+    "services": [
+      { "group": "PAY TAXES", "name": "Real Property Tax (RPT)", "description": "Amilyar payment & clearance", "fee": 3240.0 },
+      { "group": "PAY TAXES", "name": "Business Tax", "description": "Renewal of local business tax", "fee": 5800.0 },
+      { "group": "PAY TAXES", "name": "Community Tax (Cedula)", "description": "Individual community tax cert.", "fee": 55.0 },
+      { "group": "PERMITS & LICENSES", "name": "Business Permit (EBOSS)", "description": "Online one-stop shop — no queues", "fee": 2150.0 },
+      { "group": "PERMITS & LICENSES", "name": "Building Permit", "description": "Construction & occupancy", "fee": 4600.0 },
+      { "group": "PERMITS & LICENSES", "name": "Sanitary Permit", "description": "Health & sanitation clearance", "fee": 350.0 },
+      { "group": "CIVIL REGISTRY", "name": "Birth Certificate", "description": "Certified true copy request", "fee": 155.0 },
+      { "group": "CIVIL REGISTRY", "name": "Marriage Certificate", "description": "Certified true copy request", "fee": 155.0 },
+      { "group": "CIVIL REGISTRY", "name": "Death Certificate", "description": "Certified true copy request", "fee": 155.0 },
+      { "group": "BARANGAY & OTHERS", "name": "Barangay Clearance", "description": "Residency / good standing", "fee": 50.0 },
+      { "group": "BARANGAY & OTHERS", "name": "Police Clearance", "description": "PNP Legazpi clearance", "fee": 120.0 }
+    ],
+    "service_flow": {
+      "convenience_fee": 20.0,
+      "payment_methods": ["GCash", "Debit / Credit Card"],
+      "claim_note": "Window 4 · Ready in 3–5 working days"
+    },
+    "pois": [
+      { "category": "NATURE", "name": "Mayon Volcano Skyline", "hours": "Best at sunrise · Open daily" },
+      { "category": "VIEWPOINT", "name": "Ligñon Hill Nature Park", "hours": "8AM–9PM" },
+      { "category": "COASTAL", "name": "Legazpi Boulevard", "hours": "Open daily" },
+      { "category": "VIEWPOINT", "name": "Sleeping Lion (Kapuntukan) Hill", "hours": "Day hikes" },
+      { "category": "LEISURE", "name": "Embarcadero de Legazpi", "hours": "10AM–10PM" },
+      { "category": "CULTURE", "name": "Ibalong Centrum", "hours": "Event days" }
+    ],
+    "nearby": [
+      { "name": "SM City Legazpi", "meta": "Mall · 1.6 km" },
+      { "name": "Bicol University", "meta": "University · 2.2 km" },
+      { "name": "City Hall", "meta": "Government · 0.7 km" },
+      { "name": "Embarcadero", "meta": "Leisure · 1.1 km" }
+    ],
+    "posts": [
+      { "tag": "EVENT", "title": "Ibálong Festival 2026 set on August 7–23", "home_carousel_title": "Ibálong Festival 2026 — August 7–23, Legazpi City", "date": "Jul 4, 2026", "source": "City PIO" },
+      { "tag": "ADVISORY", "title": "Ibálong 2026: follow only the official pages", "home_carousel_title": "Ibálong 2026 — follow only the official pages", "date": "Jul 2, 2026", "source": "City PIO" },
+      { "tag": "GOVERNANCE", "title": "Legazpi is Bicol’s Top Economic Powerhouse 2026", "home_carousel_title": "Top Economic Powerhouse 2026 — Rank 1 sa Bicol", "date": "Jun 28, 2026", "source": "City PIO" },
+      { "tag": "SERVICES", "title": "Real Property Tax Amnesty under R.A. 12001", "date": "Jun 20, 2026", "source": "City PIO" }
+    ],
+    "categories": [
+      "Pothole / Road",
+      "Flooding",
+      "Garbage",
+      "Streetlight",
+      "Stray Animals",
+      "Illegal Parking"
+    ],
+    "assistance_programs": [
+      { "name": "Medical Aid", "description": "Hospital bills, medicines, check-ups" },
+      { "name": "Financial / Livelihood", "description": "Emergency cash, capital assistance" },
+      { "name": "Educational", "description": "City scholarship & school supplies" },
+      { "name": "Transport / Ambulance", "description": "Free ambulance & patient transport" },
+      { "name": "Burial Assistance", "description": "Funeral & burial support" }
+    ],
+    "report_flow": {
+      "ticket_office": "City Engineering Office",
+      "timeline_steps": ["Submitted", "Under Review", "Resolved"],
+      "success_title": "Salamat sa iyong ulat!",
+      "success_body": "Naitala na ang iyong report. Subaybayan ang status gamit ang ticket number."
+    },
+    "sos": {
+      "title": "Emergency SOS",
+      "subtitle": "Pindutin nang matagal upang tumawag sa City Rescue & Legazpi 911",
+      "home_bar_subtitle": "City Rescue & 911 · Tap for help",
+      "quick_dials": ["Rescue", "Police", "Fire", "Medical"]
+    },
+    "weather": { "sample": "31°C · Legazpi · Partly Cloudy", "air_quality": "Good · 42" },
+    "transport_routes": [
+      { "route": "Legazpi – Daraga", "path": "Grand Central Terminal → Daraga Centro", "mode": "Jeepney", "fare": 15 },
+      { "route": "Legazpi – Tabaco", "path": "Grand Central Terminal → Tabaco City", "mode": "Van", "fare": 70 },
+      { "route": "Downtown – Boulevard Loop", "path": "Rizal St. → Legazpi Boulevard", "mode": "Tricycle", "fare": 15 },
+      { "route": "Rawis – Old Albay District", "path": "Rawis Terminal → Old Albay District", "mode": "Jeepney", "fare": 13 },
+      { "route": "Legazpi – Bicol Int’l Airport", "path": "Grand Central Terminal → BIA, Daraga", "mode": "Shuttle", "fare": 50 }
+    ],
+    "digital_id": {
+      "banner_kicker": "LEGAZPI DIGITAL ID",
+      "banner_title": "Kunin ang iyong QR City ID",
+      "card_header": "CITY OF LEGAZPI · e-ID",
+      "verify_label": "SCAN TO VERIFY",
+      "status": "Verified Resident ✓",
+      "validity": "Valid until Dec 2026"
+    }
+  }
+}

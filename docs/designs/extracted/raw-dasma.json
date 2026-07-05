@@ -1,0 +1,391 @@
+{
+  "tenant": "dasma",
+  "cssVars": {},
+  "typography": {
+    "onboardingTitle": null,
+    "greeting": {
+      "_fs": 17,
+      "text": "Juan Dela Cruz",
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "17px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "-0.2px",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(255, 255, 255)",
+      "height": "22px",
+      "width": "127.484px"
+    },
+    "tileLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10.5px",
+      "fontWeight": "600",
+      "lineHeight": "12.075px",
+      "letterSpacing": "-0.1px",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "12.0625px",
+      "width": "41.0312px"
+    },
+    "sectionTitle": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(107, 124, 112)",
+      "height": "12px",
+      "width": "41.8594px"
+    },
+    "activeTabLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(30, 132, 73)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(30, 132, 73)",
+      "height": "12px",
+      "width": "29.2188px"
+    },
+    "inputLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "11.5px",
+      "fontWeight": "600",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(107, 124, 112)",
+      "height": "15px",
+      "width": "350px"
+    },
+    "screenTitle": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "800",
+      "lineHeight": "normal",
+      "letterSpacing": "-0.2px",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "21px",
+      "width": "131.734px"
+    }
+  },
+  "components": {
+    "searchBar": {
+      "rect": {
+        "w": 350,
+        "h": 42
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "14px",
+      "boxShadow": "rgba(0, 0, 0, 0.12) 0px 8px 20px 0px",
+      "padding": "12px 14px",
+      "border": "0px none rgb(107, 124, 112)",
+      "gap": "10px",
+      "height": "42px",
+      "width": "350px"
+    },
+    "sosBar": {
+      "rect": {
+        "w": 350,
+        "h": 74
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(100deg, rgb(198, 40, 40), rgb(229, 57, 53))",
+      "borderRadius": "18px",
+      "boxShadow": "rgba(229, 57, 53, 0.34) 0px 12px 26px 0px",
+      "padding": "15px 18px",
+      "border": "0px none rgb(0, 0, 0)",
+      "height": "74px",
+      "width": "350px"
+    },
+    "moduleTile": {
+      "rect": {
+        "w": 91,
+        "h": 91
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "14px",
+      "padding": "10px 4px",
+      "border": "0px none rgb(0, 0, 0)",
+      "gap": "7px",
+      "height": "91.0625px",
+      "width": "90.5px"
+    },
+    "announcementCard": {
+      "rect": {
+        "w": 258,
+        "h": 120
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(14, 58, 32)",
+      "backgroundImage": "url(\"blob:null/186e2b94-3156-467a-8c5e-8c5c342ed614\")",
+      "borderRadius": "0px",
+      "padding": "12px",
+      "border": "0px none rgb(0, 0, 0)",
+      "height": "120px",
+      "width": "258px"
+    },
+    "chip": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10.5px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(212, 160, 23)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(212, 160, 23)",
+      "height": "auto",
+      "width": "auto"
+    },
+    "mayorCard": {
+      "rect": {
+        "w": 350,
+        "h": 103
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(120deg, rgb(20, 83, 45), rgb(30, 132, 73))",
+      "borderRadius": "18px",
+      "padding": "14px 16px",
+      "border": "0px none rgb(27, 42, 32)",
+      "gap": "14px",
+      "height": "103px",
+      "width": "350px"
+    },
+    "weatherCard": {
+      "rect": {
+        "w": 350,
+        "h": 79
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(120deg, rgb(234, 244, 251), rgb(244, 250, 246))",
+      "borderRadius": "18px",
+      "padding": "16px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "79px",
+      "width": "350px"
+    },
+    "tabBar": {
+      "rect": {
+        "w": 390,
+        "h": 88,
+        "y": 756
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "26px 26px 44px 44px",
+      "boxShadow": "rgba(0, 0, 0, 0.05) 0px -6px 24px 0px",
+      "padding": "10px 16px 0px",
+      "border": "",
+      "height": "88px",
+      "width": "390px"
+    },
+    "sosTabButton": {
+      "rect": {
+        "w": 62,
+        "h": 36
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "36px",
+      "width": "62px"
+    },
+    "phoneFrame": {
+      "_a": 329160,
+      "rect": {
+        "w": 390,
+        "h": 844
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(246, 248, 246)",
+      "borderRadius": "44px",
+      "boxShadow": "rgba(0, 0, 0, 0.35) 0px 30px 80px 0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "844px",
+      "width": "390px"
+    },
+    "primaryButton": {
+      "rect": {
+        "w": 350,
+        "h": 49
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "15px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(30, 132, 73)",
+      "borderRadius": "14px",
+      "boxShadow": "rgba(30, 132, 73, 0.28) 0px 10px 22px 0px",
+      "padding": "15px",
+      "border": "0px none rgb(255, 255, 255)",
+      "height": "49px",
+      "width": "350px"
+    },
+    "input": {
+      "rect": {
+        "w": 350,
+        "h": 46
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "12px",
+      "padding": "13px 14px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "46px",
+      "width": "350px"
+    },
+    "qrStubCard": {
+      "rect": {
+        "w": 342,
+        "h": 319
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "20px",
+      "boxShadow": "rgba(0, 0, 0, 0.07) 0px 8px 24px 0px",
+      "padding": "22px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "319px",
+      "width": "342px"
+    },
+    "listRow": {
+      "rect": {
+        "w": 350,
+        "h": 84
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "16px",
+      "boxShadow": "rgba(0, 0, 0, 0.04) 0px 4px 12px 0px",
+      "padding": "14px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "gap": "13px",
+      "height": "84px",
+      "width": "350px"
+    }
+  },
+  "texts": {
+    "onboarding": [
+      "Skip\nLahat ng serbisyo ng lungsod, nasa isang app\nBayad ng buwis, permit, sertipiko, at higit pa — mula sa Dasmariñas City Hall, diretso sa iyong telepono.\nNext",
+      "Skip\nIulat ang problema, subaybayan ang aksyon\nMag-report ng butas sa daan, baha, o basura. Makakakuha ka ng ticket at makikita ang status nito real-time.\nNext",
+      "Skip\nTulong kapag emergency, isang tap lang\nDirektang linya sa City Rescue, pulisya, ospital, at bumbero. Hold-to-SOS para sa mabilis na saklolo.\nGet Started"
+    ],
+    "login": "MyDasma\nMaligayang pagdating!\nSign in with your mobile number to continue.\nMobile Number\n🇵🇭 +63\nSend OTP\nor\nContinue as Guest\nBy continuing you agree to the City of Dasmariñas Terms & Privacy Policy.",
+    "home": "9:41\nMagandang umaga 👋\nJuan Dela Cruz\nJD\nMaghanap ng serbisyo o lugar…\nEmergency SOS\nCity Rescue & 911 · Tap for help\nMAYOR'S CORNER\n\"Mabuhay, Dasmarineño!\"\nHon. Jenny Austria-Barzaga · City Mayor\nSulong na! Sulong pa! 🦋\nMga Serbisyo\nAll services\nGov Services\nReport\nAssistance\nHotlines\nNews\nTourism\nTransport\nDirectory\nHealth\nJobs\nEvents\nWeather\nMga Anunsyo\nBalita →\nEVENT\nSUNDUAN 2026 — awarding sa Old City Hall Quadrangle\nMay 21, 2026 · City PIO\nJOBS\nJOB FAIR 2026 — SM City Dasmariñas Event Center, May 27\nMay 26, 2026 · City PIO\nPROGRAM\nMASS WEDDING 2026 — Forever in Love this Valentine’s\nJan 20, 2026 · City PIO\n31°C\nDasmariñas · Partly Cloudy\nAir Quality\nGood · 42\nMalapit sa iyo\nSM City Dasmariñas\nMall · 1.2 km\nDLSU–Dasmariñas\nUniversity · 2.4 km\nCity Hall\nGovernment · 0.8 km\nRobinsons Pala-Pala\nMall · 3.1 km\nDASMA DIGITAL ID\nKunin ang iyong QR City ID\nActivate now\nHome\nServices\nSOS\nNews\nMore",
+    "homeScrolled": "9:41\nMagandang umaga 👋\nJuan Dela Cruz\nJD\nMaghanap ng serbisyo o lugar…\nEmergency SOS\nCity Rescue & 911 · Tap for help\nMAYOR'S CORNER\n\"Mabuhay, Dasmarineño!\"\nHon. Jenny Austria-Barzaga · City Mayor\nSulong na! Sulong pa! 🦋\nMga Serbisyo\nAll services\nGov Services\nReport\nAssistance\nHotlines\nNews\nTourism\nTransport\nDirectory\nHealth\nJobs\nEvents\nWeather\nMga Anunsyo\nBalita →\nEVENT\nSUNDUAN 2026 — awarding sa Old City Hall Quadrangle\nMay 21, 2026 · City PIO\nJOBS\nJOB FAIR 2026 — SM City Dasmariñas Event Center, May 27\nMay 26, 2026 · City PIO\nPROGRAM\nMASS WEDDING 2026 — Forever in Love this Valentine’s\nJan 20, 2026 · City PIO\n31°C\nDasmariñas · Partly Cloudy\nAir Quality\nGood · 42\nMalapit sa iyo\nSM City Dasmariñas\nMall · 1.2 km\nDLSU–Dasmariñas\nUniversity · 2.4 km\nCity Hall\nGovernment · 0.8 km\nRobinsons Pala-Pala\nMall · 3.1 km\nDASMA DIGITAL ID\nKunin ang iyong QR City ID\nActivate now\nHome\nServices\nSOS\nNews\nMore",
+    "services": "9:41\nGovernment Services\nDasmariñas Online Services · e-Gov\nSearch a service…\nPAY TAXES\nReal Property Tax (RPT)\nAmilyar payment & clearance\n₱ 3,240.00\nBusiness Tax\nRenewal of local business tax\n₱ 5,800.00\nCommunity Tax (Cedula)\nIndividual community tax cert.\n₱ 55.00\nPERMITS & LICENSES\nBusiness Permit (EBOSS)\nOnline one-stop shop — no queues\n₱ 2,150.00\nBuilding Permit\nConstruction & occupancy\n₱ 4,600.00\nSanitary Permit\nHealth & sanitation clearance\n₱ 350.00\nCIVIL REGISTRY\nBirth Certificate\nCertified true copy request\n₱ 155.00\nMarriage Certificate\nCertified true copy request\n₱ 155.00\nDeath Certificate\nCertified true copy request\n₱ 155.00\nBARANGAY & OTHERS\nBarangay Clearance\nResidency / good standing\n₱ 50.00\nPolice Clearance\nPNP Dasmariñas clearance\n₱ 120.00\nHome\nServices\nSOS\nNews\nMore",
+    "serviceReview": "9:41\nApply for Service\nReview & Payment\nService\nReal Property Tax (RPT)\nApplicant\nJuan M. Dela Cruz\nProcessing fee\n₱ 3,240.00\nConvenience fee\n₱ 20.00\nTotal\n₱ 3,240.00\nPayment Method\nGC\nGCash\nDebit / Credit Card\nPay ₱ 3,240.00",
+    "paymentSuccess": "9:41\nApply for Service\nPayment Successful!\nPresent this digital stub at the\ndesignated City Hall window.\nCLAIM STUB\nReference No.\nDSM-rpt-7742\nWindow 4 · Ready in 3–5 working days\nBack to Home",
+    "hotlines": "9:41\nEmergency Hotlines\nSearch hotline…\nCity Rescue / DRRMO\nDisaster & emergency response\n(046) 416-0100\nPNP Dasmariñas\nPhilippine National Police\n(046) 416-0343\nBureau of Fire (BFP)\nFire & rescue\n(046) 416-0111\nDe La Salle Medical Center\nHospital emergency room\n(046) 481-8000\nPagamutan ng Dasmariñas\nCity public hospital\n(046) 432-1234\nPhilippine Red Cross\nCavite chapter\n143 / (046) 419-1234\nMERALCO\nPower interruption\n16211\nPrime Water Dasma\nWater service\n(046) 416-8888",
+    "tourism": "9:41\nDiscover Dasmariñas\nUniversity Capital of Cavite 🦋\nMUSEUM\nMuseo De La Salle\n9AM–5PM · Tue–Sun\nCHURCH\nImmaculate Concepcion Parish\nOpen daily\nLANDMARK\nDLSU–Dasmariñas · Magdalo Gate\nOpen daily\nHERITAGE\nBattle of Dasmariñas Marker\nOpen daily\nFOOD\nSalitran Food Park\n4PM–12MN\nSHOPPING\nSM City Dasmariñas\n10AM–10PM\nSHOPPING\nRobinsons Place Dasmariñas\n10AM–10PM",
+    "news": "9:41\nDiscover Dasmariñas\nUniversity Capital of Cavite 🦋\nMUSEUM\nMuseo De La Salle\n9AM–5PM · Tue–Sun\nCHURCH\nImmaculate Concepcion Parish\nOpen daily\nLANDMARK\nDLSU–Dasmariñas · Magdalo Gate\nOpen daily\nHERITAGE\nBattle of Dasmariñas Marker\nOpen daily\nFOOD\nSalitran Food Park\n4PM–12MN\nSHOPPING\nSM City Dasmariñas\n10AM–10PM\nSHOPPING\nRobinsons Place Dasmariñas\n10AM–10PM",
+    "more": "9:41\nDiscover Dasmariñas\nUniversity Capital of Cavite 🦋\nMUSEUM\nMuseo De La Salle\n9AM–5PM · Tue–Sun\nCHURCH\nImmaculate Concepcion Parish\nOpen daily\nLANDMARK\nDLSU–Dasmariñas · Magdalo Gate\nOpen daily\nHERITAGE\nBattle of Dasmariñas Marker\nOpen daily\nFOOD\nSalitran Food Park\n4PM–12MN\nSHOPPING\nSM City Dasmariñas\n10AM–10PM\nSHOPPING\nRobinsons Place Dasmariñas\n10AM–10PM"
+  },
+  "cssVarsInline": {
+    "--primary": "#1E8449",
+    "--primary-dark": "#14532D",
+    "--primary-light": "#4CAF50",
+    "--mint": "#E8F5E9",
+    "--accent": "#F1C40F",
+    "--accent-deep": "#D4A017",
+    "--surface": "#ffffff",
+    "--bg": "#F6F8F6",
+    "--ink": "#1B2A20",
+    "--muted": "#6B7C70",
+    "--danger": "#E53935",
+    "--line": "#EAEFEA"
+  }
+}

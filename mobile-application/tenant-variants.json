@@ -1,4 +1,5 @@
 {
   "dasmarinas": { "bundleId": "com.dasmarinas.app", "appName": "MyDasma" },
-  "sorsogon": { "bundleId": "com.sorsogon.app", "appName": "MySorsogon" }
+  "sorsogon": { "bundleId": "com.sorsogon.app", "appName": "MySorsogon" },
+  "legazpi": { "bundleId": "com.legazpi.app", "appName": "MyLegazpi" }
 }

@@ -44,6 +44,17 @@ const TENANTS: TenantSpec[] = [
     rescueOrgIncludes: 'Sorsogon',
     phone: `+6392${String(Math.floor(10000000 + Math.random() * 89999999))}`,
   },
+  {
+    bundle: 'com.legazpi.app',
+    name: 'MyLegazpi',
+    primary: '#0E5C74',
+    slogan: 'Bagong Legazpi! 🌋',
+    executive: 'Hon. Hisham Ismail',
+    prefix: 'LGZ',
+    cedulaFee: 55,
+    rescueOrgIncludes: 'Legazpi',
+    phone: `+6393${String(Math.floor(10000000 + Math.random() * 89999999))}`,
+  },
 ];
 
 let passed = 0;

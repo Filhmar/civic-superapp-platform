@@ -27,6 +27,14 @@ const CATEGORIES: Record<string, { key: string; label: string; icon: string; dep
     { key: 'stray-animals', label: 'Stray Animals', icon: 'dog', department: 'City Agriculture & Veterinary', order: 5 },
     { key: 'peace-order', label: 'Peace & Order', icon: 'shield-alert', department: 'City PNP Station', order: 6 },
   ],
+  'ph-albay-legazpi': [
+    { key: 'pothole', label: 'Pothole / Road', icon: 'construction', department: 'City Engineering Office', order: 1 },
+    { key: 'flooding', label: 'Flooding', icon: 'waves', department: 'CDRRMO', order: 2 },
+    { key: 'garbage', label: 'Garbage', icon: 'trash-2', department: 'City ENRO', order: 3 },
+    { key: 'streetlight', label: 'Streetlight', icon: 'lightbulb', department: 'City Engineering Office', order: 4 },
+    { key: 'stray-animals', label: 'Stray Animals', icon: 'dog', department: 'City Veterinary Office', order: 5 },
+    { key: 'illegal-parking', label: 'Illegal Parking', icon: 'car', department: 'POSU', order: 6 },
+  ],
 };
 
 async function main(): Promise<void> {

@@ -1,0 +1,391 @@
+{
+  "tenant": "legazpi",
+  "cssVars": {},
+  "typography": {
+    "onboardingTitle": null,
+    "greeting": {
+      "_fs": 17,
+      "text": "Juan Dela Cruz",
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "17px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "-0.2px",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(255, 255, 255)",
+      "height": "22px",
+      "width": "127.484px"
+    },
+    "tileLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10.5px",
+      "fontWeight": "600",
+      "lineHeight": "12.075px",
+      "letterSpacing": "-0.1px",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "12.0625px",
+      "width": "41.0312px"
+    },
+    "sectionTitle": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(107, 124, 112)",
+      "height": "12px",
+      "width": "41.8594px"
+    },
+    "activeTabLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(14, 92, 116)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(14, 92, 116)",
+      "height": "12px",
+      "width": "29.2188px"
+    },
+    "inputLabel": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "11.5px",
+      "fontWeight": "600",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(107, 124, 112)",
+      "height": "15px",
+      "width": "350px"
+    },
+    "screenTitle": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "800",
+      "lineHeight": "normal",
+      "letterSpacing": "-0.2px",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "21px",
+      "width": "131.734px"
+    }
+  },
+  "components": {
+    "searchBar": {
+      "rect": {
+        "w": 350,
+        "h": 42
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "14px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(107, 124, 112)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "14px",
+      "boxShadow": "rgba(0, 0, 0, 0.12) 0px 8px 20px 0px",
+      "padding": "12px 14px",
+      "border": "0px none rgb(107, 124, 112)",
+      "gap": "10px",
+      "height": "42px",
+      "width": "350px"
+    },
+    "sosBar": {
+      "rect": {
+        "w": 350,
+        "h": 74
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(100deg, rgb(198, 40, 40), rgb(229, 57, 53))",
+      "borderRadius": "18px",
+      "boxShadow": "rgba(229, 57, 53, 0.34) 0px 12px 26px 0px",
+      "padding": "15px 18px",
+      "border": "0px none rgb(0, 0, 0)",
+      "height": "74px",
+      "width": "350px"
+    },
+    "moduleTile": {
+      "rect": {
+        "w": 91,
+        "h": 91
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "14px",
+      "padding": "10px 4px",
+      "border": "0px none rgb(0, 0, 0)",
+      "gap": "7px",
+      "height": "91.0625px",
+      "width": "90.5px"
+    },
+    "announcementCard": {
+      "rect": {
+        "w": 258,
+        "h": 120
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "13.3333px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(0, 0, 0)",
+      "background": "rgb(6, 46, 61)",
+      "backgroundImage": "url(\"blob:null/84177f89-324c-4f87-b3b2-e5c3ecd2af55\")",
+      "borderRadius": "0px",
+      "padding": "12px",
+      "border": "0px none rgb(0, 0, 0)",
+      "height": "120px",
+      "width": "258px"
+    },
+    "chip": {
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "10.5px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(201, 79, 16)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(201, 79, 16)",
+      "height": "auto",
+      "width": "auto"
+    },
+    "mayorCard": {
+      "rect": {
+        "w": 350,
+        "h": 103
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(120deg, rgb(8, 58, 76), rgb(14, 92, 116))",
+      "borderRadius": "18px",
+      "padding": "14px 16px",
+      "border": "0px none rgb(27, 42, 32)",
+      "gap": "14px",
+      "height": "103px",
+      "width": "350px"
+    },
+    "weatherCard": {
+      "rect": {
+        "w": 350,
+        "h": 79
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "backgroundImage": "linear-gradient(120deg, rgb(234, 244, 251), rgb(244, 250, 246))",
+      "borderRadius": "18px",
+      "padding": "16px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "79px",
+      "width": "350px"
+    },
+    "tabBar": {
+      "rect": {
+        "w": 390,
+        "h": 88,
+        "y": 756
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "26px 26px 44px 44px",
+      "boxShadow": "rgba(0, 0, 0, 0.05) 0px -6px 24px 0px",
+      "padding": "10px 16px 0px",
+      "border": "",
+      "height": "88px",
+      "width": "390px"
+    },
+    "sosTabButton": {
+      "rect": {
+        "w": 62,
+        "h": 36
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgba(0, 0, 0, 0)",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "36px",
+      "width": "62px"
+    },
+    "phoneFrame": {
+      "_a": 329160,
+      "rect": {
+        "w": 390,
+        "h": 844
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(246, 248, 246)",
+      "borderRadius": "44px",
+      "boxShadow": "rgba(0, 0, 0, 0.35) 0px 30px 80px 0px",
+      "padding": "0px",
+      "border": "0px none rgb(27, 42, 32)",
+      "height": "844px",
+      "width": "390px"
+    },
+    "primaryButton": {
+      "rect": {
+        "w": 350,
+        "h": 49
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "15px",
+      "fontWeight": "700",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(14, 92, 116)",
+      "borderRadius": "14px",
+      "boxShadow": "rgba(14, 92, 116, 0.28) 0px 10px 22px 0px",
+      "padding": "15px",
+      "border": "0px none rgb(255, 255, 255)",
+      "height": "49px",
+      "width": "350px"
+    },
+    "input": {
+      "rect": {
+        "w": 350,
+        "h": 46
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "12px",
+      "padding": "13px 14px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "46px",
+      "width": "350px"
+    },
+    "qrStubCard": {
+      "rect": {
+        "w": 342,
+        "h": 319
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "20px",
+      "boxShadow": "rgba(0, 0, 0, 0.07) 0px 8px 24px 0px",
+      "padding": "22px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "height": "319px",
+      "width": "342px"
+    },
+    "listRow": {
+      "rect": {
+        "w": 350,
+        "h": 84
+      },
+      "fontFamily": "\"Plus Jakarta Sans\", system-ui, sans-serif",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "normal",
+      "letterSpacing": "normal",
+      "color": "rgb(27, 42, 32)",
+      "background": "rgb(255, 255, 255)",
+      "borderRadius": "16px",
+      "boxShadow": "rgba(0, 0, 0, 0.04) 0px 4px 12px 0px",
+      "padding": "14px",
+      "border": "1px solid rgb(234, 239, 234)",
+      "gap": "13px",
+      "height": "84px",
+      "width": "350px"
+    }
+  },
+  "texts": {
+    "onboarding": [
+      "Skip\nLahat ng serbisyo ng lungsod, nasa isang app\nBayad ng buwis, permit, sertipiko, at higit pa — mula sa Legazpi City Hall, diretso sa iyong telepono.\nNext",
+      "Skip\nIulat ang problema, subaybayan ang aksyon\nMag-report ng butas sa daan, baha, o basura. Makakakuha ka ng ticket at makikita ang status nito real-time.\nNext",
+      "Skip\nTulong kapag emergency, isang tap lang\nDirektang linya sa City Rescue, pulisya, ospital, at bumbero. Hold-to-SOS para sa mabilis na saklolo.\nGet Started"
+    ],
+    "login": "MyLegazpi\nMaligayang pagdating!\nSign in with your mobile number to continue.\nMobile Number\n🇵🇭 +63\nSend OTP\nor\nContinue as Guest\nBy continuing you agree to the City of Legazpi Terms & Privacy Policy.",
+    "home": "9:41\nMagandang umaga 👋\nJuan Dela Cruz\nJD\nMaghanap ng serbisyo o lugar…\nEmergency SOS\nCity Rescue & 911 · Tap for help\nMAYOR'S CORNER\n\"Mabuhay, Legazpeño!\"\nHon. Hisham Ismail · City Mayor\nBagong Legazpi! 🌋\nMga Serbisyo\nAll services\nGov Services\nReport\nAssistance\nHotlines\nNews\nTourism\nTransport\nDirectory\nHealth\nJobs\nEvents\nWeather\nMga Anunsyo\nBalita →\nEVENT\nIbálong Festival 2026 — August 7–23, Legazpi City\nJul 4, 2026 · City PIO\nADVISORY\nIbálong 2026 — follow only the official pages\nJul 2, 2026 · City PIO\nGOVERNANCE\nTop Economic Powerhouse 2026 — Rank 1 sa Bicol\nJun 28, 2026 · City PIO\n31°C\nLegazpi · Partly Cloudy\nAir Quality\nGood · 42\nMalapit sa iyo\nSM City Legazpi\nMall · 1.6 km\nBicol University\nUniversity · 2.2 km\nCity Hall\nGovernment · 0.7 km\nEmbarcadero\nLeisure · 1.1 km\nLEGAZPI DIGITAL ID\nKunin ang iyong QR City ID\nActivate now\nHome\nServices\nSOS\nNews\nMore",
+    "homeScrolled": "9:41\nMagandang umaga 👋\nJuan Dela Cruz\nJD\nMaghanap ng serbisyo o lugar…\nEmergency SOS\nCity Rescue & 911 · Tap for help\nMAYOR'S CORNER\n\"Mabuhay, Legazpeño!\"\nHon. Hisham Ismail · City Mayor\nBagong Legazpi! 🌋\nMga Serbisyo\nAll services\nGov Services\nReport\nAssistance\nHotlines\nNews\nTourism\nTransport\nDirectory\nHealth\nJobs\nEvents\nWeather\nMga Anunsyo\nBalita →\nEVENT\nIbálong Festival 2026 — August 7–23, Legazpi City\nJul 4, 2026 · City PIO\nADVISORY\nIbálong 2026 — follow only the official pages\nJul 2, 2026 · City PIO\nGOVERNANCE\nTop Economic Powerhouse 2026 — Rank 1 sa Bicol\nJun 28, 2026 · City PIO\n31°C\nLegazpi · Partly Cloudy\nAir Quality\nGood · 42\nMalapit sa iyo\nSM City Legazpi\nMall · 1.6 km\nBicol University\nUniversity · 2.2 km\nCity Hall\nGovernment · 0.7 km\nEmbarcadero\nLeisure · 1.1 km\nLEGAZPI DIGITAL ID\nKunin ang iyong QR City ID\nActivate now\nHome\nServices\nSOS\nNews\nMore",
+    "services": "9:41\nGovernment Services\nLegazpi Online Services · e-Gov\nSearch a service…\nPAY TAXES\nReal Property Tax (RPT)\nAmilyar payment & clearance\n₱ 3,240.00\nBusiness Tax\nRenewal of local business tax\n₱ 5,800.00\nCommunity Tax (Cedula)\nIndividual community tax cert.\n₱ 55.00\nPERMITS & LICENSES\nBusiness Permit (EBOSS)\nOnline one-stop shop — no queues\n₱ 2,150.00\nBuilding Permit\nConstruction & occupancy\n₱ 4,600.00\nSanitary Permit\nHealth & sanitation clearance\n₱ 350.00\nCIVIL REGISTRY\nBirth Certificate\nCertified true copy request\n₱ 155.00\nMarriage Certificate\nCertified true copy request\n₱ 155.00\nDeath Certificate\nCertified true copy request\n₱ 155.00\nBARANGAY & OTHERS\nBarangay Clearance\nResidency / good standing\n₱ 50.00\nPolice Clearance\nPNP Legazpi clearance\n₱ 120.00\nHome\nServices\nSOS\nNews\nMore",
+    "serviceReview": "9:41\nApply for Service\nReview & Payment\nService\nReal Property Tax (RPT)\nApplicant\nJuan M. Dela Cruz\nProcessing fee\n₱ 3,240.00\nConvenience fee\n₱ 20.00\nTotal\n₱ 3,240.00\nPayment Method\nGC\nGCash\nDebit / Credit Card\nPay ₱ 3,240.00",
+    "paymentSuccess": "9:41\nApply for Service\nPayment Successful!\nPresent this digital stub at the\ndesignated City Hall window.\nCLAIM STUB\nReference No.\nLGZ-rpt-7742\nWindow 4 · Ready in 3–5 working days\nBack to Home",
+    "hotlines": "9:41\nEmergency Hotlines\nSearch hotline…\nCity Rescue / CDRRMO\nDisaster & emergency response\n(052) 480-0911\nPNP Legazpi City\nPhilippine National Police\n(052) 480-1670\nBureau of Fire (BFP)\nFire & rescue\n(052) 480-1111\nBicol Regional Hospital (BRHMC)\nRegional hospital ER\n(052) 483-0016\nEstevez Memorial Hospital\nPrivate hospital\n(052) 480-0320\nCSWDO Child Protection\nReport abuse · 24/7 · confidential\n0912-030-6754\nALECO\nPower interruption\n(052) 481-0182\nLegazpi City Water District\nWater service\n(052) 480-6034",
+    "tourism": "9:41\nDiscover Legazpi\nCity of Fun and Adventure 🌋\nNATURE\nMayon Volcano Skyline\nBest at sunrise · Open daily\nVIEWPOINT\nLigñon Hill Nature Park\n8AM–9PM\nCOASTAL\nLegazpi Boulevard\nOpen daily\nVIEWPOINT\nSleeping Lion (Kapuntukan) Hill\nDay hikes\nLEISURE\nEmbarcadero de Legazpi\n10AM–10PM\nCULTURE\nIbalong Centrum\nEvent days",
+    "news": "9:41\nDiscover Legazpi\nCity of Fun and Adventure 🌋\nNATURE\nMayon Volcano Skyline\nBest at sunrise · Open daily\nVIEWPOINT\nLigñon Hill Nature Park\n8AM–9PM\nCOASTAL\nLegazpi Boulevard\nOpen daily\nVIEWPOINT\nSleeping Lion (Kapuntukan) Hill\nDay hikes\nLEISURE\nEmbarcadero de Legazpi\n10AM–10PM\nCULTURE\nIbalong Centrum\nEvent days",
+    "more": "9:41\nDiscover Legazpi\nCity of Fun and Adventure 🌋\nNATURE\nMayon Volcano Skyline\nBest at sunrise · Open daily\nVIEWPOINT\nLigñon Hill Nature Park\n8AM–9PM\nCOASTAL\nLegazpi Boulevard\nOpen daily\nVIEWPOINT\nSleeping Lion (Kapuntukan) Hill\nDay hikes\nLEISURE\nEmbarcadero de Legazpi\n10AM–10PM\nCULTURE\nIbalong Centrum\nEvent days"
+  },
+  "cssVarsInline": {
+    "--primary": "#0E5C74",
+    "--primary-dark": "#083A4C",
+    "--primary-light": "#3E8FAB",
+    "--mint": "#E6F2F5",
+    "--accent": "#F26B21",
+    "--accent-deep": "#C94F10",
+    "--surface": "#ffffff",
+    "--bg": "#F6F8F6",
+    "--ink": "#1B2A20",
+    "--muted": "#6B7C70",
+    "--danger": "#E53935",
+    "--line": "#EAEFEA"
+  }
+}

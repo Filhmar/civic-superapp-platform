@@ -28,6 +28,16 @@ const HOTLINES: Record<string, { org: string; tag: string; numbers: string[]; or
     { org: 'SORECO II (Electric Coop)', tag: 'utility', numbers: ['(056) 211-1342'], order: 5 },
     { org: 'Sorsogon City Water District', tag: 'utility', numbers: ['(056) 211-1268'], order: 6 },
   ],
+  'ph-albay-legazpi': [
+    { org: 'Legazpi CDRRMO (City Rescue)', tag: 'rescue', numbers: ['(052) 480-0911'], order: 1 },
+    { org: 'PNP Legazpi City', tag: 'police', numbers: ['(052) 480-1670'], order: 2 },
+    { org: 'Bureau of Fire (BFP) Legazpi', tag: 'fire', numbers: ['(052) 480-1111'], order: 3 },
+    { org: 'Bicol Regional Hospital (BRHMC)', tag: 'medical', numbers: ['(052) 483-0016'], order: 4 },
+    { org: 'Estevez Memorial Hospital', tag: 'medical', numbers: ['(052) 480-0320'], order: 5 },
+    { org: 'CSWDO Child Protection', tag: 'police', numbers: ['0912-030-6754'], order: 6 },
+    { org: 'ALECO (Power Interruption)', tag: 'utility', numbers: ['(052) 481-0182'], order: 7 },
+    { org: 'Legazpi City Water District', tag: 'utility', numbers: ['(052) 480-6034'], order: 8 },
+  ],
 };
 
 const PROGRAMS: Record<string, { key: string; name: string; description: string; icon: string; office: string; requirements: string[]; order: number }[]> = {
@@ -44,6 +54,13 @@ const PROGRAMS: Record<string, { key: string; name: string; description: string;
     { key: 'educational', name: 'Educational Assistance', description: 'City scholarship and student aid program.', icon: 'graduation-cap', office: 'City Scholarship Program Office', requirements: ['Valid ID', 'Form 138', 'Certificate of enrollment', 'Proof of income'], order: 3 },
     { key: 'transport', name: 'Transport / Ambulance', description: 'Ambulance and patient transport service.', icon: 'ambulance', office: 'CDRRMO', requirements: ['Valid ID', 'Medical referral'], order: 4 },
     { key: 'burial', name: 'Burial Assistance', description: 'Aid for funeral and burial expenses.', icon: 'flower-2', office: 'CSWDO Sorsogon City', requirements: ['Valid ID', 'Death certificate', 'Funeral contract'], order: 5 },
+  ],
+  'ph-albay-legazpi': [
+    { key: 'medical', name: 'Medical Aid', description: 'Hospital bills, medicines, check-ups.', icon: 'heart-pulse', office: 'CSWDO Legazpi', requirements: ['Valid ID', 'Medical abstract or prescription', 'Statement of account', 'Barangay indigency certificate'], order: 1 },
+    { key: 'financial', name: 'Financial / Livelihood', description: 'Emergency cash, capital assistance.', icon: 'hand-coins', office: 'CSWDO Legazpi', requirements: ['Valid ID', 'Barangay indigency certificate'], order: 2 },
+    { key: 'educational', name: 'Educational', description: 'City scholarship & school supplies.', icon: 'graduation-cap', office: 'City Scholarship Office (CSWDO Legazpi)', requirements: ['Valid ID', 'Form 138', 'Certificate of enrollment', 'Barangay indigency certificate'], order: 3 },
+    { key: 'transport', name: 'Transport / Ambulance', description: 'Free ambulance & patient transport.', icon: 'ambulance', office: 'Legazpi CDRRMO', requirements: ['Valid ID', 'Medical referral'], order: 4 },
+    { key: 'burial', name: 'Burial Assistance', description: 'Funeral & burial support.', icon: 'flower-2', office: 'CSWDO Legazpi', requirements: ['Valid ID', 'Death certificate', 'Funeral contract', 'Barangay indigency certificate'], order: 5 },
   ],
 };
 
