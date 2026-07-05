@@ -1,0 +1,6 @@
+2026-07-05T17:41:28.440Z [tenancy-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T17:41:28.451Z [tenancy-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T17:41:28.452Z [tenancy-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T17:41:28.455Z [tenancy-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T17:41:28.455Z [tenancy-service] [32minfo[39m [InstanceLoader] [32mTenancyModule dependencies initialized[39m
+2026-07-05T17:41:28.530Z [tenancy-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

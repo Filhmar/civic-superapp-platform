@@ -1,0 +1,41 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id               String   @id
+  kind             String
+  parentTenantId   String?  @map("parent_tenant_id")
+  status           String   @default("active")
+  bundleId         String   @unique @map("bundle_id")
+  name             String
+  ticketPrefix     String   @map("ticket_prefix")
+  residentIdPrefix String   @map("resident_id_prefix")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  configs TenantConfigVersion[]
+
+  @@index([status])
+  @@map("tenants")
+}
+
+model TenantConfigVersion {
+  id        Int      @id @default(autoincrement())
+  tenantId  String   @map("tenant_id")
+  version   Int
+  config    Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, version])
+  @@index([tenantId])
+  @@map("tenant_config_versions")
+}

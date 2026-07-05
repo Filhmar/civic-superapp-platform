@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+logs/
+.env.development
+.env.production
+.env.staging
+**/generated/

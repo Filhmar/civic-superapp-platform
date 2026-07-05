@@ -1,0 +1,7 @@
+-- Per-service databases (independently migratable, per STACK.md §5)
+CREATE DATABASE tenancy;
+CREATE DATABASE identity;
+CREATE DATABASE egov;
+GRANT ALL PRIVILEGES ON DATABASE tenancy TO civic;
+GRANT ALL PRIVILEGES ON DATABASE identity TO civic;
+GRANT ALL PRIVILEGES ON DATABASE egov TO civic;

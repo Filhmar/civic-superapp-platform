@@ -1,0 +1,17 @@
+2026-07-05T17:41:28.522Z [api-gateway] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T17:41:28.534Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T17:41:28.534Z [api-gateway] [32minfo[39m [InstanceLoader] [32mThrottlerModule dependencies initialized[39m
+2026-07-05T17:41:28.535Z [api-gateway] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T17:41:28.538Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T17:41:28.538Z [api-gateway] [32minfo[39m [InstanceLoader] [32mClientsModule dependencies initialized[39m
+2026-07-05T17:41:28.538Z [api-gateway] [32minfo[39m [InstanceLoader] [32mRedisModule dependencies initialized[39m
+2026-07-05T17:41:28.539Z [api-gateway] [32minfo[39m [InstanceLoader] [32mAppModule dependencies initialized[39m
+2026-07-05T17:41:28.646Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/health/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T17:41:28.647Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/verify/(.*)". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T17:41:28.650Z [api-gateway] [33mwarn[39m [LegacyRouteConverter] [33mUnsupported route path: "/v1/*". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+2026-07-05T17:41:28.651Z [api-gateway] [32minfo[39m [RoutesResolver] [32mConfigController {/v1/config}:[39m
+2026-07-05T17:41:28.654Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/config, GET} route[39m
+2026-07-05T17:41:28.654Z [api-gateway] [32minfo[39m [RoutesResolver] [32mHealthController {/v1/health}:[39m
+2026-07-05T17:41:28.655Z [api-gateway] [32minfo[39m [RouterExplorer] [32mMapped {/v1/health, GET} route[39m
+2026-07-05T17:41:28.658Z [api-gateway] [32minfo[39m [NestApplication] [32mNest application successfully started[39m
+[metrics] api-gateway metrics server error: listen EADDRINUSE: address already in use 0.0.0.0:9464
