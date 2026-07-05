@@ -18,6 +18,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { palette } from "@/constants/colors";
 import { queryKeys } from "@/constants/query-keys";
 import { AuthProvider } from "@/contexts/auth-context";
+import { LocaleProvider } from "@/contexts/locale-context";
 import { TenantConfigProvider } from "@/contexts/tenant-config-context";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { authEvents } from "@/lib/auth-events";
@@ -57,17 +58,19 @@ export default function RootLayout() {
           <TenantConfigProvider>
             <ThemeProvider>
               <AuthProvider>
-                <ToastProvider>
-                  <Stack
-                    screenOptions={{
-                      headerShown: false,
-                      // Themed content bg: no white flash on screen pop.
-                      contentStyle: { backgroundColor: bg },
-                    }}
-                  />
-                  <StatusBar style="auto" />
-                  <ForceUpdateGate />
-                </ToastProvider>
+                <LocaleProvider>
+                  <ToastProvider>
+                    <Stack
+                      screenOptions={{
+                        headerShown: false,
+                        // Themed content bg: no white flash on screen pop.
+                        contentStyle: { backgroundColor: bg },
+                      }}
+                    />
+                    <StatusBar style="auto" />
+                    <ForceUpdateGate />
+                  </ToastProvider>
+                </LocaleProvider>
               </AuthProvider>
             </ThemeProvider>
           </TenantConfigProvider>

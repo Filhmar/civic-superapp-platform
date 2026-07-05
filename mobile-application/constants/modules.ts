@@ -39,12 +39,18 @@ export const MODULES: readonly ModuleMeta[] = [
 ] as const;
 
 /**
- * Routes for modules that already have screens. Modules enabled in config but
- * not yet built route nowhere (the UI shows an "opening soon" toast instead —
- * it must never call a disabled module's endpoint).
+ * Routes for modules that have screens. Modules enabled in config but not yet
+ * built route nowhere (the UI shows an "opening soon" toast instead — it must
+ * never call a disabled module's endpoint). health/jobs are config-disabled
+ * for current tenants and stay "coming soon".
  */
 export const MODULE_ROUTES: Partial<Record<ModuleKey, string>> = {
+  egov: "/services",
   reports311: "/report",
-  news: "/news",
+  assistance: "/assistance",
   sos: "/sos",
+  news: "/news",
+  tourism: "/tourism",
+  directory: "/directory",
+  transport: "/transport",
 };

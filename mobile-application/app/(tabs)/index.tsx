@@ -7,6 +7,7 @@ import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 
 import { AnnouncementsCarousel } from "@/components/home/announcements-carousel";
 import { ModuleGrid } from "@/components/home/module-grid";
+import { NearbyStrip } from "@/components/home/nearby-strip";
 import { WeatherCard } from "@/components/home/weather-card";
 import { Screen } from "@/components/ui/screen";
 import { AppText } from "@/components/ui/typography";
@@ -190,6 +191,9 @@ export default function Home() {
 
         {/* Weather + AQI */}
         <WeatherCard />
+
+        {/* Nearby places strip */}
+        <NearbyStrip />
 
         {/* Digital-ID promo — iff config.home.digital_id_promo */}
         {home.digital_id_promo && (

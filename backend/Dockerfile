@@ -19,19 +19,11 @@ RUN npm run prisma:generate
 FROM deps AS build
 RUN npm run build:all
 
-# --- prod-deps: runtime node_modules + prisma clients ------------------------
-FROM base AS prod-deps
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --no-audit --no-fund
-COPY apps/tenancy-service/prisma ./apps/tenancy-service/prisma
-COPY apps/tenancy-service/prisma.config.ts ./apps/tenancy-service/
-COPY apps/identity-service/prisma ./apps/identity-service/prisma
-COPY apps/identity-service/prisma.config.ts ./apps/identity-service/
-COPY apps/egov-service/prisma ./apps/egov-service/prisma
-COPY apps/egov-service/prisma.config.ts ./apps/egov-service/
-RUN npx prisma generate --config apps/tenancy-service/prisma.config.ts \
- && npx prisma generate --config apps/identity-service/prisma.config.ts \
- && npx prisma generate --config apps/egov-service/prisma.config.ts
+# --- prod-deps: prune the dev install to runtime deps ------------------------
+# (a second `npm ci --omit=dev` intermittently crashes npm; pruning the
+#  already-verified tree is equivalent and keeps the generated Prisma clients)
+FROM deps AS prod-deps
+RUN npm prune --omit=dev --no-audit --no-fund
 
 # --- runtime base: non-root, prod deps ----------------------------------------
 FROM base AS runtime-base
