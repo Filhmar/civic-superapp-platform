@@ -192,6 +192,17 @@ export class EgovService {
     };
   }
 
+  /** Staff console: all applications for the tenant, optionally by status. */
+  async listAll(tenant: TenantContext, status?: ApplicationStatus, limit = 50) {
+    const apps = await this.prisma.application.findMany({
+      where: { tenantId: tenant.tenantId, ...(status ? { status } : {}) },
+      orderBy: { createdAt: 'desc' },
+      include: { service: true },
+      take: Math.min(limit, 200),
+    });
+    return apps.map((a) => this.publicApplication(a));
+  }
+
   async listMine(tenant: TenantContext, userId: string) {
     const apps = await this.prisma.application.findMany({
       where: { tenantId: tenant.tenantId, userId },

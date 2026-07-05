@@ -18,6 +18,11 @@ export class ReportsController {
     return this.reports.create(p.tenant, p.data);
   }
 
+  @MessagePattern({ cmd: 'reports.ticket.list' })
+  listAll(@Payload() p: TenantScoped<{ status?: TicketStatus; limit?: number }>) {
+    return this.reports.listAll(p.tenant, p.data.status, p.data.limit);
+  }
+
   @MessagePattern({ cmd: 'reports.ticket.list-mine' })
   listMine(@Payload() p: TenantScoped<{ user_id: string; limit?: number }>) {
     return this.reports.listMine(p.tenant, p.data.user_id, p.data.limit);

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { TenantConfig } from '@app/common';
+import { TenantConfig, TenantKind } from '@app/common';
 import { TenancyService } from './services/tenancy.service';
 
 @Controller()
@@ -25,5 +25,18 @@ export class TenancyController {
   @MessagePattern({ cmd: 'tenancy.list' })
   list() {
     return this.tenancy.list();
+  }
+
+  @MessagePattern({ cmd: 'tenancy.tenant.create' })
+  createTenant(
+    @Payload()
+    payload: { id: string; kind: TenantKind; bundleId: string; name: string; config: TenantConfig },
+  ) {
+    return this.tenancy.createTenant(payload);
+  }
+
+  @MessagePattern({ cmd: 'config.history' })
+  configHistory(@Payload() payload: { tenantId: string }) {
+    return this.tenancy.configHistory(payload.tenantId);
   }
 }

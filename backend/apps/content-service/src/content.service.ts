@@ -79,6 +79,22 @@ export class ContentService {
     }));
   }
 
+  async listFeedback(tenant: TenantContext, limit = 50) {
+    const docs = await this.feedback
+      .find({ tenantId: tenant.tenantId })
+      .sort({ createdAt: -1 })
+      .limit(Math.min(limit, 200))
+      .lean();
+    return docs.map((d) => ({
+      id: String(d._id),
+      message: d.message,
+      contact: d.contact ?? null,
+      user_id: d.userId ?? null,
+      status: d.status,
+      created_at: (d as { createdAt?: Date }).createdAt,
+    }));
+  }
+
   async createFeedback(tenant: TenantContext, userId: string | undefined, message: string, contact?: string) {
     const doc = await this.feedback.create({
       tenantId: tenant.tenantId,

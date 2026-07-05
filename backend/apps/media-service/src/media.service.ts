@@ -18,6 +18,8 @@ import { Media, MediaKind } from './schemas/media.schema';
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB cap
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+// Brand kits additionally allow SVG (seals/logos) — sanitized at confirm.
+const BRAND_ALLOWED_TYPES = [...ALLOWED_TYPES, 'image/svg+xml'];
 const PRESIGN_TTL_SECONDS = 600;
 
 @Injectable()
@@ -74,10 +76,11 @@ export class MediaService implements OnModuleInit {
   }
 
   async presign(tenant: TenantContext, userId: string, contentType: string, kind: MediaKind) {
-    if (!ALLOWED_TYPES.includes(contentType)) {
+    const allowed = kind === 'brand' ? BRAND_ALLOWED_TYPES : ALLOWED_TYPES;
+    if (!allowed.includes(contentType)) {
       rpcError(400, `Unsupported content type: ${contentType}`);
     }
-    const ext = contentType.split('/')[1];
+    const ext = contentType === 'image/svg+xml' ? 'svg' : contentType.split('/')[1];
     const key = `${tenant.tenantId}/${kind}/${randomUUID()}.${ext}`;
     const doc = await this.media.create({
       tenantId: tenant.tenantId,
@@ -117,11 +120,24 @@ export class MediaService implements OnModuleInit {
       rpcError(413, `Upload exceeds ${MAX_UPLOAD_BYTES} bytes`);
     }
 
-    // EXIF strip: decode & re-encode without metadata (auto-rotates first so
-    // orientation survives the strip).
     const obj = await this.s3.send(new GetObjectCommand({ Bucket: this.bucket, Key: doc.key }));
     const bytes = Buffer.from(await obj.Body!.transformToByteArray());
-    const cleaned = await sharp(bytes).rotate().toBuffer();
+    let cleaned: Buffer;
+    if (doc.contentType === 'image/svg+xml') {
+      // SVG (brand seals/logos): strip scripts/event handlers — DOMPurify with
+      // the SVG profile — since these render in the app's image surfaces.
+      const { JSDOM } = await import('jsdom');
+      const createDOMPurify = (await import('dompurify')).default;
+      const purify = createDOMPurify(new JSDOM('').window);
+      cleaned = Buffer.from(
+        purify.sanitize(bytes.toString('utf8'), { USE_PROFILES: { svg: true, svgFilters: true } }),
+        'utf8',
+      );
+    } else {
+      // EXIF strip: decode & re-encode without metadata (auto-rotates first so
+      // orientation survives the strip).
+      cleaned = await sharp(bytes).rotate().toBuffer();
+    }
     await this.s3.send(
       new PutObjectCommand({
         Bucket: this.bucket,

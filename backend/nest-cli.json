@@ -15,105 +15,144 @@
       "root": "apps/api-gateway",
       "entryFile": "main",
       "sourceRoot": "apps/api-gateway/src",
-      "compilerOptions": { "tsConfigPath": "apps/api-gateway/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+      }
     },
     "tenancy-service": {
       "type": "application",
       "root": "apps/tenancy-service",
       "entryFile": "main",
       "sourceRoot": "apps/tenancy-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/tenancy-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/tenancy-service/tsconfig.app.json"
+      }
     },
     "identity-service": {
       "type": "application",
       "root": "apps/identity-service",
       "entryFile": "main",
       "sourceRoot": "apps/identity-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/identity-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/identity-service/tsconfig.app.json"
+      }
     },
     "content-service": {
       "type": "application",
       "root": "apps/content-service",
       "entryFile": "main",
       "sourceRoot": "apps/content-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/content-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/content-service/tsconfig.app.json"
+      }
     },
     "notification-service": {
       "type": "application",
       "root": "apps/notification-service",
       "entryFile": "main",
       "sourceRoot": "apps/notification-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/notification-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-service/tsconfig.app.json"
+      }
     },
     "integration-service": {
       "type": "application",
       "root": "apps/integration-service",
       "entryFile": "main",
       "sourceRoot": "apps/integration-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/integration-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/integration-service/tsconfig.app.json"
+      }
     },
     "reports-service": {
       "type": "application",
       "root": "apps/reports-service",
       "entryFile": "main",
       "sourceRoot": "apps/reports-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/reports-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/reports-service/tsconfig.app.json"
+      }
     },
     "media-service": {
       "type": "application",
       "root": "apps/media-service",
       "entryFile": "main",
       "sourceRoot": "apps/media-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/media-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/media-service/tsconfig.app.json"
+      }
     },
     "egov-service": {
       "type": "application",
       "root": "apps/egov-service",
       "entryFile": "main",
       "sourceRoot": "apps/egov-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/egov-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/egov-service/tsconfig.app.json"
+      }
     },
     "assistance-service": {
       "type": "application",
       "root": "apps/assistance-service",
       "entryFile": "main",
       "sourceRoot": "apps/assistance-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/assistance-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/assistance-service/tsconfig.app.json"
+      }
     },
     "emergency-service": {
       "type": "application",
       "root": "apps/emergency-service",
       "entryFile": "main",
       "sourceRoot": "apps/emergency-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/emergency-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/emergency-service/tsconfig.app.json"
+      }
     },
     "places-service": {
       "type": "application",
       "root": "apps/places-service",
       "entryFile": "main",
       "sourceRoot": "apps/places-service/src",
-      "compilerOptions": { "tsConfigPath": "apps/places-service/tsconfig.app.json" }
+      "compilerOptions": {
+        "tsConfigPath": "apps/places-service/tsconfig.app.json"
+      }
     },
     "common": {
       "type": "library",
       "root": "libs/common",
       "entryFile": "index",
       "sourceRoot": "libs/common/src",
-      "compilerOptions": { "tsConfigPath": "libs/common/tsconfig.lib.json" }
+      "compilerOptions": {
+        "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
     },
     "redis": {
       "type": "library",
       "root": "libs/redis",
       "entryFile": "index",
       "sourceRoot": "libs/redis/src",
-      "compilerOptions": { "tsConfigPath": "libs/redis/tsconfig.lib.json" }
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
     },
     "mongodb": {
       "type": "library",
       "root": "libs/mongodb",
       "entryFile": "index",
       "sourceRoot": "libs/mongodb/src",
-      "compilerOptions": { "tsConfigPath": "libs/mongodb/tsconfig.lib.json" }
+      "compilerOptions": {
+        "tsConfigPath": "libs/mongodb/tsconfig.lib.json"
+      }
+    },
+    "admin-service": {
+      "type": "application",
+      "root": "apps/admin-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin-service/tsconfig.app.json"
+      }
     }
   }
 }

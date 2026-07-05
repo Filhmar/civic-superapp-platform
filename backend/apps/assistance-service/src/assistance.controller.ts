@@ -18,6 +18,11 @@ export class AssistanceController {
     return this.assistance.create(p.tenant, p.data.user_id, p.data.program_key, p.data.details);
   }
 
+  @MessagePattern({ cmd: 'assistance.request.list' })
+  listAll(@Payload() p: TenantScoped<{ status?: RequestStatus; limit?: number }>) {
+    return this.assistance.listAll(p.tenant, p.data.status, p.data.limit);
+  }
+
   @MessagePattern({ cmd: 'assistance.request.list-mine' })
   listMine(@Payload() p: TenantScoped<{ user_id: string }>) {
     return this.assistance.listMine(p.tenant, p.data.user_id);

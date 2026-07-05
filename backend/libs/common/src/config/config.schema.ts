@@ -34,6 +34,8 @@ export const configSchema = z.object({
   MEDIA_SERVICE_TCP_PORT: tcpPort(3016),
   INTEGRATION_SERVICE_TCP_HOST: host,
   INTEGRATION_SERVICE_TCP_PORT: tcpPort(3017),
+  ADMIN_SERVICE_TCP_HOST: host,
+  ADMIN_SERVICE_TCP_PORT: tcpPort(3018),
 
   // TCP client reconnection
   TCP_CONNECTION_MAX_RETRIES: z.coerce.number().default(50),
@@ -47,6 +49,7 @@ export const configSchema = z.object({
   TENANCY_SERVICE_DATABASE_URL: z.url().optional(),
   IDENTITY_SERVICE_DATABASE_URL: z.url().optional(),
   EGOV_SERVICE_DATABASE_URL: z.url().optional(),
+  ADMIN_SERVICE_DATABASE_URL: z.url().optional(),
 
   // MongoDB
   MONGODB_REPORTS_URI: z.url().optional(),
@@ -67,6 +70,10 @@ export const configSchema = z.object({
   JWT_ACCESS_EXPIRES_IN: z.coerce.number().default(900),
   JWT_REFRESH_EXPIRES_IN: z.coerce.number().default(604800),
   DIGITAL_ID_QR_SECRET: z.string().min(64).optional(),
+  JWT_ADMIN_ACCESS_SECRET: z.string().min(64).optional(),
+  JWT_ADMIN_REFRESH_SECRET: z.string().min(64).optional(),
+  ADMIN_SEED_EMAIL: z.string().optional(),
+  ADMIN_SEED_PASSWORD: z.string().optional(),
 
   // OTP
   OTP_LENGTH: z.coerce.number().min(4).max(8).default(6),

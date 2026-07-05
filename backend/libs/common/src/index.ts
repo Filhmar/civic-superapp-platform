@@ -2,6 +2,7 @@ export * from './config/config.schema';
 export * from './config/app-config.service';
 export * from './config/app-config.module';
 export * from './tenant/tenant-config.types';
+export * from './tenant/tenant-config.schema';
 export * from './rpc/rpc-error';
 export * from './logger/logger';
 export * from './metrics/metrics.server';

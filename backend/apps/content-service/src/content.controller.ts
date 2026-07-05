@@ -33,6 +33,11 @@ export class ContentController {
     return this.content.listFaq(p.tenant, p.data.locale);
   }
 
+  @MessagePattern({ cmd: 'content.feedback.list' })
+  listFeedback(@Payload() p: TenantScoped<{ limit?: number }>) {
+    return this.content.listFeedback(p.tenant, p.data.limit);
+  }
+
   @MessagePattern({ cmd: 'content.feedback.create' })
   createFeedback(
     @Payload() p: TenantScoped<{ user_id?: string; message: string; contact?: string }>,

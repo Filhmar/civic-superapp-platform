@@ -41,6 +41,11 @@ export class EgovController {
     );
   }
 
+  @MessagePattern({ cmd: 'egov.application.list' })
+  listAll(@Payload() p: TenantScoped<{ status?: ApplicationStatus; limit?: number }>) {
+    return this.egov.listAll(p.tenant, p.data.status, p.data.limit);
+  }
+
   @MessagePattern({ cmd: 'egov.application.list-mine' })
   listMine(@Payload() p: TenantScoped<{ user_id: string }>) {
     return this.egov.listMine(p.tenant, p.data.user_id);

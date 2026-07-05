@@ -62,6 +62,16 @@ export class AssistanceService {
     return this.publicRequest(doc.toObject() as unknown as Record<string, unknown>);
   }
 
+  /** Staff console: all requests for the tenant, optionally by status. */
+  async listAll(tenant: TenantContext, status?: RequestStatus, limit = 50) {
+    const docs = await this.requests
+      .find({ tenantId: tenant.tenantId, ...(status ? { status } : {}) })
+      .sort({ createdAt: -1 })
+      .limit(Math.min(limit, 200))
+      .lean();
+    return docs.map((d) => this.publicRequest(d as unknown as Record<string, unknown>));
+  }
+
   async listMine(tenant: TenantContext, userId: string) {
     const docs = await this.requests
       .find({ tenantId: tenant.tenantId, userId })

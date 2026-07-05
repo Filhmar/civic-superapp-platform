@@ -64,4 +64,46 @@ export class TenancyService {
       bundleId: t.bundleId,
     }));
   }
+
+  /** Provision a new tenant: record + config v1 (Reference §4 step 1). */
+  async createTenant(input: {
+    id: string;
+    kind: TenantKind;
+    bundleId: string;
+    name: string;
+    config: TenantConfig;
+  }): Promise<{ id: string; version: number }> {
+    if (!/^[a-z0-9-]+$/.test(input.id)) rpcError(400, 'Tenant id must be kebab-case');
+    const existing = await this.prisma.tenant.findFirst({
+      where: { OR: [{ id: input.id }, { bundleId: input.bundleId }] },
+    });
+    if (existing) rpcError(409, 'Tenant id or bundle id already exists');
+    await this.prisma.tenant.create({
+      data: {
+        id: input.id,
+        kind: input.kind,
+        status: 'active',
+        bundleId: input.bundleId,
+        name: input.name,
+        ticketPrefix: input.config.identifiers.ticket_prefix,
+        residentIdPrefix: input.config.identifiers.resident_id_prefix,
+      },
+    });
+    await this.prisma.tenantConfigVersion.create({
+      data: { tenantId: input.id, version: 1, config: input.config as object },
+    });
+    return { id: input.id, version: 1 };
+  }
+
+  /** Config version history (metadata only) for the admin consoles. */
+  async configHistory(tenantId: string) {
+    const versions = await this.prisma.tenantConfigVersion.findMany({
+      where: { tenantId },
+      orderBy: { version: 'desc' },
+      select: { version: true, createdAt: true },
+      take: 50,
+    });
+    if (!versions.length) rpcError(404, `Unknown tenant: ${tenantId}`);
+    return versions.map((v) => ({ version: v.version, created_at: v.createdAt.toISOString() }));
+  }
 }

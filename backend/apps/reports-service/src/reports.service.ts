@@ -71,6 +71,18 @@ export class ReportsService {
     return this.publicTicket(doc.toObject() as unknown as Record<string, unknown>);
   }
 
+  /** Staff console: all tickets for the tenant, optionally by status. */
+  async listAll(tenant: TenantContext, status?: TicketStatus, limit = 50) {
+    const filter: Record<string, unknown> = { tenantId: tenant.tenantId };
+    if (status) filter.status = status;
+    const docs = await this.tickets
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .limit(Math.min(limit, 200))
+      .lean();
+    return docs.map((d) => this.publicTicket(d as unknown as Record<string, unknown>));
+  }
+
   async listMine(tenant: TenantContext, userId: string, limit = 20) {
     const docs = await this.tickets
       .find({ tenantId: tenant.tenantId, userId })

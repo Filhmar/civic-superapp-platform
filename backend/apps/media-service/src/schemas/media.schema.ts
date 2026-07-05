@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export const MEDIA_KINDS = ['report', 'avatar', 'cms', 'poi'] as const;
+export const MEDIA_KINDS = ['report', 'avatar', 'cms', 'poi', 'brand'] as const;
 export type MediaKind = (typeof MEDIA_KINDS)[number];
 
 @Schema({ timestamps: true, collection: 'media' })

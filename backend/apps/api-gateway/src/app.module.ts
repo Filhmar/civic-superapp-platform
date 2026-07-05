@@ -26,6 +26,11 @@ import { EmergencyGatewayController } from './protected/emergency.controller';
 import { SosGateway } from './gateways/sos.gateway';
 import { PlacesGatewayController, TransportGatewayController } from './public/places.controller';
 import { SearchGatewayController } from './public/search.controller';
+import { AdminAuthController } from './admin/admin-auth.controller';
+import { AdminTenantsController } from './admin/admin-tenants.controller';
+import { AdminAssetsController } from './admin/admin-assets.controller';
+import { AdminOpsController } from './admin/admin-ops.controller';
+import { AdminJwtGuard } from './admin/admin-jwt.guard';
 
 @Module({
   imports: [
@@ -57,9 +62,14 @@ import { SearchGatewayController } from './public/search.controller';
     PlacesGatewayController,
     TransportGatewayController,
     SearchGatewayController,
+    AdminAuthController,
+    AdminTenantsController,
+    AdminAssetsController,
+    AdminOpsController,
   ],
   providers: [
     SosGateway,
+    AdminJwtGuard,
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: JwtGuard },
     { provide: APP_GUARD, useClass: ModuleFlagGuard },
@@ -67,10 +77,12 @@ import { SearchGatewayController } from './public/search.controller';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    // Tenant resolution guards every route except health and the public QR verify.
+    // Tenant resolution guards every route except health, the public QR verify,
+    // and the admin plane (platform admins operate cross-tenant; scope comes
+    // from the admin token / explicit tenant params instead of X-Tenant-ID).
     consumer
       .apply(TenantMiddleware)
-      .exclude('health', 'health/(.*)', 'verify', 'verify/(.*)')
+      .exclude('health', 'health/(.*)', 'verify', 'verify/(.*)', 'admin', 'admin/(.*)')
       .forRoutes('*');
   }
 }
