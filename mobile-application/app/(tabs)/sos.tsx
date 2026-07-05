@@ -75,7 +75,7 @@ export default function Sos() {
               className="mt-8 items-center rounded-full bg-brand px-10 py-4 active:opacity-80"
             >
               <Text className="text-base font-semibold text-white">
-                I'm safe — end SOS
+                I&apos;m safe — end SOS
               </Text>
             </Pressable>
           </>
@@ -83,7 +83,7 @@ export default function Sos() {
           <>
             {/* Degraded mode: could not reach the server */}
             <AppText variant="title" className="text-center text-xl">
-              Couldn't reach dispatch
+              Couldn&apos;t reach dispatch
             </AppText>
             <AppText variant="caption" className="mt-2 text-center">
               You appear to be offline. Call the rescue hotline directly:

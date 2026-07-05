@@ -51,7 +51,7 @@ export default function Feedback() {
         keyboardShouldPersistTaps="handled"
       >
         <AppText variant="caption">
-          Tell us what works, what doesn't, and what you'd like to see.
+          Tell us what works, what doesn&apos;t, and what you&apos;d like to see.
         </AppText>
         <TextInput
           className="mt-4 min-h-[140px] rounded-2xl bg-surface px-4 py-3.5 text-base text-fg dark:bg-surface-dark dark:text-fg-dark"

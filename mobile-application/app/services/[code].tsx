@@ -243,7 +243,7 @@ export default function ServiceFlow() {
               ))}
             </View>
             <AppText variant="caption" className="mt-3 text-center">
-              Payments are processed securely. You'll receive an official
+              Payments are processed securely. You&apos;ll receive an official
               receipt number.
             </AppText>
           </>
