@@ -9,6 +9,7 @@ import { AnnouncementsCarousel } from "@/components/home/announcements-carousel"
 import { ModuleGrid } from "@/components/home/module-grid";
 import { NearbyStrip } from "@/components/home/nearby-strip";
 import { WeatherCard } from "@/components/home/weather-card";
+import { AssetImage } from "@/components/ui/asset-image";
 import { Screen } from "@/components/ui/screen";
 import { AppText } from "@/components/ui/typography";
 import { palette } from "@/constants/colors";
@@ -51,7 +52,7 @@ export default function Home() {
   const greeting = greetingForHour(new Date().getHours());
   const displayName = isResident ? (user?.name ?? "Resident") : "Guest";
   const avatarUrl = isResident ? resolveAssetUrl(user?.avatar_url) : null;
-  const executivePhoto = resolveAssetUrl(brand.executive.photo);
+  const seal = brand.logo.assets.seal;
 
   return (
     <Screen>
@@ -102,12 +103,20 @@ export default function Home() {
           )}
         </View>
 
-        {/* App identity — from config.app */}
-        <View className="mt-4">
-          <AppText variant="title">{app.name}</AppText>
-          <AppText variant="caption" className="mt-0.5">
-            {app.tagline}
-          </AppText>
+        {/* App identity — from config.app (+ city seal when a real asset) */}
+        <View className="mt-4 flex-row items-center gap-3">
+          <AssetImage
+            uri={seal}
+            style={{ width: 44, height: 44, borderRadius: 22 }}
+            resizeMode="contain"
+            accessibilityLabel="City seal"
+          />
+          <View className="flex-1">
+            <AppText variant="title">{app.name}</AppText>
+            <AppText variant="caption" className="mt-0.5">
+              {app.tagline}
+            </AppText>
+          </View>
         </View>
 
         {/* Search bar → /search */}
@@ -158,16 +167,17 @@ export default function Home() {
         {home.mayors_corner && (
           <View className="mt-6 rounded-2xl bg-surface p-5 dark:bg-surface-dark">
             <View className="flex-row items-center gap-4">
-              {executivePhoto ? (
-                <Image
-                  source={{ uri: executivePhoto }}
-                  style={{ width: 56, height: 56, borderRadius: 28 }}
-                />
-              ) : (
-                <View className="h-14 w-14 items-center justify-center rounded-full bg-tint">
-                  <UserRound size={26} color={primary} />
-                </View>
-              )}
+              <AssetImage
+                uri={brand.executive.photo}
+                style={{ width: 56, height: 56, borderRadius: 28 }}
+                resizeMode="cover"
+                accessibilityLabel={brand.executive.name}
+                fallback={
+                  <View className="h-14 w-14 items-center justify-center rounded-full bg-tint">
+                    <UserRound size={26} color={primary} />
+                  </View>
+                }
+              />
               <View className="flex-1">
                 <AppText variant="caption">{brand.executive.title}</AppText>
                 <AppText variant="subtitle" numberOfLines={1}>

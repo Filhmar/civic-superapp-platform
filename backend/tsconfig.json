@@ -30,5 +30,11 @@
       "@app/mongodb/*": ["libs/mongodb/src/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "**/generated/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/generated/**",
+    "apps/platform-admin-panel",
+    "apps/tenant-admin-panel"
+  ]
 }

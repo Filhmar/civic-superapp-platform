@@ -248,9 +248,83 @@ async function verifyToggleInertness(): Promise<void> {
   check('restored via config version append → 200', restored.status === 200, restored.status);
 }
 
+async function verifyAdminPlane(): Promise<void> {
+  console.log('\n=== Admin plane (hierarchical SaaS authorization) ===');
+  const anon = axios.create({ baseURL: `${BASE}/v1`, validateStatus: () => true });
+  const platLogin = await anon.post('/admin/auth/login', {
+    email: process.env.ADMIN_SEED_EMAIL ?? 'admin@platform.local',
+    password: process.env.ADMIN_SEED_PASSWORD ?? 'PlatformAdmin!2026',
+  });
+  check('platform admin login', platLogin.status === 201 || platLogin.status === 200, platLogin.status);
+  const pa = platLogin.data.data.access_token as string;
+  const platform = axios.create({
+    baseURL: `${BASE}/v1`,
+    headers: { Authorization: `Bearer ${pa}` },
+    validateStatus: () => true,
+  });
+  const tenants = (await platform.get('/admin/tenants')).data.data as { id: string }[];
+  check('platform admin sees all tenants', tenants.length >= 2, tenants.length);
+
+  // Tenant admin (idempotent create: 409 on rerun is fine)
+  const email = 'lgu-admin@dasmarinas.gov.ph';
+  await platform.post('/admin/users', {
+    email,
+    password: 'DasmaAdmin!2026',
+    name: 'Dasma LGU Admin',
+    role: 'tenant_admin',
+    tenant_id: 'ph-cavite-dasmarinas',
+  });
+  const taLogin = await anon.post('/admin/auth/login', { email, password: 'DasmaAdmin!2026' });
+  const ta = taLogin.data.data.access_token as string;
+  const tenantAdmin = axios.create({
+    baseURL: `${BASE}/v1`,
+    headers: { Authorization: `Bearer ${ta}` },
+    validateStatus: () => true,
+  });
+  const scoped = (await tenantAdmin.get('/admin/tenants')).data.data as { id: string }[];
+  check('tenant admin sees exactly own tenant', scoped.length === 1 && scoped[0].id === 'ph-cavite-dasmarinas', scoped);
+  const cross = await tenantAdmin.patch('/admin/tenants/ph-sorsogon-sorsogoncity/config/branding', {
+    branding: { brand: { slogan: 'x' } },
+  });
+  check('cross-tenant branding patch rejected 403', cross.status === 403, cross.status);
+  const modAttempt = await tenantAdmin.patch('/admin/tenants/ph-cavite-dasmarinas/config/modules', {
+    modules: { jobs: true },
+  });
+  check('module toggle by tenant admin rejected 403 (platform-only)', modAttempt.status === 403, modAttempt.status);
+  const residentOnAdmin = await axios.get(`${BASE}/v1/admin/tenants`, {
+    headers: { Authorization: 'Bearer not-an-admin-token' },
+    validateStatus: () => true,
+  });
+  check('non-admin token rejected on admin plane 401', residentOnAdmin.status === 401, residentOnAdmin.status);
+
+  // Branding patch by the scoped admin bumps a config version the app sees.
+  const before = (await tenantAdmin.get('/admin/tenants/ph-cavite-dasmarinas/config')).data.data
+    .version as number;
+  const patch = await tenantAdmin.patch('/admin/tenants/ph-cavite-dasmarinas/config/branding', {
+    branding: { brand: { executive: { greeting: `Mabuhay! (e2e ${before + 1})` } } },
+  });
+  check('tenant admin branding patch appends version', patch.data.data.version === before + 1, patch.data);
+  const appCfg = await axios.get(`${BASE}/v1/config`, {
+    headers: { 'X-Tenant-ID': 'com.dasmarinas.app' },
+  });
+  check(
+    'app boot config reflects admin change',
+    appCfg.data.data.version === before + 1 &&
+      (appCfg.data.data.config.brand.executive.greeting as string).includes(`e2e ${before + 1}`),
+    appCfg.data.data.version,
+  );
+  // Brand assets uploaded by admins are live URLs in the app payload.
+  const seal = appCfg.data.data.config.brand.logo.assets.seal as string;
+  if (/^https?:\/\//.test(seal)) {
+    const sealGet = await axios.get(seal, { validateStatus: () => true });
+    check('uploaded brand seal URL serves 200', sealGet.status === 200, sealGet.status);
+  }
+}
+
 async function main(): Promise<void> {
   for (const t of TENANTS) await verifyTenant(t);
   await verifyToggleInertness();
+  await verifyAdminPlane();
   console.log(`\n==== RESULT: ${passed} passed, ${failed} failed ====`);
   if (failed > 0) process.exit(1);
 }

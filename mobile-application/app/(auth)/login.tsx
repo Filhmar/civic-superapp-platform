@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 
+import { AssetImage } from "@/components/ui/asset-image";
 import { Screen } from "@/components/ui/screen";
 import { useToast } from "@/components/ui/toast";
 import { AppText } from "@/components/ui/typography";
@@ -66,7 +67,19 @@ export default function Login() {
 
   return (
     <Screen className="justify-center px-8">
-      {/* Branding — from tenant config */}
+      {/* Branding — from tenant config (city seal when a real asset) */}
+      <AssetImage
+        uri={config?.brand.logo.assets.seal}
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: 36,
+          alignSelf: "center",
+          marginBottom: 12,
+        }}
+        resizeMode="contain"
+        accessibilityLabel="City seal"
+      />
       <AppText variant="title" className="text-center">
         {config?.app.name}
       </AppText>

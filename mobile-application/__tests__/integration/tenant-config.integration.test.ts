@@ -52,6 +52,19 @@ describe("GET /v1/config (real backend, both tenants)", () => {
     expect(b.config.modules.health).toBe(false);
   });
 
+  it("serves an uploaded executive photo as a reachable absolute URL", async () => {
+    const a = await fetchConfig(TENANT_A);
+    const photo = a.config.brand.executive.photo;
+    expect(photo).toMatch(/^https?:\/\//);
+
+    // The asset itself must be publicly fetchable.
+    const res = await axios.get(photo, {
+      responseType: "arraybuffer",
+      validateStatus: () => true,
+    });
+    expect(res.status).toBe(200);
+  });
+
   it("400s without X-Tenant-ID and 404s for an unknown tenant", async () => {
     const missing = await axios.get(`${BASE_URL}/v1/config`, {
       validateStatus: () => true,

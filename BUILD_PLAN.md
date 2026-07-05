@@ -86,6 +86,14 @@ onboarding slides, home flags, module grid). Zero per-tenant branches in code.
   EN/FIL toggle, settings/help/feedback/logout. Post-MVP (hierarchy, analytics, billing
   tiers) stubbed cleanly behind flags.
 
+- **M9 Admin plane & consoles** — admin-service (platform_admin / tenant_admin
+  hierarchy, separate JWT_ADMIN_* secrets, bcrypt-12, rotation + reuse-kill);
+  gateway /v1/admin/* (tenant CRUD + config/branding/modules with zod contract
+  validation, brand-asset presign/confirm, ops transitions actor=admin:*, posts,
+  feedback, audit); media 'brand' kind incl. sanitized SVG; two Vite+React
+  consoles served by nginx containers (:8090 platform, :8091 tenant); mobile
+  renders config asset URLs (strict http(s)-only with fallbacks).
+
 ## Verification protocol
 
 Per feature: (1) build both sides; (2) VERIFY — typecheck+lint+tests green, endpoints return

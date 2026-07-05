@@ -11,12 +11,14 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { AssetImage } from "@/components/ui/asset-image";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import type { OnboardingSlide } from "@/types/config";
 
 /**
  * 3-slide carousel rendered entirely from the fetched TenantConfig
- * (title / body / bg color per slide). Tenancy is data, never code.
+ * (title / body / bg color / optional image per slide). Tenancy is data,
+ * never code. Slide images and the seal render only for real http(s) assets.
  */
 export default function Onboarding() {
   const router = useRouter();
@@ -67,6 +69,20 @@ export default function Onboarding() {
         paddingBottom: insets.bottom,
       }}
     >
+      {/* City seal mark (only when a real asset) */}
+      <AssetImage
+        uri={config?.brand.logo.assets.seal}
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 24,
+          alignSelf: "center",
+          marginTop: 12,
+        }}
+        resizeMode="contain"
+        accessibilityLabel="City seal"
+      />
+
       <FlatList
         ref={listRef}
         data={slides}
@@ -82,6 +98,18 @@ export default function Onboarding() {
             style={{ width, backgroundColor: item.bg }}
             className="flex-1 items-center justify-center px-10"
           >
+            {/* Slide illustration (bg color stays underneath) */}
+            <AssetImage
+              uri={item.image}
+              style={{
+                width: width - 120,
+                height: 180,
+                borderRadius: 20,
+                marginBottom: 28,
+              }}
+              resizeMode="cover"
+              accessibilityLabel={item.title}
+            />
             <Text className="text-center text-3xl font-bold text-white">
               {item.title}
             </Text>

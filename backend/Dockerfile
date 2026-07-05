@@ -121,3 +121,10 @@ COPY --from=build /app/dist/apps/integration-service ./dist/apps/integration-ser
 USER appuser
 EXPOSE 3017
 CMD ["node", "dist/apps/integration-service/main.js"]
+
+FROM runtime-base AS admin-service
+COPY --from=build /app/dist/apps/admin-service ./dist/apps/admin-service
+COPY --from=prod-deps /app/apps/admin-service ./apps/admin-service
+USER appuser
+EXPOSE 3018
+CMD ["sh", "-c", "npx prisma migrate deploy --config apps/admin-service/prisma.config.ts && node dist/apps/admin-service/main.js"]

@@ -1,5 +1,5 @@
 import { QrCode } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 import { Screen } from "@/components/ui/screen";
 import { ScreenHeader } from "@/components/ui/screen-header";
@@ -7,6 +7,7 @@ import { AppText } from "@/components/ui/typography";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import { useDigitalIdQuery } from "@/hooks/queries/use-digital-id";
+import { isRenderableAssetUrl } from "@/lib/asset-url";
 import { formatDate } from "@/utils/format-date";
 
 /** Digital City ID — resident-only (guests are routed to login upstream). */
@@ -16,6 +17,13 @@ export default function DigitalIdScreen() {
   const { data: id, isPending, isError } = useDigitalIdQuery({
     enabled: status === "resident",
   });
+
+  // Seal watermark behind the card content — prefer the dedicated watermark
+  // asset, fall back to the seal; skip cleanly when neither is a real URL.
+  const assets = config?.brand.logo.assets;
+  const watermarkUri = [assets?.watermark, assets?.seal].find(
+    isRenderableAssetUrl,
+  );
 
   return (
     <Screen>
@@ -35,6 +43,23 @@ export default function DigitalIdScreen() {
           </AppText>
         ) : (
           <View className="mt-4 overflow-hidden rounded-3xl bg-surface dark:bg-surface-dark">
+            {/* Seal watermark — subtle, behind the card content */}
+            {watermarkUri && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: "absolute",
+                  right: -40,
+                  bottom: -40,
+                }}
+              >
+                <Image
+                  source={{ uri: watermarkUri }}
+                  resizeMode="contain"
+                  style={{ width: 220, height: 220, opacity: 0.07 }}
+                />
+              </View>
+            )}
             {/* Brand band */}
             <View className="bg-brand px-5 py-4">
               <Text className="text-xs font-medium text-white/80">

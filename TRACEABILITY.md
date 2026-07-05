@@ -57,3 +57,16 @@ test inputs).
 | Append-only audit log on every status/payment event | `audit_events` collection populated via notification dispatch path | 🔁 |
 | `docker compose up` brings the backend up clean | 4 infra + 12 service containers healthy; verify-e2e 106/0 against the compose gateway | 🔁 |
 | App boots BOTH tenants purely from config | integration suites assert both bundle ids get correct name/colors/slogan/prefix from `/v1/config`; app renders exclusively from that payload; dev boot via `EXPO_PUBLIC_TENANT_BUNDLE_ID` | 🔁 |
+
+## M9 — Admin plane, asset pipeline, consoles (added post-MVP-goal)
+
+| Proof | Evidence | Status |
+|---|---|---|
+| Hierarchical authz: platform sees all tenants, tenant admin exactly one | verify-e2e admin section + both panel smokes | 🔁 |
+| Cross-tenant writes 403; module toggles platform-only 403 for tenant admins | verify-e2e + tenant-panel read-only modules page | 🔁 |
+| Admin/resident token planes mutually unusable | separate JWT_ADMIN_* secrets; verify-e2e 401 checks | 🔁 |
+| Brand-asset pipeline: presign → MinIO → EXIF-strip/SVG-sanitize → config version → app payload → 200 | verify-e2e (seal URL 200) + mobile integration test (photo URL 200) + script-stripped SVG diff | 🔁 |
+| Admin ops replace CLI scripts (audited actor=admin:role:id) | DSM ticket transitioned via /v1/admin, timeline actor recorded | 🔁 |
+| Panels containerized and served with the stack | 19-container compose up; headless Chromium smoke vs :8090/:8091 (login, data, no cross-tenant leak) | 🔁 |
+| Mobile renders admin-uploaded assets, falls back cleanly | 34 mobile tests incl. asset-url policy + live URL 200 | 🔁 |
+| Full regression | scripts/verify-e2e.ts vs containerized stack: 115/0 | 🔁 |

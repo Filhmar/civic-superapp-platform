@@ -14,6 +14,8 @@ x-service-env: &service-env
   NOTIFICATION_SERVICE_TCP_HOST: notification-service
   MEDIA_SERVICE_TCP_HOST: media-service
   INTEGRATION_SERVICE_TCP_HOST: integration-service
+  ADMIN_SERVICE_TCP_HOST: admin-service
+  ADMIN_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/admin
   TENANCY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/tenancy
   IDENTITY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/identity
   EGOV_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/egov
@@ -155,3 +157,32 @@ services:
       target: integration-service
     environment:
       <<: *service-env
+
+  admin-service:
+    <<: *service-defaults
+    image: civic/admin-service
+    build:
+      context: .
+      target: admin-service
+    environment:
+      <<: *service-env
+
+  platform-admin-panel:
+    image: civic/platform-admin-panel
+    build:
+      context: apps/platform-admin-panel
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    depends_on:
+      - api-gateway
+
+  tenant-admin-panel:
+    image: civic/tenant-admin-panel
+    build:
+      context: apps/tenant-admin-panel
+    restart: unless-stopped
+    ports:
+      - "8091:80"
+    depends_on:
+      - api-gateway

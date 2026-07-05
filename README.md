@@ -64,6 +64,25 @@ Tests (unit + live-backend integration for both tenants):
 npx tsc --noEmit && npx jest && npx expo export --platform web
 ```
 
+## Admin plane (SaaS hierarchy) + consoles
+
+Two containerized web consoles start with the backend:
+
+| Console | URL | Who | Can |
+|---|---|---|---|
+| Platform admin panel | http://localhost:8090 | `platform_admin` (SaaS operator) | see/create ALL tenants, toggle modules (billing tiers), edit any branding, create tenant admins, run operations |
+| Tenant admin panel | http://localhost:8091 | `tenant_admin` (one LGU) | edit own branding (logo/colors/slogan/mayor/onboarding), upload brand assets, publish posts, read feedback, operate status machines — own tenant only |
+
+Dev credentials (seeded): platform `admin@platform.local` / `PlatformAdmin!2026`;
+tenant `lgu-admin@dasmarinas.gov.ph` / `DasmaAdmin!2026`. Admin tokens use a
+separate `JWT_ADMIN_*` secret family — resident and admin tokens are mutually
+unusable across planes; tenant scope is enforced server-side (cross-tenant = 403).
+
+**Brand assets**: admins upload seals/mascot/mayor photos/onboarding art via the
+panels → presigned PUT to MinIO → server-side EXIF strip (raster) or DOMPurify
+sanitization (SVG) → public URL written into the tenant config (new version) →
+the mobile app renders it on next config refresh. No code, no manual wiring.
+
 ## Control-plane scripts (staff-console stand-ins)
 
 ```bash
