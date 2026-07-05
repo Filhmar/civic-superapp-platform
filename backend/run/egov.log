@@ -1,6 +1,0 @@
-2026-07-05T18:28:02.224Z [egov-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
-2026-07-05T18:28:02.233Z [egov-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
-2026-07-05T18:28:02.233Z [egov-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
-2026-07-05T18:28:02.237Z [egov-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
-2026-07-05T18:28:02.238Z [egov-service] [32minfo[39m [InstanceLoader] [32mEgovModule dependencies initialized[39m
-2026-07-05T18:28:02.309Z [egov-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

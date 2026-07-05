@@ -1,7 +1,0 @@
-2026-07-05T17:57:44.248Z [integration-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
-2026-07-05T17:57:44.259Z [integration-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
-2026-07-05T17:57:44.259Z [integration-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
-2026-07-05T17:57:44.261Z [integration-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
-2026-07-05T17:57:44.261Z [integration-service] [32minfo[39m [InstanceLoader] [32mRedisModule dependencies initialized[39m
-2026-07-05T17:57:44.262Z [integration-service] [32minfo[39m [InstanceLoader] [32mIntegrationModule dependencies initialized[39m
-2026-07-05T17:57:44.280Z [integration-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m
