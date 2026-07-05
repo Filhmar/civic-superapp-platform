@@ -259,6 +259,7 @@ export class EgovService {
   }
 
   private publicApplication(app: {
+    id: string;
     stubId: string;
     status: string;
     formData: unknown;
@@ -272,6 +273,7 @@ export class EgovService {
     service: { code: string; name: string; group: string };
   }) {
     return {
+      application_id: app.id,
       stub_id: app.stubId,
       service: { code: app.service.code, name: app.service.name, group: app.service.group },
       status: app.status,

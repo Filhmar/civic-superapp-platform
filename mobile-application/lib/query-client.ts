@@ -30,8 +30,14 @@ const asyncStoragePersister = createAsyncStoragePersister({
   key: "react-query-cache:v1",
 });
 
-/** Whitelisted query families that survive restarts. */
-const PERSISTED_FAMILIES: readonly (readonly string[])[] = [queryKeys.config.all];
+/**
+ * Whitelisted query families that survive restarts. Hotlines are persisted so
+ * the SOS degraded mode can dial the rescue line while offline.
+ */
+const PERSISTED_FAMILIES: readonly (readonly string[])[] = [
+  queryKeys.config.all,
+  queryKeys.hotlines.all,
+];
 
 export const persistOptions: Omit<PersistQueryClientOptions, "queryClient"> = {
   persister: asyncStoragePersister,

@@ -1,0 +1,142 @@
+# Service overlay: docker compose -f docker-compose.yml -f docker-compose.services.yml up
+# Hosts are compose service DNS names (never localhost inside containers — STACK.md §9).
+x-service-env: &service-env
+  NODE_ENV: development
+  REDIS_HOST: redis
+  TENANCY_SERVICE_TCP_HOST: tenancy-service
+  IDENTITY_SERVICE_TCP_HOST: identity-service
+  EGOV_SERVICE_TCP_HOST: egov-service
+  REPORTS_SERVICE_TCP_HOST: reports-service
+  ASSISTANCE_SERVICE_TCP_HOST: assistance-service
+  EMERGENCY_SERVICE_TCP_HOST: emergency-service
+  CONTENT_SERVICE_TCP_HOST: content-service
+  PLACES_SERVICE_TCP_HOST: places-service
+  NOTIFICATION_SERVICE_TCP_HOST: notification-service
+  MEDIA_SERVICE_TCP_HOST: media-service
+  INTEGRATION_SERVICE_TCP_HOST: integration-service
+  TENANCY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/tenancy
+  IDENTITY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/identity
+  EGOV_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/egov
+  MONGODB_REPORTS_URI: mongodb://mongo:27017/reports
+  MONGODB_ASSISTANCE_URI: mongodb://mongo:27017/assistance
+  MONGODB_EMERGENCY_URI: mongodb://mongo:27017/emergency
+  MONGODB_CONTENT_URI: mongodb://mongo:27017/content
+  MONGODB_PLACES_URI: mongodb://mongo:27017/places
+  MONGODB_NOTIFICATION_URI: mongodb://mongo:27017/notification
+  MONGODB_MEDIA_URI: mongodb://mongo:27017/media
+  S3_ENDPOINT: http://minio:9000
+  S3_PUBLIC_ENDPOINT: http://localhost:9000
+
+x-service-defaults: &service-defaults
+  build:
+    context: .
+  restart: unless-stopped
+  env_file: .env.development
+  depends_on:
+    postgres:
+      condition: service_healthy
+    mongo:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    minio:
+      condition: service_healthy
+
+services:
+  api-gateway:
+    <<: *service-defaults
+    build:
+      context: .
+      target: api-gateway
+    environment:
+      <<: *service-env
+    ports:
+      - "3005:3005"
+
+  tenancy-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: tenancy-service
+    environment:
+      <<: *service-env
+
+  identity-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: identity-service
+    environment:
+      <<: *service-env
+
+  egov-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: egov-service
+    environment:
+      <<: *service-env
+
+  reports-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: reports-service
+    environment:
+      <<: *service-env
+
+  assistance-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: assistance-service
+    environment:
+      <<: *service-env
+
+  emergency-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: emergency-service
+    environment:
+      <<: *service-env
+
+  content-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: content-service
+    environment:
+      <<: *service-env
+
+  places-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: places-service
+    environment:
+      <<: *service-env
+
+  notification-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: notification-service
+    environment:
+      <<: *service-env
+
+  media-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: media-service
+    environment:
+      <<: *service-env
+
+  integration-service:
+    <<: *service-defaults
+    build:
+      context: .
+      target: integration-service
+    environment:
+      <<: *service-env

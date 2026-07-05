@@ -31,4 +31,41 @@ export const queryKeys = {
     mine: () => ["reports", "mine"] as const,
     detail: (ticketId: string) => ["reports", "detail", ticketId] as const,
   },
+  egov: {
+    all: ["egov"] as const,
+    catalog: () => ["egov", "catalog"] as const,
+    applications: () => ["egov", "applications"] as const,
+    application: (stubId: string) =>
+      ["egov", "applications", "detail", stubId] as const,
+  },
+  assistance: {
+    all: ["assistance"] as const,
+    programs: () => ["assistance", "programs"] as const,
+    requests: () => ["assistance", "requests"] as const,
+    request: (id: string) => ["assistance", "requests", "detail", id] as const,
+  },
+  hotlines: {
+    all: ["hotlines"] as const,
+    list: (tag?: string) => ["hotlines", "list", tag ?? "all"] as const,
+  },
+  places: {
+    all: ["places"] as const,
+    list: (filter?: object) => ["places", "list", filter ?? {}] as const,
+    detail: (id: string) => ["places", "detail", id] as const,
+  },
+  transport: {
+    all: ["transport"] as const,
+    routes: () => ["transport", "routes"] as const,
+    match: (from: string, to: string) =>
+      ["transport", "match", from, to] as const,
+  },
+  search: {
+    all: ["search"] as const,
+    results: (q: string) => ["search", "results", q] as const,
+    recent: () => ["search", "recent"] as const,
+  },
+  faq: {
+    all: ["faq"] as const,
+    list: (locale: string) => ["faq", "list", locale] as const,
+  },
 } as const;
