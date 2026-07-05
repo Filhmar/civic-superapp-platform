@@ -1,0 +1,10 @@
+2026-07-05T17:58:14.922Z [content-service] [32minfo[39m [NestFactory] [32mStarting Nest application...[39m
+2026-07-05T17:58:14.933Z [content-service] [32minfo[39m [InstanceLoader] [32mMongodbModule dependencies initialized[39m
+2026-07-05T17:58:14.933Z [content-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T17:58:14.934Z [content-service] [32minfo[39m [InstanceLoader] [32mConfigHostModule dependencies initialized[39m
+2026-07-05T17:58:14.934Z [content-service] [32minfo[39m [InstanceLoader] [32mConfigModule dependencies initialized[39m
+2026-07-05T17:58:14.935Z [content-service] [32minfo[39m [InstanceLoader] [32mAppConfigModule dependencies initialized[39m
+2026-07-05T17:58:14.967Z [content-service] [32minfo[39m [InstanceLoader] [32mMongooseCoreModule dependencies initialized[39m
+2026-07-05T17:58:14.968Z [content-service] [32minfo[39m [InstanceLoader] [32mMongooseModule dependencies initialized[39m
+2026-07-05T17:58:14.968Z [content-service] [32minfo[39m [InstanceLoader] [32mContentModule dependencies initialized[39m
+2026-07-05T17:58:14.981Z [content-service] [32minfo[39m [NestMicroservice] [32mNest microservice successfully started[39m

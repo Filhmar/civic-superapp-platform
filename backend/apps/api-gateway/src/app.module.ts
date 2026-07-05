@@ -14,6 +14,10 @@ import { JwtGuard } from './auth/jwt.guard';
 import { ProfileController } from './protected/profile.controller';
 import { DigitalIdController } from './protected/digital-id.controller';
 import { VerifyController } from './public/verify.controller';
+import { PostsController } from './public/posts.controller';
+import { ContentMiscController } from './public/content-misc.controller';
+import { NotificationsController } from './protected/notifications.controller';
+import { WeatherController } from './public/weather.controller';
 
 @Module({
   imports: [
@@ -33,6 +37,10 @@ import { VerifyController } from './public/verify.controller';
     ProfileController,
     DigitalIdController,
     VerifyController,
+    PostsController,
+    ContentMiscController,
+    NotificationsController,
+    WeatherController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
