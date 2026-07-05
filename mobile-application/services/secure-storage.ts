@@ -9,6 +9,7 @@ import { Platform } from "react-native";
 export const STORAGE_KEYS = {
   accessToken: "auth.access-token",
   refreshToken: "auth.refresh-token",
+  scope: "auth.scope",
 } as const;
 
 const isWeb = Platform.OS === "web";
@@ -62,11 +63,28 @@ export async function clearAuthTokens(): Promise<void> {
   await Promise.all([
     deleteItem(STORAGE_KEYS.accessToken),
     deleteItem(STORAGE_KEYS.refreshToken),
+    deleteItem(STORAGE_KEYS.scope),
   ]);
 }
 
-/** Cached-session startup: token PRESENCE only — never a network check. */
+/** Session scope ("guest" | "resident") persisted alongside the tokens. */
+export function getStoredScope(): Promise<string | null> {
+  return getItem(STORAGE_KEYS.scope);
+}
+
+export function storeScope(scope: string): Promise<void> {
+  return setItem(STORAGE_KEYS.scope, scope);
+}
+
+/**
+ * Cached-session startup: token PRESENCE only — never a network check.
+ * Guests hold an access token but an empty refresh token, so presence of
+ * EITHER token counts as a session.
+ */
 export async function hasSession(): Promise<boolean> {
-  const token = await getRefreshToken();
-  return token !== null && token.length > 0;
+  const [refresh, access] = await Promise.all([
+    getRefreshToken(),
+    getAccessToken(),
+  ]);
+  return Boolean(refresh?.length) || Boolean(access?.length);
 }

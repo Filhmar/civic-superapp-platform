@@ -17,6 +17,7 @@ import { getTenantId } from "@/lib/tenant";
 /** Routes that never carry an Authorization header. */
 const PUBLIC_PATHS = [
   "/token/refresh",
+  "/auth/refresh",
   "/login",
   "/otp/request",
   "/otp/verify",

@@ -20,6 +20,7 @@ import { NotificationsController } from './protected/notifications.controller';
 import { WeatherController } from './public/weather.controller';
 import { ReportsGatewayController } from './protected/reports.controller';
 import { MediaGatewayController } from './protected/media.controller';
+import { EgovGatewayController } from './protected/egov.controller';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { MediaGatewayController } from './protected/media.controller';
     WeatherController,
     ReportsGatewayController,
     MediaGatewayController,
+    EgovGatewayController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },

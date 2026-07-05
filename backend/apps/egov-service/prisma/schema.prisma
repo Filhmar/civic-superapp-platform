@@ -1,0 +1,97 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ServiceCatalogItem {
+  id             String  @id @default(uuid())
+  tenantId       String  @map("tenant_id")
+  code           String
+  group          String
+  name           String
+  description    String
+  fee            Decimal @db.Decimal(10, 2)
+  requirements   String[]
+  processingDays Int     @map("processing_days")
+  active         Boolean @default(true)
+
+  applications Application[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, group])
+  @@map("service_catalog")
+}
+
+model FeeRule {
+  tenantId       String  @id @map("tenant_id")
+  convenienceFee Decimal @map("convenience_fee") @db.Decimal(10, 2)
+
+  @@map("fee_rules")
+}
+
+model Application {
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  userId         String   @map("user_id")
+  serviceId      String   @map("service_id")
+  stubId         String   @unique @map("stub_id")
+  status         String   @default("PENDING_PAYMENT")
+  formData       Json     @map("form_data")
+  fee            Decimal  @db.Decimal(10, 2)
+  convenienceFee Decimal  @map("convenience_fee") @db.Decimal(10, 2)
+  total          Decimal  @db.Decimal(10, 2)
+  windowNo       String?  @map("window_no")
+  readyEta       DateTime? @map("ready_eta")
+  transitions    Json     @default("[]")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  service  ServiceCatalogItem @relation(fields: [serviceId], references: [id])
+  payments Payment[]
+
+  @@index([tenantId, userId, createdAt])
+  @@index([tenantId, status])
+  @@map("applications")
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  applicationId  String   @map("application_id")
+  userId         String   @map("user_id")
+  method         String
+  amount         Decimal  @db.Decimal(10, 2)
+  status         String   @default("pending")
+  idempotencyKey String   @unique @map("idempotency_key")
+  receiptNo      String?  @unique @map("receipt_no")
+  providerRef    String?  @map("provider_ref")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  application Application @relation(fields: [applicationId], references: [id])
+
+  @@index([tenantId, userId])
+  @@map("payments")
+}
+
+model ApplicationSequence {
+  tenantId    String @map("tenant_id")
+  serviceCode String @map("service_code")
+  seq         Int    @default(0)
+
+  @@id([tenantId, serviceCode])
+  @@map("application_sequences")
+}
+
+model ReceiptSequence {
+  tenantId String @map("tenant_id")
+  year     Int
+  seq      Int    @default(0)
+
+  @@id([tenantId, year])
+  @@map("receipt_sequences")
+}
