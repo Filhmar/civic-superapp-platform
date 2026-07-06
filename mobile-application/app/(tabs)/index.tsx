@@ -95,6 +95,18 @@ export default function Home() {
             borderBottomRightRadius: 30,
           }}
         >
+          {/* Watermark */}
+          <View
+            pointerEvents="none"
+            style={{ position: "absolute", right: -20, top: -10, opacity: 0.14 }}
+          >
+            <AssetImage
+              uri={seal}
+              style={{ width: 150, height: 150 }}
+              resizeMode="contain"
+            />
+          </View>
+
           <View className="flex-row items-center gap-3">
             {/* Logo badge */}
             <View
@@ -225,6 +237,21 @@ export default function Home() {
             className="mx-5 mt-4"
             style={{ borderRadius: 18, padding: 14, paddingHorizontal: 16 }}
           >
+            <View
+              pointerEvents="none"
+              style={{
+                position: "absolute",
+                right: -16,
+                bottom: -18,
+                opacity: 0.14,
+              }}
+            >
+              <AssetImage
+                uri={seal}
+                style={{ width: 110, height: 110 }}
+                resizeMode="contain"
+              />
+            </View>
             <View className="flex-row items-center gap-3.5">
               <View
                 className="h-16 w-16 items-center justify-center overflow-hidden rounded-full"
@@ -338,6 +365,21 @@ export default function Home() {
               end={{ x: 1, y: 0.6 }}
               style={{ borderRadius: 22, padding: 20, minHeight: 148 }}
             >
+              <View
+                pointerEvents="none"
+                style={{
+                  position: "absolute",
+                  right: -10,
+                  top: -6,
+                  opacity: 0.18,
+                }}
+              >
+                <AssetImage
+                  uri={seal}
+                  style={{ width: 130, height: 130 }}
+                  resizeMode="contain"
+                />
+              </View>
               <Text className="text-[10px] font-extrabold uppercase tracking-kicker text-white/70">
                 Digital City ID
               </Text>
