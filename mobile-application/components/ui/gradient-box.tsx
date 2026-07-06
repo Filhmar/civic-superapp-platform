@@ -39,8 +39,18 @@ export function GradientBox({
 }: GradientBoxProps) {
   // Stable-enough unique id per mount (SSR-safe: deterministic ordering).
   const id = `grad-${(gradientCounter = (gradientCounter + 1) % 1e6)}`;
+  // Opaque base = the middle stop. react-native-svg's <Svg> layer lets the
+  // view background bleed through slightly; a dark app bg keeps it saturated
+  // but a LIGHT bg washes the gradient out (and drops white-text contrast).
+  // The base guarantees a solid same-hue backing in either theme.
+  const baseColor = stops.length
+    ? stops[Math.floor((stops.length - 1) / 2)].color
+    : undefined;
   return (
-    <View className={className} style={[{ overflow: "hidden" }, style]}>
+    <View
+      className={className}
+      style={[{ overflow: "hidden", backgroundColor: baseColor }, style]}
+    >
       <Svg
         style={StyleSheet.absoluteFill}
         width="100%"
