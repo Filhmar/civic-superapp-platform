@@ -167,7 +167,7 @@ export default function Login() {
         />
 
         <Text className="mt-6 text-center font-sans text-[11.5px] leading-4 text-fg-2 dark:text-fg-2-dark">
-          By continuing you agree to the city's{" "}
+          By continuing you agree to the city&apos;s{" "}
           <Text className="text-[11.5px] font-semibold" style={{ color: primary }}>
             Terms
           </Text>{" "}

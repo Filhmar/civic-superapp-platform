@@ -8,6 +8,7 @@ import {
   LogIn,
   LogOut,
   MessageSquare,
+  Monitor,
   Moon,
   Pencil,
   Sun,
@@ -64,18 +65,11 @@ export default function More() {
     }
   };
 
-  const cycleTheme = () => {
-    const order: ThemePreference[] = ["auto", "light", "dark"];
-    const next = order[(order.indexOf(preference) + 1) % order.length];
-    setPreference(next);
-  };
-
-  const themeLabel =
-    preference === "auto"
-      ? t("themeAuto")
-      : preference === "light"
-        ? t("themeLight")
-        : t("themeDark");
+  const themeOptions: { key: ThemePreference; label: string; Icon: typeof Monitor }[] = [
+    { key: "system", label: t("themeSystem"), Icon: Monitor },
+    { key: "light", label: t("themeLight"), Icon: Sun },
+    { key: "dark", label: t("themeDark"), Icon: Moon },
+  ];
 
   return (
     <Screen>
@@ -152,18 +146,41 @@ export default function More() {
             />
           )}
 
-          {/* Theme */}
-          <MenuItem
-            label={`${t("theme")}: ${themeLabel}`}
-            icon={
-              preference === "dark" ? (
-                <Moon size={20} color={primary} />
-              ) : (
-                <Sun size={20} color={primary} />
-              )
-            }
-            onPress={cycleTheme}
-          />
+          {/* Theme — System / Light / Dark segmented control */}
+          <View className="rounded-2xl bg-surface p-3 dark:bg-surface-dark">
+            <AppText variant="caption" className="mb-2 px-1">
+              {t("theme")}
+            </AppText>
+            <View className="flex-row gap-2">
+              {themeOptions.map(({ key, label, Icon }) => {
+                const active = preference === key;
+                return (
+                  <Pressable
+                    key={key}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    onPress={() => setPreference(key)}
+                    className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-xl py-2.5 ${
+                      active ? "bg-brand" : "bg-tint dark:bg-bg-dark"
+                    }`}
+                  >
+                    <Icon
+                      size={16}
+                      color={active ? "#FFFFFF" : palette["fg-2"]}
+                      strokeWidth={2}
+                    />
+                    <Text
+                      className={`text-xs font-semibold ${
+                        active ? "text-white" : "text-fg-2 dark:text-fg-2-dark"
+                      }`}
+                    >
+                      {label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
 
           <MenuItem
             label={t("helpFaq")}

@@ -28,11 +28,13 @@ import { queryKeys } from "@/constants/query-keys";
 import { AuthProvider } from "@/contexts/auth-context";
 import { LocaleProvider } from "@/contexts/locale-context";
 import { TenantConfigProvider } from "@/contexts/tenant-config-context";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ThemeModeProvider, useThemeMode } from "@/contexts/theme-context";
 import { authEvents } from "@/lib/auth-events";
 import { persistOptions, queryClient } from "@/lib/query-client";
 
-// Provider tree per STACK_BASIS §16 (outer → inner).
+// Provider tree per STACK_BASIS §16 (outer → inner). ThemeModeProvider owns the
+// effective light/dark scheme (single source of truth) and gates first paint on
+// the restored preference; ThemedRoot consumes it for the whole tree.
 export default function RootLayout() {
   // Fonts are bundled assets (no network) — gate per STACK_BASIS §16.
   const [fontsLoaded] = useFonts({
@@ -42,9 +44,23 @@ export default function RootLayout() {
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
   });
-  const colorScheme = useColorScheme();
+
+  if (!fontsLoaded) return null; // bundled font load — local, never network
+
+  return (
+    <ThemeModeProvider>
+      <ThemedRoot />
+    </ThemeModeProvider>
+  );
+}
+
+function ThemedRoot() {
+  // Effective scheme follows the in-app toggle (System/Light/Dark), NOT the OS
+  // directly — so the nav frame, status bar, and content bg never conflict with
+  // the NativeWind `dark:` variants.
+  const { scheme } = useThemeMode();
   const router = useRouter();
-  const isDark = colorScheme === "dark";
+  const isDark = scheme === "dark";
   const bg = isDark ? palette["bg-dark"] : palette.bg;
 
   // Dead session → tear down session caches, redirect to the auth flow.
@@ -54,8 +70,6 @@ export default function RootLayout() {
       router.replace("/(auth)/login");
     });
   }, [router]);
-
-  if (!fontsLoaded) return null; // bundled font load — local, never network
 
   const navTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),
@@ -85,7 +99,7 @@ export default function RootLayout() {
                         contentStyle: { backgroundColor: bg },
                       }}
                     />
-                    <StatusBar style="auto" />
+                    <StatusBar style={isDark ? "light" : "dark"} />
                     <ForceUpdateGate />
                   </ToastProvider>
                 </LocaleProvider>

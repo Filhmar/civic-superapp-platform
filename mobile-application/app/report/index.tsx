@@ -437,7 +437,7 @@ function SuccessView({
         Report Submitted!
       </AppText>
       <AppText variant="caption" className="mt-1.5 text-center">
-        We'll keep you posted as your ticket moves.
+        We&apos;ll keep you posted as your ticket moves.
       </AppText>
 
       {/* Ticket card with inline timeline */}

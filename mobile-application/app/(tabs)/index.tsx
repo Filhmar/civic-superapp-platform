@@ -278,7 +278,7 @@ export default function Home() {
                   className="text-[10px] font-extrabold uppercase tracking-kicker"
                   style={{ color: accent }}
                 >
-                  Mayor's Corner
+                  Mayor&apos;s Corner
                 </Text>
                 <Text
                   className="mt-0.5 text-[15px] font-extrabold leading-5 text-white"
