@@ -1,7 +1,8 @@
 /**
  * Config-driven brand asset image: renders a plain RN <Image> only when the
- * URL is a real http(s) asset, with BOTH an absent-URL fallback and an
- * onError fallback to the provided placeholder rendering.
+ * URL is a real http(s) asset. When absent / non-http(s) / failed to load it
+ * shows a fallback — an explicit one if provided (e.g. initials for avatars),
+ * otherwise a branded ImagePlaceholder sized to the same slot.
  */
 import { useState, type ReactNode } from "react";
 import {
@@ -10,15 +11,19 @@ import {
   type ImageStyle,
   type StyleProp,
 } from "react-native";
+import { type LucideIcon } from "lucide-react-native";
 
+import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 import { isRenderableAssetUrl } from "@/lib/asset-url";
 
 interface AssetImageProps {
   uri?: string | null;
   style?: StyleProp<ImageStyle>;
   resizeMode?: ImageResizeMode;
-  /** Rendered when the URL is absent/non-http(s) or the image fails to load. */
+  /** Explicit fallback (e.g. initials). If omitted, a branded ImagePlaceholder is used. */
   fallback?: ReactNode;
+  /** Glyph for the default ImagePlaceholder when no explicit fallback is given. */
+  placeholderIcon?: LucideIcon;
   accessibilityLabel?: string;
 }
 
@@ -26,12 +31,19 @@ export function AssetImage({
   uri,
   style,
   resizeMode = "cover",
-  fallback = null,
+  fallback,
+  placeholderIcon,
   accessibilityLabel,
 }: AssetImageProps) {
   const [failed, setFailed] = useState(false);
 
-  if (!isRenderableAssetUrl(uri) || failed) return <>{fallback}</>;
+  if (!isRenderableAssetUrl(uri) || failed) {
+    return (
+      <>
+        {fallback ?? <ImagePlaceholder icon={placeholderIcon} style={style} />}
+      </>
+    );
+  }
 
   return (
     <Image
