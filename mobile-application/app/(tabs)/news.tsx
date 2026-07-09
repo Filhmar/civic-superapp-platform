@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+import { Newspaper } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -117,7 +118,7 @@ export default function NewsTab() {
                 uri={item.hero_image}
                 style={{ width: "100%", height: 140 }}
                 resizeMode="cover"
-                fallback={<View className="h-2 w-full bg-brand" />}
+                placeholderIcon={Newspaper}
               />
               {/* Category pill overlaid bottom-left of the image area */}
               <View className="absolute left-3 top-3 rounded-full bg-[#FEF3D9] px-2.5 py-1">

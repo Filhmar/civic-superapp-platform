@@ -1,5 +1,6 @@
 /** Horizontal snap carousel of pinned posts (DESIGN_SPEC §4). */
 import { useRouter } from "expo-router";
+import { Newspaper } from "lucide-react-native";
 import { FlatList, Pressable, Text, View } from "react-native";
 
 import { AssetImage } from "@/components/ui/asset-image";
@@ -38,7 +39,7 @@ export function AnnouncementsCarousel() {
                 uri={item.hero_image}
                 style={{ width: "100%", height: 120 }}
                 resizeMode="cover"
-                fallback={<View className="h-[120px] w-full bg-tint" />}
+                placeholderIcon={Newspaper}
               />
               {/* Category pill overlaid bottom-left */}
               <View className="absolute bottom-2.5 left-2.5 rounded-full bg-[#FEF3D9] px-2.5 py-1">

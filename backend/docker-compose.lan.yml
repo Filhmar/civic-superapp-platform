@@ -1,0 +1,14 @@
+# LAN overlay for on-device (physical phone) testing.
+# Apply as a 3rd -f AFTER docker-compose.yml + docker-compose.services.yml.
+# Only changes runtime env (no rebuild): points MinIO's presigned-PUT host and
+# public read host at the host's Wi-Fi LAN IP so the phone can upload/display media,
+# and widens gateway CORS to LAN origins (harmless for native Expo Go).
+services:
+  media-service:
+    environment:
+      # presigned PUT + public GET must resolve from the phone → host LAN IP
+      S3_ENDPOINT: http://192.168.110.251:9000
+      S3_PUBLIC_ENDPOINT: http://192.168.110.251:9000
+  api-gateway:
+    environment:
+      CORS_ORIGINS: http://localhost:8081,http://192.168.110.251:8081,http://localhost:19006,http://192.168.110.251:19006,http://localhost:5173,http://localhost:5174,http://localhost:8090,http://localhost:8091
