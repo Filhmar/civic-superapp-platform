@@ -8,3 +8,4 @@ logs/
 **/generated/
 build-ca.crt
 run/
+.env
