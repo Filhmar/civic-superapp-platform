@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { api, ApiError } from '../lib/api';
 import { useSession } from '../components/AuthLayout';
 import { useToast } from '../components/Toasts';
+import { Icon } from '../components/Icons';
+import { fmtVersion } from '../components/CatChip';
+import { applyTenantTheme } from '../lib/theme';
 import {
   BrandingEditor,
   PhonePreview,
@@ -60,14 +63,17 @@ export function Branding() {
       toast('info', 'Nothing to save — no sections were modified');
       return;
     }
+    const colorsChanged = dirty.has('colors');
     setSaving(true);
     try {
       const result = await api<{ version: number }>(
         `/admin/tenants/${tenant.id}/config/branding`,
         { method: 'PATCH', body: { branding } },
       );
-      toast('success', `v${result.version} saved`);
+      toast('success', `Saved v${result.version}`);
       setDirty(new Set());
+      // The saved config version re-themes the whole console on config refresh.
+      if (colorsChanged) applyTenantTheme(form.colors);
       await load(false);
     } catch (err) {
       toast('error', err instanceof ApiError ? err.message : 'Save failed');
@@ -79,40 +85,58 @@ export function Branding() {
   if (!form) return <div className="loading">Loading branding…</div>;
 
   return (
-    <div className="page">
+    <div className="page page-branding">
       <div className="page-head">
         <div>
-          <h2 className="page-title">Branding</h2>
-          <p className="page-sub">
-            Logo, colors, slogan, chief executive and onboarding for the resident app.
-          </p>
+          <div className="page-kicker">Flagship</div>
+          <h2 className="page-title">Branding Studio</h2>
         </div>
-        <div className="version-box">
-          <span className="chip chip-blue" data-testid="config-version">
-            config v{version ?? '…'}
+        <div className="head-actions">
+          <span className="dirty-note">
+            {dirty.size > 0
+              ? `${dirty.size} section${dirty.size === 1 ? '' : 's'} modified`
+              : 'No changes yet'}
           </span>
+          <button
+            type="button"
+            className="btn btn-primary"
+            data-testid="save-branding"
+            disabled={saving}
+            onClick={() => void handleSubmit()}
+          >
+            <Icon name="save" />
+            {saving ? 'Saving…' : 'Save changes'}
+          </button>
         </div>
       </div>
       <div className="branding-layout">
-        <BrandingEditor
-          form={form}
-          tenantId={tenant.id}
-          saving={saving}
-          dirtyCount={dirty.size}
-          onChange={handleChange}
-          onSubmit={() => void handleSubmit()}
-        />
+        <BrandingEditor form={form} tenantId={tenant.id} onChange={handleChange} />
         <div className="branding-side">
-          <PhonePreview form={form} />
+          <div>
+            <div className="preview-live">
+              <span className="live-dot" aria-hidden />
+              <span>Live preview</span>
+            </div>
+            <PhonePreview form={form} />
+          </div>
           <section className="panel history-panel">
-            <h2 className="panel-title">Recent versions</h2>
+            <div className="panel-title" style={{ marginBottom: 8 }}>
+              Version history
+            </div>
             <ul className="history-list">
-              {history.map((h) => (
-                <li key={h.version}>
-                  <span className="history-version">v{h.version}</span>
-                  <span className="history-date">{new Date(h.created_at).toLocaleString()}</span>
-                </li>
-              ))}
+              {history.map((h) => {
+                const current = h.version === version;
+                return (
+                  <li key={h.version} data-testid={current ? 'config-version' : undefined}>
+                    <span className={`history-dot${current ? ' current' : ''}`} aria-hidden />
+                    <span className={`history-label${current ? ' current' : ''}`}>
+                      v{h.version}
+                      {current ? ' · current' : ''}
+                    </span>
+                    <span className="history-date">{fmtVersion(h.created_at)}</span>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         </div>

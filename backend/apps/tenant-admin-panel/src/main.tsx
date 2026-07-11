@@ -9,7 +9,11 @@ import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '@fontsource/jetbrains-mono/600.css';
 import { App } from './App';
+import { initTheme } from './lib/theme';
 import './styles.css';
+
+// Hydrate the tenant theme (or the neutral fallback) before first paint.
+initTheme();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) throw new Error('#root element missing');

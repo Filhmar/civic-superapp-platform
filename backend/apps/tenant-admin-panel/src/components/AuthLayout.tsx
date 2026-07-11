@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { api, ApiError, fetchMe, getAccessToken, logout } from '../lib/api';
-import type { AdminUser, BrandColors, ConfigResponse, Tenant } from '../lib/types';
-import { Icon } from './Icons';
+import { applyTenantTheme, resetTheme } from '../lib/theme';
+import type { AdminUser, ConfigResponse, Tenant } from '../lib/types';
+import { Icon, VolcanoMark } from './Icons';
+import type { IconName } from './Icons';
 
 export interface Session {
   admin: AdminUser;
@@ -13,53 +15,28 @@ export function useSession(): Session {
   return useOutletContext<Session>();
 }
 
-const NAV_ITEMS: { to: string; label: string }[] = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/branding', label: 'Branding' },
-  { to: '/modules', label: 'Modules' },
-  { to: '/content', label: 'Content' },
-  { to: '/operations', label: 'Operations' },
-  { to: '/audit', label: 'Audit log' },
+const NAV_ITEMS: { to: string; label: string; icon: IconName }[] = [
+  { to: '/', label: 'Dashboard', icon: 'dashboard' },
+  { to: '/branding', label: 'Branding', icon: 'branding' },
+  { to: '/modules', label: 'Modules', icon: 'modules' },
+  { to: '/content', label: 'Content', icon: 'content' },
+  { to: '/operations', label: 'Operations', icon: 'operations' },
+  { to: '/audit', label: 'Audit log', icon: 'audit' },
 ];
 
-const HEX_RE = /^#[0-9a-fA-F]{6}$/;
-
-function hexToRgb(hex: string): string | null {
-  if (!HEX_RE.test(hex)) return null;
-  const n = parseInt(hex.slice(1), 16);
-  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
-}
-
-/** Re-theme the console shell from the tenant's config brand colors. */
-function applyTenantTheme(colors: Partial<BrandColors> | undefined): void {
-  if (!colors) return;
-  const root = document.documentElement.style;
-  if (colors.primary && HEX_RE.test(colors.primary)) {
-    root.setProperty('--primary', colors.primary);
-    const rgb = hexToRgb(colors.primary);
-    if (rgb) root.setProperty('--primary-rgb', rgb);
-  }
-  if (colors.primaryDark && HEX_RE.test(colors.primaryDark)) {
-    root.setProperty('--primary-dark', colors.primaryDark);
-  }
-  if (colors.tint && HEX_RE.test(colors.tint)) {
-    root.setProperty('--primary-soft', colors.tint);
-  }
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .map((w) => w[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
+const PAGE_TITLES: Record<string, string> = {
+  '/branding': 'Branding Studio',
+  '/modules': 'Modules',
+  '/content': 'Content',
+  '/operations': 'Operations',
+  '/audit': 'Audit log',
+};
 
 export function AuthLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
+  const [sealUrl, setSealUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -75,10 +52,13 @@ export function AuthLayout() {
         const tenant = tenants.find((t) => t.id === admin.tenant_id) ?? tenants[0];
         if (!tenant) throw new ApiError(404, 'No tenant is assigned to this administrator');
         if (!cancelled) setSession({ admin, tenant });
-        // Theme the console from the tenant's config colors (best effort).
+        // Theme the whole console from the tenant's config colors (best effort).
         api<ConfigResponse>(`/admin/tenants/${tenant.id}/config`)
           .then((cfg) => {
-            if (!cancelled) applyTenantTheme(cfg.config?.brand?.colors);
+            if (cancelled) return;
+            applyTenantTheme(cfg.config?.brand?.colors);
+            const seal = cfg.config?.brand?.logo?.assets?.seal;
+            if (seal && /^https?:\/\//.test(seal)) setSealUrl(seal);
           })
           .catch(() => undefined);
       } catch (err) {
@@ -92,6 +72,7 @@ export function AuthLayout() {
 
   async function handleLogout() {
     await logout();
+    resetTheme();
     navigate('/login', { replace: true });
   }
 
@@ -116,18 +97,30 @@ export function AuthLayout() {
     );
   }
 
+  const pageTitle = PAGE_TITLES[location.pathname];
+
   return (
     <div className="shell">
       <aside className="sidebar">
+        <div className="sidebar-watermark" aria-hidden>
+          {sealUrl ? (
+            <img src={sealUrl} alt="" />
+          ) : (
+            <svg viewBox="0 0 24 24" width="220" height="220">
+              <path d="M12 3 L21 20 L3 20 Z" fill="#fff" />
+            </svg>
+          )}
+        </div>
         <div className="sidebar-brand">
-          <div className="sidebar-brand-mark">{initials(session.tenant.name)}</div>
+          <div className="sidebar-brand-mark">
+            <VolcanoMark size={24} />
+          </div>
           <div>
             <div className="sidebar-brand-title">{session.tenant.name}</div>
             <div className="sidebar-brand-sub">City Console</div>
           </div>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-section-label">LGU administration</div>
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -135,39 +128,41 @@ export function AuthLayout() {
               end={item.to === '/'}
               className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
+              <Icon name={item.icon} />
               {item.label}
             </NavLink>
           ))}
         </nav>
         <div className="sidebar-foot">
-          <div className="sidebar-identity">
-            <span className="identity-avatar">{initials(session.admin.name)}</span>
-            <div>
-              <div className="identity-name">{session.admin.name}</div>
-              <div className="identity-sub">{session.tenant.id}</div>
-            </div>
-            <span className="presence-dot" />
-          </div>
+          <div className="sidebar-tenant-id">{session.tenant.id}</div>
         </div>
       </aside>
       <div className="main">
         <header className="topbar">
-          <h1 className="topbar-title">
-            <span data-testid="tenant-name">{session.tenant.name}</span>
-            <span className="topbar-sep"> — City Console</span>
-          </h1>
-          <div className="topbar-right">
-            <span className="admin-name">{session.admin.name}</span>
-            <span className="role-badge">{session.admin.role.replace(/_/g, ' ')}</span>
-            <button
-              className="icon-btn"
-              onClick={() => void handleLogout()}
-              title="Log out"
-              aria-label="Log out"
-            >
-              <Icon name="logout" />
-            </button>
+          <div className="topbar-mark" aria-hidden>
+            <VolcanoMark size={19} />
           </div>
+          <h1 className="topbar-title">
+            {pageTitle ?? (
+              <>
+                <span data-testid="tenant-name">{session.tenant.name}</span> — City Console
+              </>
+            )}
+          </h1>
+          <div className="topbar-spacer" />
+          <div className="topbar-identity">
+            <div className="admin-name">{session.admin.name}</div>
+            <div className="admin-email">{session.admin.email}</div>
+          </div>
+          <span className="role-badge">{session.admin.role.replace(/_/g, ' ')}</span>
+          <button
+            className="icon-btn"
+            onClick={() => void handleLogout()}
+            title="Log out"
+            aria-label="Log out"
+          >
+            <Icon name="logout" />
+          </button>
         </header>
         <main className="content">
           <Outlet context={session} />

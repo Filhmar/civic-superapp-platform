@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, ApiError } from '../lib/api';
 import { useSession } from '../components/AuthLayout';
 import { useToast } from '../components/Toasts';
+import { CatChip, CatTile, fmtAudit } from '../components/CatChip';
 import type { AuditEvent } from '../lib/types';
 
 export function Audit() {
@@ -34,16 +35,17 @@ export function Audit() {
   }, [tenant.id, category, toast]);
 
   return (
-    <div className="page">
+    <div className="page page-audit">
       <div className="page-head">
         <div>
+          <div className="page-kicker">Trail</div>
           <h2 className="page-title">Audit log</h2>
-          <p className="page-sub">Every state change recorded for this city.</p>
         </div>
         <select
           className="status-filter"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
+          aria-label="Filter by category"
         >
           <option value="">All categories</option>
           {categories.map((c) => (
@@ -53,21 +55,26 @@ export function Audit() {
           ))}
         </select>
       </div>
-      <section className="panel">
+      <section className="audit-card">
         {events === null ? (
-          <div className="loading">Loading…</div>
+          <div className="loading" style={{ padding: '18px 20px' }}>
+            Loading…
+          </div>
         ) : events.length === 0 ? (
-          <p className="empty">No audit events.</p>
+          <p className="empty" style={{ padding: '18px 20px' }}>
+            No audit events.
+          </p>
         ) : (
           <ul className="audit-list">
             {events.map((ev) => (
               <li key={ev.id} className="audit-row">
-                <span className="chip chip-gray audit-cat">{ev.category}</span>
-                <span className="audit-title">
-                  {ev.title}
-                  {ev.user_id && <span className="cell-sub"> user {ev.user_id.slice(0, 8)}…</span>}
+                <CatTile category={ev.category} />
+                <CatChip category={ev.category} />
+                <span className="audit-title">{ev.title}</span>
+                <span className="audit-actor">
+                  {ev.user_id ? `user ${ev.user_id.slice(0, 8)}…` : '—'}
                 </span>
-                <span className="audit-time">{new Date(ev.at).toLocaleString()}</span>
+                <span className="audit-time">{fmtAudit(ev.at)}</span>
               </li>
             ))}
           </ul>

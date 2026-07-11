@@ -2,20 +2,23 @@ import { useEffect, useState } from 'react';
 import { api, ApiError } from '../lib/api';
 import { useSession } from '../components/AuthLayout';
 import { useToast } from '../components/Toasts';
+import { Icon } from '../components/Icons';
+import type { IconName } from '../components/Icons';
 import type { ConfigResponse } from '../lib/types';
 
-const MODULE_LABELS: Record<string, string> = {
-  egov: 'eGov services',
-  reports311: 'Reports 311',
-  assistance: 'Assistance programs',
-  sos: 'SOS / emergency',
-  news: 'News & advisories',
-  tourism: 'Tourism',
-  directory: 'Directory',
-  transport: 'Transport',
-  health: 'Health',
-  jobs: 'Jobs',
-};
+/** Display metadata per module key — the ORDER matches the design spec. */
+const MODULE_META: { key: string; label: string; desc: string; icon: IconName }[] = [
+  { key: 'egov', label: 'e-Gov Services', desc: 'Pay taxes, permits, certificates', icon: 'bank' },
+  { key: 'reports311', label: 'Report a Problem', desc: '311-style issue reporting', icon: 'alert-triangle' },
+  { key: 'assistance', label: 'Assistance', desc: 'Social welfare requests', icon: 'heart' },
+  { key: 'sos', label: 'Emergency SOS', desc: 'Hold-to-SOS + live location', icon: 'alert' },
+  { key: 'news', label: 'News & Advisories', desc: 'PIO posts & alerts', icon: 'news' },
+  { key: 'tourism', label: 'Tourism', desc: 'City guide & destinations', icon: 'map-pin' },
+  { key: 'directory', label: 'Directory', desc: 'Business listings', icon: 'bag' },
+  { key: 'transport', label: 'Transport', desc: 'Routes, fares, terminals', icon: 'bus' },
+  { key: 'health', label: 'Health', desc: 'Health services', icon: 'operations' },
+  { key: 'jobs', label: 'Jobs', desc: 'City job portal', icon: 'briefcase' },
+];
 
 export function Modules() {
   const { tenant } = useSession();
@@ -40,33 +43,48 @@ export function Modules() {
 
   if (!modules) return <div className="loading">Loading modules…</div>;
 
-  const entries = Object.entries(modules).sort(([a], [b]) => a.localeCompare(b));
+  // Known modules in design order first, then any extra keys from config.
+  const known = MODULE_META.filter((m) => m.key in modules);
+  const extras = Object.keys(modules)
+    .filter((k) => !MODULE_META.some((m) => m.key === k))
+    .sort()
+    .map((key) => ({ key, label: key, desc: key, icon: 'modules' as IconName }));
+  const entries = [...known, ...extras];
 
   return (
-    <div className="page">
+    <div className="page page-modules">
       <div className="page-head">
         <div>
+          <div className="page-kicker">Subscription</div>
           <h2 className="page-title">Modules</h2>
-          <p className="page-sub">Feature modules currently provisioned for this city.</p>
         </div>
       </div>
       <div className="note-banner" data-testid="modules-note">
-        Module availability is managed by the platform operator. Contact your platform
-        representative to enable or disable a module.
+        <Icon name="lock" />
+        <span>
+          Module availability is managed by the platform operator. Contact your account manager to
+          change your subscription tier.
+        </span>
       </div>
-      <section className="panel">
-        <ul className="module-list" data-testid="module-list">
-          {entries.map(([key, enabled]) => (
-            <li key={key} className={`module-row${enabled ? ' module-on' : ''}`}>
-              <span className="module-name">{MODULE_LABELS[key] ?? key}</span>
-              <span className="module-key">{key}</span>
-              <span className={`chip ${enabled ? 'chip-green' : 'chip-gray'}`}>
-                {enabled ? 'Enabled' : 'Disabled'}
+      <ul className="module-list" data-testid="module-list">
+        {entries.map((m) => {
+          const enabled = modules[m.key];
+          return (
+            <li key={m.key} className={`module-row${enabled ? '' : ' module-off'}`}>
+              <span className="module-icon" aria-hidden>
+                <Icon name={m.icon} />
+              </span>
+              <span className="module-body">
+                <div className="module-name">{m.label}</div>
+                <div className="module-desc">{m.desc}</div>
+              </span>
+              <span className={`module-tag ${enabled ? 'tag-included' : 'tag-addon'}`}>
+                {enabled ? 'Included' : 'Add-on'}
               </span>
             </li>
-          ))}
-        </ul>
-      </section>
+          );
+        })}
+      </ul>
     </div>
   );
 }

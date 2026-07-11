@@ -3,10 +3,12 @@
  *
  * Steps: build output is served via `vite preview`, then Chromium:
  *   1. /login -> sign in with the LGU admin credentials
- *   2. assert the header shows the tenant name and exactly ONE tenant is visible
- *   3. /branding -> set the slogan, save, assert a "v{n} saved" toast (real mutation)
+ *   2. assert the header shows the tenant name and exactly ONE tenant is visible,
+ *      and that the sidebar re-themed to the TENANT's primary color (runtime theming)
+ *   3. /branding -> set the slogan, save, assert a "Saved v{n}" toast (real mutation)
  *   4. /modules -> assert read-only (no toggle/input/button controls in the list)
- *   5. screenshot -> smoke.png
+ *   5. /operations -> open a transition dialog, then cancel it
+ *   6. screenshot -> smoke.png
  *
  * Run: node smoke.mjs   (expects `npm run build` to have been run first)
  */
@@ -21,6 +23,8 @@ const CHROMIUM_PATH = '/opt/pw-browsers/chromium';
 const EMAIL = 'lgu-admin@dasmarinas.gov.ph';
 const PASSWORD = 'DasmaAdmin!2026';
 const EXPECTED_TENANT = 'MyDasma';
+// MyDasma's config primary (#1E8449) as the computed-style rgb triplet.
+const EXPECTED_PRIMARY_RGB = '30, 132, 73';
 const NEW_SLOGAN = 'Sulong na! Sulong pa!';
 
 // The backend CORS allow-list only accepts specific origins; the platform panel
@@ -109,6 +113,20 @@ try {
   if (pickers !== 0) throw new Error('found a tenant picker control — there must be none');
   pass(`header shows "${tenantName} — City Console"; exactly one tenant visible, no tenant picker`);
 
+  // sidebar re-themed from the tenant's config primary (runtime CSS custom props)
+  await page.waitForFunction(
+    (rgb) => getComputedStyle(document.querySelector('.sidebar')).backgroundImage.includes(rgb),
+    EXPECTED_PRIMARY_RGB,
+    { timeout: 15000 },
+  );
+  const sidebarBg = await page
+    .locator('.sidebar')
+    .evaluate((el) => getComputedStyle(el).backgroundImage);
+  if (!sidebarBg.includes(EXPECTED_PRIMARY_RGB)) {
+    throw new Error(`sidebar background not themed with tenant primary: ${sidebarBg}`);
+  }
+  pass(`sidebar gradient uses the tenant primary rgb(${EXPECTED_PRIMARY_RGB}) — ${sidebarBg}`);
+
   // dashboard cards render real counts
   await page.waitForSelector('[data-testid="card-config-version"]', { timeout: 15000 });
   const versionCard = await page.locator('[data-testid="card-config-version"] .stat-value').textContent();
@@ -124,17 +142,17 @@ try {
   await page.fill('[data-testid="slogan-input"]', '');
   await page.fill('[data-testid="slogan-input"]', NEW_SLOGAN);
   await page.click('[data-testid="save-branding"]');
-  const toast = page.locator('[data-testid="toast"]', { hasText: /v\d+ saved/ });
+  const toast = page.locator('[data-testid="toast"]', { hasText: /Saved v\d+/ });
   await toast.first().waitFor({ timeout: 15000 });
   const toastText = (await toast.first().textContent())?.trim();
   pass(`branding saved — toast "${toastText}"`);
 
-  // config version chip refreshed to the same version as the toast
-  const savedVersion = toastText.match(/v(\d+) saved/)[1];
+  // version-history card refreshed: the toast's version is now "current"
+  const savedVersion = toastText.match(/Saved v(\d+)/)[1];
   await page
-    .locator('[data-testid="config-version"]', { hasText: `config v${savedVersion}` })
+    .locator('[data-testid="config-version"]', { hasText: `v${savedVersion} · current` })
     .waitFor({ timeout: 15000 });
-  pass(`config version chip refreshed to v${savedVersion}`);
+  pass(`version history shows v${savedVersion} · current`);
 
   // 4. modules: read-only, no toggle controls
   await page.click('a[href="/modules"]');
@@ -149,9 +167,25 @@ try {
   }
   const noteVisible = await page.locator('[data-testid="modules-note"]').isVisible();
   if (!noteVisible) throw new Error('platform-operator note not visible on /modules');
-  pass(`modules page read-only: ${moduleRows} modules listed, 0 toggle controls, operator note shown`);
+  const switches = await page.locator('[data-testid="module-list"] [role="switch"]').count();
+  if (switches !== 0) throw new Error(`modules page must have zero switches, found ${switches}`);
+  pass(`modules page read-only: ${moduleRows} modules listed, 0 toggle/switch controls, operator note shown`);
 
-  // 5. screenshot
+  // 5. operations: open a transition dialog, then cancel (no mutation)
+  await page.click('a[href="/operations"]');
+  await page.waitForSelector('.ops-tab', { timeout: 15000 });
+  const actionBtn = page.locator('.action-btn').first();
+  await actionBtn.waitFor({ timeout: 15000 });
+  const actionLabel = (await actionBtn.textContent())?.trim();
+  await actionBtn.click();
+  await page.waitForSelector('[data-testid="transition-dialog"]', { timeout: 5000 });
+  await page.click('[data-testid="transition-dialog"] button:has-text("Cancel")');
+  await page
+    .locator('[data-testid="transition-dialog"]')
+    .waitFor({ state: 'detached', timeout: 5000 });
+  pass(`operations dialog ("${actionLabel}") opened and cancelled cleanly`);
+
+  // 6. screenshot
   await page.screenshot({ path: path.join(__dirname, 'smoke.png'), fullPage: true });
   pass('screenshot written to smoke.png');
 

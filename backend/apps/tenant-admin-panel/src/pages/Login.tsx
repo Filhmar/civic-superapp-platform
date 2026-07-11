@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { FormEvent } from 'react';
 import { ApiError, login } from '../lib/api';
+import { resetTheme } from '../lib/theme';
+import { VolcanoMark } from '../components/Icons';
 
 export function Login() {
   const navigate = useNavigate();
@@ -9,6 +11,11 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Pre-login there is no tenant yet — render the neutral fallback theme.
+  useEffect(() => {
+    resetTheme();
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -29,10 +36,12 @@ export function Login() {
       <div className="login-grid-overlay" aria-hidden />
       <form className="login-panel" onSubmit={(e) => void handleSubmit(e)}>
         <div className="login-brand">
-          <div className="login-mark">◆</div>
+          <div className="login-mark" aria-hidden>
+            <VolcanoMark size={24} spark />
+          </div>
           <div>
             <h1 className="login-title">City Console</h1>
-            <p className="login-sub">LGU administration</p>
+            <p className="login-sub">Local government administration</p>
           </div>
         </div>
         <div className="login-divider" />
@@ -66,7 +75,7 @@ export function Login() {
         <button className="btn btn-primary btn-block" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
-        <div className="login-caption">Protected area · authorized LGU administrators only</div>
+        <div className="login-caption">Local government administration · authorized staff only</div>
       </form>
     </div>
   );

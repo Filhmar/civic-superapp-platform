@@ -4,7 +4,7 @@ import { api, ApiError } from '../lib/api';
 import { useSession } from '../components/AuthLayout';
 import { useToast } from '../components/Toasts';
 import { AssetUpload } from '../components/AssetUpload';
-import { StatusChip } from '../components/StatusChip';
+import { catColors, fmtShort } from '../components/CatChip';
 import { POST_CATEGORIES } from '../lib/types';
 import type { FeedbackItem, PostCategory } from '../lib/types';
 
@@ -44,7 +44,7 @@ export function Content() {
       const payload: Record<string, unknown> = { title, body, category, pinned };
       if (heroImage) payload.hero_image = heroImage;
       await api(`/admin/tenants/${tenant.id}/posts`, { method: 'POST', body: payload });
-      toast('success', 'Post published');
+      toast('success', 'Post published & pushed');
       setTitle('');
       setBody('');
       setHeroImage('');
@@ -58,72 +58,88 @@ export function Content() {
 
   return (
     <div className="page">
-      <div className="page-head">
-        <div>
-          <h2 className="page-title">Content</h2>
-          <p className="page-sub">Publish news posts and review resident feedback.</p>
-        </div>
-      </div>
       <div className="two-col">
         <section className="panel">
-          <h2 className="panel-title">New post</h2>
+          <h2 className="card-title">Compose post</h2>
           <form onSubmit={(e) => void handlePublish(e)} className="post-form">
             <label>
               <span className="field-label">Title</span>
               <input
                 type="text"
                 required
+                placeholder="Post title…"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </label>
+            <div>
+              <span className="field-label">Category</span>
+              <div className="cat-picker" role="radiogroup" aria-label="Category">
+                {POST_CATEGORIES.map((c) => {
+                  const active = category === c;
+                  const colors = catColors(c);
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      className="cat-option"
+                      style={
+                        active
+                          ? {
+                              background: colors.bg,
+                              color: colors.fg,
+                              borderColor: colors.fg,
+                            }
+                          : undefined
+                      }
+                      onClick={() => setCategory(c)}
+                    >
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <label>
               <span className="field-label">Body</span>
               <textarea
-                rows={6}
+                style={{ height: 100 }}
                 required
+                placeholder="Write the announcement…"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
               />
             </label>
-            <div className="field-grid">
-              <label>
-                <span className="field-label">Category</span>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value as PostCategory)}
-                >
-                  {POST_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="checkbox-label pinned-check">
-                <input
-                  type="checkbox"
-                  checked={pinned}
-                  onChange={(e) => setPinned(e.target.checked)}
+            <div className="compose-extras">
+              <div className="toggle-row" onClick={() => setPinned((p) => !p)}>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={pinned}
+                  aria-label="Pin to top"
+                  className="toggle"
                 />
                 Pin to top
-              </label>
+              </div>
+              <div style={{ minWidth: 220 }}>
+                <AssetUpload
+                  label="Hero image"
+                  hint="Optional cover photo"
+                  value={heroImage}
+                  tenantId={tenant.id}
+                  onChange={setHeroImage}
+                />
+              </div>
             </div>
-            <AssetUpload
-              label="Hero image"
-              value={heroImage}
-              tenantId={tenant.id}
-              onChange={setHeroImage}
-            />
-            <div className="form-actions">
-              <button className="btn btn-primary" type="submit" disabled={publishing}>
-                {publishing ? 'Publishing…' : 'Publish post'}
-              </button>
-            </div>
+            <button className="btn btn-primary btn-block" type="submit" disabled={publishing}>
+              {publishing ? 'Publishing…' : 'Publish & push'}
+            </button>
           </form>
         </section>
         <section className="panel">
-          <h2 className="panel-title">Feedback inbox</h2>
+          <h2 className="card-title">Feedback inbox</h2>
           {feedback === null ? (
             <div className="loading">Loading feedback…</div>
           ) : feedback.length === 0 ? (
@@ -133,14 +149,12 @@ export function Content() {
               {feedback.map((f) => (
                 <li key={f.id} className="feedback-row">
                   <div className="feedback-head">
-                    <StatusChip status={f.status} />
-                    <span className="feedback-time">
-                      {new Date(f.created_at).toLocaleString()}
-                    </span>
+                    <span className="feedback-name">{f.contact || 'Anonymous'}</span>
+                    <span className="feedback-time">{fmtShort(f.created_at)}</span>
                   </div>
                   <p className="feedback-message">{f.message}</p>
                   <div className="feedback-meta">
-                    {f.contact ? `Contact: ${f.contact}` : 'No contact provided'}
+                    {f.status.toLowerCase()}
                     {f.user_id ? ` · user ${f.user_id.slice(0, 8)}…` : ''}
                   </div>
                 </li>

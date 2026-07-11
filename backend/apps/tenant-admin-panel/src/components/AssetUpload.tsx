@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { ApiError, uploadAsset, UPLOAD_CONTENT_TYPES } from '../lib/api';
+import { Icon } from './Icons';
 import { useToast } from './Toasts';
 
 interface AssetUploadProps {
@@ -7,10 +8,12 @@ interface AssetUploadProps {
   value: string;
   tenantId: string;
   onChange: (url: string) => void;
+  /** small hint under the label, e.g. "SVG / PNG · square" */
+  hint?: string;
 }
 
-/** file input -> presign -> PUT bytes -> confirm -> onChange(public url) */
-export function AssetUpload({ label, value, tenantId, onChange }: AssetUploadProps) {
+/** Designed upload zone: file input -> presign -> PUT bytes -> confirm -> onChange(url). */
+export function AssetUpload({ label, value, tenantId, onChange, hint }: AssetUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,35 +38,32 @@ export function AssetUpload({ label, value, tenantId, onChange }: AssetUploadPro
   }
 
   return (
-    <div className="asset-upload">
-      <span className="field-label">{label}</span>
-      <div className="asset-upload-row">
-        <div className="asset-thumb">
-          {value ? (
-            <img src={value} alt={label} />
-          ) : (
-            <span className="asset-thumb-empty">none</span>
-          )}
-        </div>
-        <div className="asset-upload-actions">
-          <button
-            type="button"
-            className="btn btn-secondary btn-sm"
-            disabled={uploading}
-            onClick={() => inputRef.current?.click()}
-          >
-            {uploading ? 'Uploading…' : value ? 'Replace' : 'Upload'}
-          </button>
-          <input
-            ref={inputRef}
-            type="file"
-            accept={UPLOAD_CONTENT_TYPES.join(',')}
-            style={{ display: 'none' }}
-            onChange={(e) => void handleFile(e.target.files?.[0])}
-          />
-          {error && <span className="field-error">{error}</span>}
-        </div>
-      </div>
-    </div>
+    <>
+      <button
+        type="button"
+        className="upload-zone"
+        disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+      >
+        <span className="upload-zone-icon" aria-hidden>
+          {value ? <img src={value} alt="" /> : <Icon name="upload" />}
+        </span>
+        <span>
+          <span className="upload-zone-label">{label}</span>
+          <div className={`upload-zone-hint${error ? ' field-error' : ''}`}>
+            {uploading
+              ? 'Uploading…'
+              : error ?? (value ? 'Uploaded · click to replace' : hint ?? 'PNG / JPEG / WebP / SVG')}
+          </div>
+        </span>
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={UPLOAD_CONTENT_TYPES.join(',')}
+        style={{ display: 'none' }}
+        onChange={(e) => void handleFile(e.target.files?.[0])}
+      />
+    </>
   );
 }
