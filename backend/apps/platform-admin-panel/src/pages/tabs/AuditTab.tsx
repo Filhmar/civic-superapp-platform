@@ -1,10 +1,29 @@
 import { useEffect, useState } from 'react';
 import { AdminApi, errorMessage } from '../../lib/api';
 import type { AuditItem } from '../../lib/types';
+import { AUDIT_ICONS, Icon } from '../../components/Icons';
 import { useToast } from '../../components/Toast';
 
+const CATEGORY_COLORS: Record<string, { bg: string; fg: string }> = {
+  ADVISORY: { bg: '#FDECEC', fg: '#C0392B' },
+  EVENT: { bg: '#FEF3E0', fg: '#B7791F' },
+  PROGRAM: { bg: '#F0EBFB', fg: '#6D4BC7' },
+  GOVERNANCE: { bg: '#E8EEFB', fg: '#2A5BD7' },
+  TOURISM: { bg: '#E6F5EC', fg: '#1E8449' },
+  JOBS: { bg: '#E8F5F0', fg: '#1B7F6B' },
+  REPORTS: { bg: '#FEF3E0', fg: '#B7791F' },
+  EGOV: { bg: '#E8EEFB', fg: '#2A5BD7' },
+  ASSIST: { bg: '#E6F5EC', fg: '#1E8449' },
+  CONTENT: { bg: '#F0EBFB', fg: '#6D4BC7' },
+  CONFIG: { bg: '#EEF0FE', fg: '#5B5BD6' },
+};
+
+const FALLBACK = { bg: '#EEF0FE', fg: '#5B5BD6' };
+
 function fmt(ts: string): string {
-  return new Date(ts).toLocaleString();
+  const d = new Date(ts);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 export default function AuditTab({ tenantId }: { tenantId: string }) {
@@ -47,10 +66,9 @@ export default function AuditTab({ tenantId }: { tenantId: string }) {
   }, [tenantId, filter]);
 
   return (
-    <section className="card">
-      <div className="card-head">
-        <h3 className="card-title">Audit feed</h3>
-        <div className="filter-chips">
+    <div>
+      {categories.length > 0 && (
+        <div className="filter-chips" style={{ marginBottom: 16 }}>
           <button className={filter === '' ? 'filter-chip active' : 'filter-chip'} onClick={() => setFilter('')}>
             All
           </button>
@@ -64,47 +82,36 @@ export default function AuditTab({ tenantId }: { tenantId: string }) {
             </button>
           ))}
         </div>
+      )}
+      <div className="audit-card">
+        {!items ? (
+          <div className="empty">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="empty">No audit entries{filter ? ` for ${filter}` : ''}.</div>
+        ) : (
+          items.map((a) => {
+            const cat = a.category.toUpperCase();
+            const colors = CATEGORY_COLORS[cat] ?? FALLBACK;
+            return (
+              <div key={a.id} className="audit-row">
+                <span className="audit-icon" style={{ background: colors.bg, color: colors.fg }}>
+                  <Icon name={AUDIT_ICONS[cat] ?? 'tag'} />
+                </span>
+                <span className="cat-chip" style={{ background: colors.bg, color: colors.fg }}>
+                  {a.category}
+                </span>
+                <span className="audit-title cell-clip" title={a.title}>
+                  {a.title}
+                </span>
+                <span className="audit-actor cell-clip" title={a.user_id ?? ''}>
+                  {a.user_id ? `${a.user_id.slice(0, 8)}…` : '—'}
+                </span>
+                <span className="audit-time">{fmt(a.at)}</span>
+              </div>
+            );
+          })
+        )}
       </div>
-      <div className="table-scroll">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Event</th>
-              <th>User</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!items ? (
-              <tr>
-                <td colSpan={4} className="empty">
-                  Loading…
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="empty">
-                  No audit entries{filter ? ` for ${filter}` : ''}.
-                </td>
-              </tr>
-            ) : (
-              items.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    <span className="chip chip-blue">{a.category}</span>
-                  </td>
-                  <td>{a.title}</td>
-                  <td className="mono cell-clip" title={a.user_id ?? ''}>
-                    {a.user_id ?? '—'}
-                  </td>
-                  <td className="muted">{fmt(a.at)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    </div>
   );
 }

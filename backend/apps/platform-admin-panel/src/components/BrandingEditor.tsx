@@ -16,6 +16,15 @@ interface BrandingForm {
 
 const LOGO_ASSET_KEYS = ['seal', 'mascot', 'watermark'];
 
+const COLOR_LABELS: Record<string, string> = {
+  primary: 'Primary',
+  primaryDark: 'Primary dark',
+  accent: 'Accent',
+  accentDeep: 'Accent deep',
+  danger: 'Danger',
+  tint: 'Tint',
+};
+
 function initForm(config: TenantConfig): BrandingForm {
   const slides: OnboardingSlide[] = [0, 1, 2].map((i) => ({
     title: config.onboarding?.[i]?.title ?? '',
@@ -83,6 +92,8 @@ export function computeBrandingPatch(orig: BrandingForm, cur: BrandingForm): Rec
   return Object.keys(patch).length ? patch : null;
 }
 
+const HEX_RE = /^#[0-9A-Fa-f]{6}$/;
+
 function ColorField({
   label,
   value,
@@ -92,21 +103,26 @@ function ColorField({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const pickerValue = /^#[0-9a-fA-F]{6}$/.test(value) ? value : '#000000';
+  const pickerValue = HEX_RE.test(value) ? value : '#000000';
   return (
     <div className="color-field">
-      <span className="field-label">{label}</span>
-      <div className="color-inputs">
-        <input type="color" value={pickerValue} onChange={(e) => onChange(e.target.value)} aria-label={`${label} picker`} />
+      <span className="color-swatch-wrap">
+        <span className="color-swatch" style={{ background: pickerValue }} />
         <input
-          type="text"
-          className="input mono"
-          value={value}
-          maxLength={9}
-          onChange={(e) => onChange(e.target.value)}
-          aria-label={`${label} hex`}
+          type="color"
+          value={pickerValue}
+          onChange={(e) => onChange(e.target.value.toUpperCase())}
+          aria-label={`${label} picker`}
         />
-      </div>
+      </span>
+      <span className="color-field-label">{label}</span>
+      <input
+        className="color-hex-input"
+        value={value}
+        maxLength={9}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label={`${label} hex`}
+      />
     </div>
   );
 }
@@ -157,190 +173,192 @@ export default function BrandingEditor({ tenantId, cfg, refetch }: Props) {
   };
 
   return (
-    <div className="stack">
-      <section className="card">
-        <h3 className="card-title">App identity</h3>
-        <div className="grid-2">
-          <label className="field">
-            <span className="field-label">App name</span>
-            <input
-              className="input"
-              value={form.app.name}
-              onChange={(e) => set((f) => ({ ...f, app: { ...f.app, name: e.target.value } }))}
-            />
-          </label>
-          <label className="field">
-            <span className="field-label">Tagline</span>
-            <input
-              className="input"
-              value={form.app.tagline}
-              onChange={(e) => set((f) => ({ ...f, app: { ...f.app, tagline: e.target.value } }))}
-            />
-          </label>
-        </div>
-        <label className="field">
-          <span className="field-label">Slogan</span>
-          <input className="input" value={form.slogan} onChange={(e) => set((f) => ({ ...f, slogan: e.target.value }))} />
-        </label>
-      </section>
+    <div className="grid-2" style={{ alignItems: 'start' }}>
+      <div className="stack">
+        <section className="card">
+          <span className="card-kicker">Palette</span>
+          <div className="card-body palette-grid">
+            {Object.keys(form.colors).map((key) => (
+              <ColorField
+                key={key}
+                label={COLOR_LABELS[key] ?? key}
+                value={form.colors[key]}
+                onChange={(v) => set((f) => ({ ...f, colors: { ...f.colors, [key]: v } }))}
+              />
+            ))}
+          </div>
+        </section>
 
-      <section className="card">
-        <h3 className="card-title">Brand colors</h3>
-        <div className="swatch-row">
-          {Object.entries(form.colors).map(([key, value]) => (
-            <div key={key} className="swatch">
-              <div className="swatch-color" style={{ background: value }} />
-              <span className="swatch-label">{key}</span>
-            </div>
-          ))}
-        </div>
-        <div className="grid-3">
-          {Object.keys(form.colors).map((key) => (
-            <ColorField
-              key={key}
-              label={key}
-              value={form.colors[key]}
-              onChange={(v) => set((f) => ({ ...f, colors: { ...f.colors, [key]: v } }))}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="card">
-        <h3 className="card-title">Executive</h3>
-        <div className="grid-2">
-          <label className="field">
-            <span className="field-label">Title</span>
-            <input
-              className="input"
-              value={form.executive.title}
-              onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, title: e.target.value } }))}
-            />
-          </label>
-          <label className="field">
-            <span className="field-label">Name</span>
-            <input
-              className="input"
-              value={form.executive.name}
-              onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, name: e.target.value } }))}
-            />
-          </label>
-        </div>
-        <label className="field">
-          <span className="field-label">Greeting</span>
-          <textarea
-            className="input"
-            rows={3}
-            value={form.executive.greeting}
-            onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, greeting: e.target.value } }))}
-          />
-        </label>
-        <AssetUpload
-          tenantId={tenantId}
-          label="Executive photo"
-          value={form.executive.photo}
-          onUploaded={(url) => set((f) => ({ ...f, executive: { ...f.executive, photo: url } }))}
-        />
-      </section>
-
-      <section className="card">
-        <h3 className="card-title">Logo assets</h3>
-        <div className="grid-3">
-          {Object.keys(form.logoAssets).map((key) => (
-            <AssetUpload
-              key={key}
-              tenantId={tenantId}
-              label={key}
-              value={form.logoAssets[key]}
-              onUploaded={(url) => set((f) => ({ ...f, logoAssets: { ...f.logoAssets, [key]: url } }))}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="card">
-        <h3 className="card-title">Onboarding slides</h3>
-        <div className="grid-3">
-          {form.onboarding.map((slide, i) => (
-            <div key={i} className="slide-card" style={{ borderTopColor: slide.bg }}>
-              <div className="slide-heading">Slide {i + 1}</div>
+        <section className="card">
+          <span className="card-kicker">Identity &amp; executive</span>
+          <div className="card-body fields-col">
+            <div className="form-grid-2">
               <label className="field">
-                <span className="field-label">Title</span>
+                <span className="field-label">App name</span>
                 <input
                   className="input"
-                  value={slide.title}
-                  onChange={(e) =>
-                    set((f) => {
-                      f.onboarding[i] = { ...f.onboarding[i], title: e.target.value };
-                      return f;
-                    })
-                  }
+                  value={form.app.name}
+                  onChange={(e) => set((f) => ({ ...f, app: { ...f.app, name: e.target.value } }))}
                 />
               </label>
               <label className="field">
-                <span className="field-label">Body</span>
-                <textarea
+                <span className="field-label">Tagline</span>
+                <input
                   className="input"
-                  rows={3}
-                  value={slide.body}
-                  onChange={(e) =>
-                    set((f) => {
-                      f.onboarding[i] = { ...f.onboarding[i], body: e.target.value };
-                      return f;
-                    })
-                  }
+                  value={form.app.tagline}
+                  onChange={(e) => set((f) => ({ ...f, app: { ...f.app, tagline: e.target.value } }))}
                 />
               </label>
-              <ColorField
-                label="Background"
-                value={slide.bg}
-                onChange={(v) =>
-                  set((f) => {
-                    f.onboarding[i] = { ...f.onboarding[i], bg: v };
-                    return f;
-                  })
-                }
-              />
-              <AssetUpload
-                tenantId={tenantId}
-                label="Image"
-                value={slide.image}
-                onUploaded={(url) =>
-                  set((f) => {
-                    f.onboarding[i] = { ...f.onboarding[i], image: url };
-                    return f;
-                  })
-                }
-              />
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="card">
-        <h3 className="card-title">Home screen flags</h3>
-        <div className="check-row">
-          {Object.keys(form.home).map((key) => (
-            <label key={key} className="check-field">
+            <label className="field">
+              <span className="field-label">Slogan</span>
               <input
-                type="checkbox"
-                checked={form.home[key]}
-                onChange={(e) => set((f) => ({ ...f, home: { ...f.home, [key]: e.target.checked } }))}
+                className="input"
+                value={form.slogan}
+                onChange={(e) => set((f) => ({ ...f, slogan: e.target.value }))}
               />
-              <span>{key.replace(/_/g, ' ')}</span>
             </label>
-          ))}
-        </div>
-      </section>
+            <div className="form-grid-2">
+              <label className="field">
+                <span className="field-label">Executive title</span>
+                <input
+                  className="input"
+                  value={form.executive.title}
+                  onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, title: e.target.value } }))}
+                />
+              </label>
+              <label className="field">
+                <span className="field-label">Executive name</span>
+                <input
+                  className="input"
+                  value={form.executive.name}
+                  onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, name: e.target.value } }))}
+                />
+              </label>
+            </div>
+            <label className="field">
+              <span className="field-label">Greeting</span>
+              <textarea
+                className="input"
+                value={form.executive.greeting}
+                onChange={(e) => set((f) => ({ ...f, executive: { ...f.executive, greeting: e.target.value } }))}
+              />
+            </label>
+            <AssetUpload
+              tenantId={tenantId}
+              label="Executive photo"
+              value={form.executive.photo}
+              onUploaded={(url) => set((f) => ({ ...f, executive: { ...f.executive, photo: url } }))}
+            />
+          </div>
+        </section>
 
-      <div className="save-bar">
-        <span className="muted">
-          Editing against v{baseVersion}
-          {dirty ? ' — unsaved changes' : ' — no changes'}
-        </span>
-        <button className="btn btn-primary" onClick={() => void submit()} disabled={saving || !dirty}>
-          {saving ? 'Saving…' : 'Save branding'}
-        </button>
+        <section className="card">
+          <span className="card-kicker">Home screen flags</span>
+          <div className="card-body check-row">
+            {Object.keys(form.home).map((key) => (
+              <label key={key} className="check-field">
+                <span className="switch switch-sm">
+                  <input
+                    type="checkbox"
+                    checked={form.home[key]}
+                    onChange={(e) => set((f) => ({ ...f, home: { ...f.home, [key]: e.target.checked } }))}
+                  />
+                  <span className="slider" />
+                </span>
+                <span>{key.replace(/_/g, ' ')}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <div className="stack">
+        <section className="card">
+          <span className="card-kicker">Logo assets</span>
+          <div className="card-body upload-grid">
+            {Object.keys(form.logoAssets).map((key) => (
+              <AssetUpload
+                key={key}
+                tenantId={tenantId}
+                label={key.charAt(0).toUpperCase() + key.slice(1)}
+                value={form.logoAssets[key]}
+                onUploaded={(url) => set((f) => ({ ...f, logoAssets: { ...f.logoAssets, [key]: url } }))}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="card">
+          <span className="card-kicker">Onboarding slides</span>
+          <div className="card-body fields-col">
+            {form.onboarding.map((slide, i) => (
+              <div key={i} className="slide-row">
+                <span className="slide-num">{i + 1}</span>
+                <div className="slide-fields">
+                  <input
+                    className="input"
+                    placeholder="Slide title"
+                    value={slide.title}
+                    onChange={(e) =>
+                      set((f) => {
+                        f.onboarding[i] = { ...f.onboarding[i], title: e.target.value };
+                        return f;
+                      })
+                    }
+                  />
+                  <textarea
+                    className="input"
+                    placeholder="Slide body"
+                    value={slide.body}
+                    onChange={(e) =>
+                      set((f) => {
+                        f.onboarding[i] = { ...f.onboarding[i], body: e.target.value };
+                        return f;
+                      })
+                    }
+                  />
+                  <ColorField
+                    label="Background"
+                    value={slide.bg}
+                    onChange={(v) =>
+                      set((f) => {
+                        f.onboarding[i] = { ...f.onboarding[i], bg: v };
+                        return f;
+                      })
+                    }
+                  />
+                  <AssetUpload
+                    tenantId={tenantId}
+                    label="Slide image"
+                    value={slide.image}
+                    onUploaded={(url) =>
+                      set((f) => {
+                        f.onboarding[i] = { ...f.onboarding[i], image: url };
+                        return f;
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div>
+          <button
+            className="btn btn-primary btn-block"
+            onClick={() => void submit()}
+            disabled={saving || !dirty}
+            data-testid="save-branding"
+          >
+            {saving ? 'Saving…' : 'Save branding — new config version'}
+          </button>
+          <div className="helper-text" style={{ textAlign: 'center', marginTop: 10 }}>
+            Editing against v{baseVersion}
+            {dirty ? ' — unsaved changes' : ' — no changes'}
+          </div>
+        </div>
       </div>
     </div>
   );

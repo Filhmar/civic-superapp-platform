@@ -57,7 +57,7 @@ export function Modules() {
       <section className="panel">
         <ul className="module-list" data-testid="module-list">
           {entries.map(([key, enabled]) => (
-            <li key={key} className="module-row">
+            <li key={key} className={`module-row${enabled ? ' module-on' : ''}`}>
               <span className="module-name">{MODULE_LABELS[key] ?? key}</span>
               <span className="module-key">{key}</span>
               <span className={`chip ${enabled ? 'chip-green' : 'chip-gray'}`}>

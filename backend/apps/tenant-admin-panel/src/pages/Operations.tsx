@@ -53,54 +53,106 @@ function Timeline({ entries }: { entries: TimelineEntry[] }) {
 
 interface TransitionBarProps {
   to: string;
+  /** Mono id shown under the dialog title (ticket/stub/request id). */
+  subject: string;
   needsClaimFields: boolean;
   busy: boolean;
   onConfirm: (note: string, claimSchedule?: string, claimLocation?: string) => void;
   onCancel: () => void;
 }
 
-function TransitionBar({ to, needsClaimFields, busy, onConfirm, onCancel }: TransitionBarProps) {
+const TONE_COLORS: Record<string, string> = {
+  RESOLVED: '#1E8449',
+  APPROVED: '#1E8449',
+  READY: '#1E8449',
+  CLAIMED: '#1E8449',
+  UNDER_REVIEW: '#B7791F',
+  PROCESSING: '#B7791F',
+  REJECTED: '#C0392B',
+  DENIED: '#C0392B',
+};
+
+const ACTION_LABELS: Record<string, string> = {
+  UNDER_REVIEW: 'Start review',
+  RESOLVED: 'Resolve',
+  REJECTED: 'Reject',
+  APPROVED: 'Approve',
+  DENIED: 'Deny',
+  READY: 'Mark ready',
+  CLAIMED: 'Mark claimed',
+};
+
+function actionLabel(to: string): string {
+  return ACTION_LABELS[to] ?? to.replace(/_/g, ' ');
+}
+
+/** Status-colored transition dialog (design-language overlay, replaces the inline bar). */
+function TransitionBar({ to, subject, needsClaimFields, busy, onConfirm, onCancel }: TransitionBarProps) {
   const [note, setNote] = useState('');
   const [claimSchedule, setClaimSchedule] = useState('');
   const [claimLocation, setClaimLocation] = useState('');
+  const color = TONE_COLORS[to] ?? '#1E8449';
   return (
-    <div className="transition-bar">
-      <span className="transition-label">
-        Move to <strong>{to.replace(/_/g, ' ')}</strong>
-      </span>
-      <input
-        type="text"
-        placeholder="Note (optional)"
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-      />
-      {needsClaimFields && (
-        <>
-          <input
-            type="text"
-            placeholder="Claim schedule (e.g. 2026-07-10 09:00)"
-            value={claimSchedule}
-            onChange={(e) => setClaimSchedule(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Claim location"
-            value={claimLocation}
-            onChange={(e) => setClaimLocation(e.target.value)}
-          />
-        </>
-      )}
-      <button
-        type="button"
-        className="btn btn-primary btn-sm"
-        disabled={busy}
-        onClick={() => onConfirm(note, claimSchedule || undefined, claimLocation || undefined)}
-      >
-        {busy ? 'Applying…' : 'Confirm'}
-      </button>
-      <button type="button" className="btn btn-secondary btn-sm" disabled={busy} onClick={onCancel}>
-        Cancel
-      </button>
+    <div className="scrim" onMouseDown={(e) => e.target === e.currentTarget && !busy && onCancel()}>
+      <div className="dialog" role="dialog" aria-modal="true" data-testid="transition-dialog">
+        <div className="dialog-head">
+          <span className="dialog-icon" style={{ background: `${color}1F`, color }} aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+          <div>
+            <div className="dialog-title">{actionLabel(to)}</div>
+            <div className="dialog-sub">{subject}</div>
+          </div>
+        </div>
+        <div className="dialog-fields">
+          {needsClaimFields && (
+            <div className="dialog-grid-2">
+              <label>
+                <span className="field-label">Claim date</span>
+                <input
+                  type="text"
+                  placeholder="2026-07-10 09:00"
+                  value={claimSchedule}
+                  onChange={(e) => setClaimSchedule(e.target.value)}
+                />
+              </label>
+              <label>
+                <span className="field-label">Claim location</span>
+                <input
+                  type="text"
+                  placeholder="e.g. City Hall, Window 3"
+                  value={claimLocation}
+                  onChange={(e) => setClaimLocation(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
+          <label>
+            <span className="field-label">Note (attached to audit trail)</span>
+            <textarea
+              placeholder="Add a note for this transition…"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </label>
+        </div>
+        <div className="dialog-foot">
+          <button type="button" className="btn btn-secondary" disabled={busy} onClick={onCancel}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-status"
+            style={{ background: color }}
+            disabled={busy}
+            onClick={() => onConfirm(note, claimSchedule || undefined, claimLocation || undefined)}
+          >
+            {busy ? 'Applying…' : actionLabel(to)}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -215,26 +267,26 @@ function ReportsTable({ tenantId }: { tenantId: string }) {
                     <StatusChip status={r.status} />
                   </td>
                   <td>
-                    {ops.pending?.id === r.ticket_id ? (
+                    {ops.pending?.id === r.ticket_id && (
                       <TransitionBar
                         to={ops.pending.to}
+                        subject={r.ticket_id}
                         needsClaimFields={false}
                         busy={ops.busy}
                         onConfirm={(note) => void ops.confirm(r.ticket_id, ops.pending!.to, note)}
                         onCancel={() => ops.setPending(null)}
                       />
-                    ) : (
-                      (REPORT_TRANSITIONS[r.status] ?? []).map((to) => (
-                        <button
-                          key={to}
-                          type="button"
-                          className="btn btn-secondary btn-sm action-btn"
-                          onClick={() => ops.setPending({ id: r.ticket_id, to })}
-                        >
-                          {to.replace(/_/g, ' ')}
-                        </button>
-                      ))
                     )}
+                    {(REPORT_TRANSITIONS[r.status] ?? []).map((to) => (
+                      <button
+                        key={to}
+                        type="button"
+                        className="action-btn"
+                        onClick={() => ops.setPending({ id: r.ticket_id, to })}
+                      >
+                        {actionLabel(to)}
+                      </button>
+                    ))}
                   </td>
                 </tr>
               ))}
@@ -297,26 +349,26 @@ function ApplicationsTable({ tenantId }: { tenantId: string }) {
                     <StatusChip status={a.status} />
                   </td>
                   <td>
-                    {ops.pending?.id === a.stub_id ? (
+                    {ops.pending?.id === a.stub_id && (
                       <TransitionBar
                         to={ops.pending.to}
+                        subject={a.stub_id}
                         needsClaimFields={false}
                         busy={ops.busy}
                         onConfirm={(note) => void ops.confirm(a.stub_id, ops.pending!.to, note)}
                         onCancel={() => ops.setPending(null)}
                       />
-                    ) : (
-                      (APPLICATION_TRANSITIONS[a.status] ?? []).map((to) => (
-                        <button
-                          key={to}
-                          type="button"
-                          className="btn btn-secondary btn-sm action-btn"
-                          onClick={() => ops.setPending({ id: a.stub_id, to })}
-                        >
-                          {to.replace(/_/g, ' ')}
-                        </button>
-                      ))
                     )}
+                    {(APPLICATION_TRANSITIONS[a.status] ?? []).map((to) => (
+                      <button
+                        key={to}
+                        type="button"
+                        className="action-btn"
+                        onClick={() => ops.setPending({ id: a.stub_id, to })}
+                      >
+                        {actionLabel(to)}
+                      </button>
+                    ))}
                   </td>
                 </tr>
               ))}
@@ -384,9 +436,10 @@ function AssistanceTable({ tenantId }: { tenantId: string }) {
                     <StatusChip status={r.status} />
                   </td>
                   <td>
-                    {ops.pending?.id === r.request_id ? (
+                    {ops.pending?.id === r.request_id && (
                       <TransitionBar
                         to={ops.pending.to}
+                        subject={r.request_id}
                         needsClaimFields={ops.pending.to === 'APPROVED'}
                         busy={ops.busy}
                         onConfirm={(note, cs, cl) =>
@@ -394,18 +447,17 @@ function AssistanceTable({ tenantId }: { tenantId: string }) {
                         }
                         onCancel={() => ops.setPending(null)}
                       />
-                    ) : (
-                      (ASSISTANCE_TRANSITIONS[r.status] ?? []).map((to) => (
-                        <button
-                          key={to}
-                          type="button"
-                          className="btn btn-secondary btn-sm action-btn"
-                          onClick={() => ops.setPending({ id: r.request_id, to })}
-                        >
-                          {to.replace(/_/g, ' ')}
-                        </button>
-                      ))
                     )}
+                    {(ASSISTANCE_TRANSITIONS[r.status] ?? []).map((to) => (
+                      <button
+                        key={to}
+                        type="button"
+                        className="action-btn"
+                        onClick={() => ops.setPending({ id: r.request_id, to })}
+                      >
+                        {actionLabel(to)}
+                      </button>
+                    ))}
                   </td>
                 </tr>
               ))}

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { AdminApi, errorMessage } from '../lib/api';
 import type { ConfigResponse, Tenant } from '../lib/types';
 import StatusChip from '../components/StatusChip';
+import { Icon } from '../components/Icons';
 import { useToast } from '../components/Toast';
 import OverviewTab from './tabs/OverviewTab';
 import ModulesTab from './tabs/ModulesTab';
@@ -52,24 +53,43 @@ export default function TenantDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantId]);
 
+  const primary = cfg?.config.brand?.colors?.primary ?? '#5B5BD6';
+  const prefix =
+    cfg?.config.identifiers?.ticket_prefix?.slice(0, 3) ??
+    (tenant ? tenant.name.replace(/^My/, '').slice(0, 3).toUpperCase() : '·');
+
   return (
     <div className="page">
-      <div className="page-head">
-        <div>
-          <div className="breadcrumb">
-            <Link to="/">Tenants</Link> <span className="crumb-sep">/</span> <span className="mono">{tenantId}</span>
-          </div>
-          <h2 className="page-title">
-            {tenant ? tenant.name : tenantId}{' '}
+      <Link to="/" className="ghost-link">
+        <Icon name="chevron-left" />
+        All tenants
+      </Link>
+
+      <div className="tenant-header">
+        <span
+          className="tenant-avatar"
+          style={{ background: primary, boxShadow: `0 8px 20px ${primary}66` }}
+        >
+          {prefix}
+        </span>
+        <div className="tenant-header-main">
+          <div className="tenant-header-name">
+            <h1>{tenant ? tenant.name : tenantId}</h1>
             {tenant && <StatusChip status={tenant.status} />}
-          </h2>
-          {tenant && (
-            <div className="muted">
-              {tenant.kind} · <span className="mono">{tenant.bundleId}</span>
-            </div>
+          </div>
+          <div className="tenant-header-sub">
+            {tenantId}
+            {tenant ? ` · ${tenant.bundleId}` : ''}
+          </div>
+        </div>
+        <div className="tenant-header-version">
+          <span className="card-kicker">Config version</span>
+          {cfg ? (
+            <span className="version-pill">v{cfg.version}</span>
+          ) : (
+            <span className="skeleton" style={{ width: 52, display: 'inline-block' }} />
           )}
         </div>
-        {cfg && <span className="version-badge">config v{cfg.version}</span>}
       </div>
 
       <div className="tab-bar" role="tablist">
@@ -89,21 +109,28 @@ export default function TenantDetail() {
 
       {loadError ? (
         <div className="card">
-          <div className="form-error">{loadError}</div>
+          <div className="form-error">
+            <Icon name="alert" />
+            <span>{loadError}</span>
+          </div>
         </div>
       ) : !cfg ? (
         <div className="card">
-          <div className="empty">Loading configuration…</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="skeleton" style={{ width: '82%' }} />
+            <div className="skeleton" style={{ width: '64%' }} />
+            <div className="skeleton" style={{ width: '92%' }} />
+          </div>
         </div>
       ) : (
-        <>
+        <div className="tab-pane" key={tab}>
           {tab === 'overview' && <OverviewTab tenantId={tenantId} cfg={cfg} />}
           {tab === 'modules' && <ModulesTab tenantId={tenantId} cfg={cfg} refetch={refetch} />}
           {tab === 'branding' && <BrandingTab tenantId={tenantId} cfg={cfg} refetch={refetch} />}
           {tab === 'operations' && <OperationsTab tenantId={tenantId} />}
           {tab === 'content' && <ContentTab tenantId={tenantId} />}
           {tab === 'audit' && <AuditTab tenantId={tenantId} />}
-        </>
+        </div>
       )}
     </div>
   );

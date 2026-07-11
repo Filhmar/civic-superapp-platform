@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { AdminApi, errorMessage, resolveAssetUrl } from '../lib/api';
 import type { AssetContentType } from '../lib/types';
@@ -16,7 +16,12 @@ interface Props {
 export default function AssetUpload({ tenantId, label, value, onUploaded }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [thumbBroken, setThumbBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setThumbBroken(false);
+  }, [value]);
 
   const onFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,26 +58,32 @@ export default function AssetUpload({ tenantId, label, value, onUploaded }: Prop
   };
 
   return (
-    <div className="asset-upload">
-      <span className="field-label">{label}</span>
-      <div className="asset-row">
-        {value ? (
-          <img className="asset-thumb" src={resolveAssetUrl(value)} alt={label} />
-        ) : (
-          <div className="asset-thumb asset-thumb-empty">none</div>
-        )}
-        <div className="asset-controls">
-          <input
-            ref={inputRef}
-            type="file"
-            accept={ALLOWED_TYPES.join(',')}
-            onChange={(e) => void onFile(e)}
-            disabled={uploading}
+    <div className="field">
+      <div className="upload-zone">
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ALLOWED_TYPES.join(',')}
+          onChange={(e) => void onFile(e)}
+          disabled={uploading}
+          aria-label={`Upload ${label}`}
+        />
+        {value && !thumbBroken ? (
+          <img
+            className="upload-thumb"
+            src={resolveAssetUrl(value)}
+            alt={label}
+            onError={() => setThumbBroken(true)}
           />
-          {uploading && <span className="muted">Uploading…</span>}
-          {error && <span className="form-error">{error}</span>}
-        </div>
+        ) : (
+          <span className="upload-ghost" aria-hidden />
+        )}
+        <span className="upload-label">{label}</span>
+        <span className="upload-hint">
+          {uploading ? 'Uploading…' : value ? 'Click to replace' : 'SVG / PNG / JPEG / WebP'}
+        </span>
       </div>
+      {error && <span className="helper-text" style={{ color: '#C0392B', marginTop: 6 }}>{error}</span>}
     </div>
   );
 }

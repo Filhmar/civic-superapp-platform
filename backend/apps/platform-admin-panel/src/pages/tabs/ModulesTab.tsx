@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { AdminApi, errorMessage } from '../../lib/api';
 import type { ConfigResponse } from '../../lib/types';
-import { MODULE_KEYS, MODULE_LABELS } from '../../lib/types';
+import { MODULE_KEYS, MODULE_LABELS, MODULE_DESCRIPTIONS } from '../../lib/types';
+import { Icon, MODULE_ICONS } from '../../components/Icons';
 import { useToast } from '../../components/Toast';
 import { useAdmin } from '../../components/Layout';
 
@@ -46,35 +47,37 @@ export default function ModulesTab({ tenantId, cfg, refetch }: Props) {
   };
 
   return (
-    <section className="card">
-      <h3 className="card-title">Modules</h3>
-      {!platformAdmin && (
-        <p className="muted">Module changes require a platform administrator — toggles are read-only.</p>
-      )}
-      <div className="module-list">
+    <div>
+      <div className="module-callout">
+        <Icon name="info" />
+        <span>
+          {platformAdmin
+            ? 'Module availability is billing-tier enforcement — platform-operator only. Toggling saves a new config version.'
+            : 'Module changes require a platform administrator — toggles are read-only.'}
+        </span>
+      </div>
+      <div className="module-grid">
         {Object.keys(modules).map((name) => (
-          <div key={name} className="module-row">
-            <div>
-              <div className="strong">{MODULE_LABELS[name] ?? name}</div>
-              <div className="muted mono module-key">{name}</div>
+          <div key={name} className={modules[name] ? 'module-card on' : 'module-card'}>
+            <span className="module-icon">
+              <Icon name={MODULE_ICONS[name] ?? 'tag'} />
+            </span>
+            <div className="module-text">
+              <div className="module-title">{MODULE_LABELS[name] ?? name}</div>
+              <div className="module-desc">{MODULE_DESCRIPTIONS[name] ?? name}</div>
             </div>
-            <div className="module-state">
-              <span className={modules[name] ? 'chip chip-green' : 'chip chip-gray'}>
-                {modules[name] ? 'Enabled' : 'Disabled'}
-              </span>
-              <label className="switch" data-module={name}>
-                <input
-                  type="checkbox"
-                  checked={modules[name]}
-                  disabled={!platformAdmin || busy === name}
-                  onChange={() => void toggle(name)}
-                />
-                <span className="slider" />
-              </label>
-            </div>
+            <label className="switch" data-module={name}>
+              <input
+                type="checkbox"
+                checked={modules[name]}
+                disabled={!platformAdmin || busy === name}
+                onChange={() => void toggle(name)}
+              />
+              <span className="slider" />
+            </label>
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

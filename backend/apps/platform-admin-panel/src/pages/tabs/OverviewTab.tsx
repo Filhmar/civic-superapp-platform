@@ -3,7 +3,30 @@ import { AdminApi } from '../../lib/api';
 import type { ConfigHistoryEntry, ConfigResponse } from '../../lib/types';
 
 function fmt(ts: string): string {
-  return new Date(ts).toLocaleString();
+  const d = new Date(ts);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function IntegrationRow({
+  label,
+  connected,
+  text,
+}: {
+  label: string;
+  connected: boolean;
+  text: string;
+}) {
+  const color = connected ? '#1E8449' : '#B7791F';
+  return (
+    <div className="kv-row">
+      <span style={{ fontSize: 13, fontWeight: 600 }}>{label}</span>
+      <span className="status-dot-row" style={{ color }}>
+        <span className="dot" style={{ background: color }} />
+        {text}
+      </span>
+    </div>
+  );
 }
 
 export default function OverviewTab({ tenantId, cfg }: { tenantId: string; cfg: ConfigResponse }) {
@@ -15,7 +38,7 @@ export default function OverviewTab({ tenantId, cfg }: { tenantId: string; cfg: 
     let cancelled = false;
     AdminApi.configHistory(tenantId)
       .then((h) => {
-        if (!cancelled) setHistory(h);
+        if (!cancelled) setHistory([...h].sort((a, b) => b.version - a.version));
       })
       .catch((err) => {
         if (!cancelled) setHistoryError(err instanceof Error ? err.message : 'Failed to load history');
@@ -26,97 +49,117 @@ export default function OverviewTab({ tenantId, cfg }: { tenantId: string; cfg: 
   }, [tenantId, cfg.version]);
 
   return (
-    <div className="grid-2 align-start">
+    <div className="grid-overview">
+      <section className="card">
+        <span className="card-kicker">Version history</span>
+        <div className="card-body">
+          {historyError ? (
+            <div className="form-error">{historyError}</div>
+          ) : !history ? (
+            <div className="empty">Loading…</div>
+          ) : history.length === 0 ? (
+            <div className="empty">No versions recorded.</div>
+          ) : (
+            history.map((h, i) => {
+              const isCurrent = h.version === cfg.version;
+              const note = isCurrent
+                ? 'Latest configuration'
+                : h.version === 1
+                  ? 'Initial provisioning'
+                  : 'Configuration change';
+              return (
+                <div key={h.version} className="timeline-row">
+                  <div className="timeline-rail">
+                    <span className={isCurrent ? 'timeline-dot current' : 'timeline-dot'} />
+                    {i < history.length - 1 && <span className="timeline-connector" />}
+                  </div>
+                  <div className="timeline-body">
+                    <div className="timeline-label">
+                      v{h.version}
+                      {isCurrent ? ' · current' : ''}
+                    </div>
+                    <div className="timeline-note">{note}</div>
+                    <div className="timeline-time">{fmt(h.created_at)}</div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </section>
+
       <div className="stack">
         <section className="card">
-          <h3 className="card-title">Configuration</h3>
-          <dl className="kv">
-            <div>
-              <dt>Current version</dt>
-              <dd>
-                <span className="version-badge">v{cfg.version}</span>
-              </dd>
+          <span className="card-kicker">Identifiers</span>
+          <div className="card-body">
+            <div className="kv-row">
+              <span className="kv-key">Ticket prefix</span>
+              <span className="kv-val">
+                {c.identifiers?.ticket_prefix ? `${c.identifiers.ticket_prefix}-000000` : '—'}
+              </span>
+            </div>
+            <div className="kv-row">
+              <span className="kv-key">Resident prefix</span>
+              <span className="kv-val">
+                {c.identifiers?.resident_id_prefix
+                  ? `${c.identifiers.resident_id_prefix}-${new Date().getFullYear()}-`
+                  : '—'}
+              </span>
+            </div>
+            <div className="kv-row">
+              <span className="kv-key">Locales</span>
+              <span className="kv-val">{c.locales?.join(', ') || '—'}</span>
             </div>
             {cfg.app_min_supported_version && (
-              <div>
-                <dt>Min app version</dt>
-                <dd className="mono">{cfg.app_min_supported_version}</dd>
+              <div className="kv-row">
+                <span className="kv-key">Min app version</span>
+                <span className="kv-val">{cfg.app_min_supported_version}</span>
               </div>
             )}
-            <div>
-              <dt>Locales</dt>
-              <dd>{c.locales?.join(', ') || '—'}</dd>
-            </div>
-          </dl>
+          </div>
         </section>
 
         <section className="card">
-          <h3 className="card-title">Identifiers</h3>
-          <dl className="kv">
-            <div>
-              <dt>Ticket prefix</dt>
-              <dd className="mono">{c.identifiers?.ticket_prefix ?? '—'}</dd>
+          <span className="card-kicker">Geography</span>
+          <div className="card-body">
+            <div className="kv-row">
+              <span className="kv-key">Barangays</span>
+              <span className="kv-val num">{c.geo?.units?.length ?? 0}</span>
             </div>
-            <div>
-              <dt>Resident ID prefix</dt>
-              <dd className="mono">{c.identifiers?.resident_id_prefix ?? '—'}</dd>
+            <div className="kv-row">
+              <span className="kv-key">Centroid</span>
+              <span className="kv-val num">
+                {c.geo?.centroid?.map((n) => n.toFixed(2)).join(', ') ?? '—'}
+              </span>
             </div>
-          </dl>
+          </div>
         </section>
 
         <section className="card">
-          <h3 className="card-title">Geography</h3>
-          <dl className="kv">
-            <div>
-              <dt>Geo units</dt>
-              <dd>{c.geo?.units?.length ?? 0} units</dd>
-            </div>
-            <div>
-              <dt>Centroid</dt>
-              <dd className="mono">{c.geo?.centroid?.join(', ') ?? '—'}</dd>
-            </div>
-          </dl>
-        </section>
-
-        <section className="card">
-          <h3 className="card-title">Integrations</h3>
-          <dl className="kv">
-            <div>
-              <dt>Weather</dt>
-              <dd>{c.integrations?.weather ?? '—'}</dd>
-            </div>
-            <div>
-              <dt>SMS</dt>
-              <dd>{c.integrations?.sms ?? '—'}</dd>
-            </div>
-            <div>
-              <dt>Payments</dt>
-              <dd>{c.integrations?.payments?.length ? c.integrations.payments.join(', ') : '—'}</dd>
-            </div>
-          </dl>
+          <span className="card-kicker">Integrations</span>
+          <div className="card-body">
+            <IntegrationRow
+              label="Weather"
+              connected={Boolean(c.integrations?.weather)}
+              text={c.integrations?.weather ? 'Connected' : 'Not set'}
+            />
+            <IntegrationRow
+              label="SMS gateway"
+              connected={Boolean(c.integrations?.sms)}
+              text={c.integrations?.sms ? 'Connected' : 'Not set'}
+            />
+            <IntegrationRow
+              label={
+                c.integrations?.payments?.length
+                  ? `Payments (${c.integrations.payments.join(', ')})`
+                  : 'Payments'
+              }
+              connected={false}
+              text={c.integrations?.payments?.length ? 'Sandbox' : 'Not set'}
+            />
+          </div>
         </section>
       </div>
-
-      <section className="card">
-        <h3 className="card-title">Version history</h3>
-        {historyError ? (
-          <div className="form-error">{historyError}</div>
-        ) : !history ? (
-          <div className="empty">Loading…</div>
-        ) : history.length === 0 ? (
-          <div className="empty">No versions recorded.</div>
-        ) : (
-          <ul className="history-list">
-            {history.map((h) => (
-              <li key={h.version} className={h.version === cfg.version ? 'history-item current' : 'history-item'}>
-                <span className="version-badge">v{h.version}</span>
-                <span className="muted">{fmt(h.created_at)}</span>
-                {h.version === cfg.version && <span className="chip chip-green">current</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </div>
   );
 }

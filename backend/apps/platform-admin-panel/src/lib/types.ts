@@ -160,14 +160,27 @@ export const MODULE_KEYS = [
 ] as const;
 
 export const MODULE_LABELS: Record<string, string> = {
-  egov: 'eGov Services',
-  reports311: '311 Reports',
+  egov: 'e-Gov Services',
+  reports311: 'Report a Problem',
   assistance: 'Assistance',
-  sos: 'SOS / Emergency',
-  news: 'News',
+  sos: 'Emergency SOS',
+  news: 'News & Advisories',
   tourism: 'Tourism',
   directory: 'Directory',
   transport: 'Transport',
   health: 'Health',
   jobs: 'Jobs',
+};
+
+export const MODULE_DESCRIPTIONS: Record<string, string> = {
+  egov: 'Pay taxes, permits, certificates',
+  reports311: '311-style issue reporting',
+  assistance: 'Social welfare requests',
+  sos: 'Hold-to-SOS + live location',
+  news: 'PIO posts & alerts',
+  tourism: 'City guide & destinations',
+  directory: 'Business & establishment listings',
+  transport: 'Routes, fares, terminals',
+  health: 'Health services (add-on)',
+  jobs: 'City job portal (add-on)',
 };

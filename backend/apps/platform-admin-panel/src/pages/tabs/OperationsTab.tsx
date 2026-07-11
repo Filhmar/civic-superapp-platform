@@ -2,6 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { AdminApi, errorMessage } from '../../lib/api';
 import type { AssistanceRequest, EgovApplication, ReportTicket } from '../../lib/types';
 import StatusChip from '../../components/StatusChip';
+import TransitionDialog, {
+  actionColorFor,
+  actionLabelFor,
+  toneFor,
+} from '../../components/TransitionDialog';
+import type { TransitionRequest } from '../../components/TransitionDialog';
 import { useToast } from '../../components/Toast';
 
 const REPORT_STATUSES = ['SUBMITTED', 'UNDER_REVIEW', 'RESOLVED', 'REJECTED'];
@@ -22,8 +28,11 @@ const ASSISTANCE_NEXT: Record<string, string[]> = {
   UNDER_REVIEW: ['APPROVED', 'DENIED'],
 };
 
-function fmt(ts?: string | null): string {
-  return ts ? new Date(ts).toLocaleString() : '—';
+function fmtDate(ts?: string | null): string {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 function FilterChips({
@@ -52,36 +61,67 @@ function FilterChips({
 function TransitionButtons({
   status,
   nextMap,
-  onTransition,
+  onPick,
 }: {
   status: string;
   nextMap: Record<string, string[]>;
-  onTransition: (to: string) => void;
+  onPick: (to: string) => void;
 }) {
   const nexts = nextMap[status] ?? [];
-  if (nexts.length === 0) return <span className="muted">—</span>;
+  if (nexts.length === 0) return <span className="closed-label">closed</span>;
   return (
-    <div className="action-row">
-      {nexts.map((to) => (
-        <button key={to} className="btn btn-sm btn-outline" onClick={() => onTransition(to)}>
-          → {to.replace(/_/g, ' ')}
-        </button>
-      ))}
-    </div>
+    <span className="action-row">
+      {nexts.map((to) => {
+        const color = actionColorFor(to);
+        return (
+          <button
+            key={to}
+            className="action-btn"
+            style={{
+              background: `${color}1A`,
+              color,
+              border: `1px solid ${color}40`,
+            }}
+            data-transition={to}
+            onClick={() => onPick(to)}
+          >
+            {actionLabelFor(to)}
+          </button>
+        );
+      })}
+    </span>
   );
 }
 
-/** Prompt for an optional note; returns undefined for empty, null if the admin cancelled. */
-function promptNote(to: string): string | undefined | null {
-  const note = window.prompt(`Optional note for transition to ${to.replace(/_/g, ' ')}:`, '');
-  if (note === null) return null;
-  return note.trim() ? note.trim() : undefined;
+interface Pending {
+  id: string;
+  to: string;
+  request: TransitionRequest;
+}
+
+function usePendingTransition() {
+  const [pending, setPending] = useState<Pending | null>(null);
+  const [busy, setBusy] = useState(false);
+  const open = (id: string, to: string, withClaimFields = false) =>
+    setPending({
+      id,
+      to,
+      request: {
+        title: actionLabelFor(to),
+        targetId: id,
+        tone: toneFor(to),
+        confirmLabel: actionLabelFor(to),
+        withClaimFields,
+      },
+    });
+  return { pending, setPending, busy, setBusy, open };
 }
 
 function ReportsSection({ tenantId }: { tenantId: string }) {
   const toast = useToast();
   const [filter, setFilter] = useState('');
   const [items, setItems] = useState<ReportTicket[] | null>(null);
+  const { pending, setPending, busy, setBusy, open } = usePendingTransition();
 
   const load = useCallback(() => {
     setItems(null);
@@ -96,77 +136,70 @@ function ReportsSection({ tenantId }: { tenantId: string }) {
 
   useEffect(load, [load]);
 
-  const transition = async (ticketId: string, to: string) => {
-    const note = promptNote(to);
-    if (note === null) return;
+  const confirm = async (values: { note?: string }) => {
+    if (!pending) return;
+    setBusy(true);
     try {
-      await AdminApi.reportTransition(tenantId, ticketId, { to, ...(note ? { note } : {}) });
-      toast.push(`${ticketId} → ${to.replace(/_/g, ' ')}`);
+      await AdminApi.reportTransition(tenantId, pending.id, {
+        to: pending.to,
+        ...(values.note ? { note: values.note } : {}),
+      });
+      toast.push(`Status updated → ${pending.to.replace(/_/g, ' ')}`);
+      setPending(null);
       load();
     } catch (err) {
       toast.push(errorMessage(err), 'error');
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <section className="card">
-      <div className="card-head">
-        <h3 className="card-title">Reports (311)</h3>
+    <>
+      <div className="save-bar" style={{ marginBottom: 14 }}>
         <FilterChips statuses={REPORT_STATUSES} value={filter} onChange={setFilter} />
       </div>
-      <div className="table-scroll">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Ticket</th>
-              <th>Category</th>
-              <th>Department</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!items ? (
-              <tr>
-                <td colSpan={7} className="empty">
-                  Loading…
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="empty">
-                  No reports{filter ? ` with status ${filter}` : ''}.
-                </td>
-              </tr>
-            ) : (
-              items.map((r) => (
-                <tr key={r.ticket_id}>
-                  <td className="mono">{r.ticket_id}</td>
-                  <td>{r.category?.label ?? r.category?.key}</td>
-                  <td>{r.department}</td>
-                  <td className="cell-clip" title={r.description}>
-                    {r.description}
-                  </td>
-                  <td>
-                    <StatusChip status={r.status} />
-                  </td>
-                  <td className="muted">{fmt(r.created_at)}</td>
-                  <td>
-                    <TransitionButtons
-                      status={r.status}
-                      nextMap={REPORT_NEXT}
-                      onTransition={(to) => void transition(r.ticket_id, to)}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="table-card">
+        <div className="trow trow-head cols-ops">
+          <span>Ticket</span>
+          <span>Category</span>
+          <span>Department</span>
+          <span>Status</span>
+          <span style={{ textAlign: 'right' }}>Action</span>
+        </div>
+        {!items ? (
+          <div className="empty">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="empty">No reports{filter ? ` with status ${filter.replace(/_/g, ' ')}` : ''}.</div>
+        ) : (
+          items.map((r) => (
+            <div key={r.ticket_id} className="trow cols-ops">
+              <span className="cell-mono-id">{r.ticket_id}</span>
+              <span className="cell-clip" title={r.description}>
+                {r.category?.label ?? r.category?.key}
+              </span>
+              <span className="cell-meta cell-clip">{r.department}</span>
+              <span>
+                <StatusChip status={r.status} />
+              </span>
+              <TransitionButtons
+                status={r.status}
+                nextMap={REPORT_NEXT}
+                onPick={(to) => open(r.ticket_id, to)}
+              />
+            </div>
+          ))
+        )}
       </div>
-    </section>
+      {pending && (
+        <TransitionDialog
+          request={pending.request}
+          busy={busy}
+          onCancel={() => setPending(null)}
+          onConfirm={(v) => void confirm(v)}
+        />
+      )}
+    </>
   );
 }
 
@@ -174,6 +207,7 @@ function ApplicationsSection({ tenantId }: { tenantId: string }) {
   const toast = useToast();
   const [filter, setFilter] = useState('');
   const [items, setItems] = useState<EgovApplication[] | null>(null);
+  const { pending, setPending, busy, setBusy, open } = usePendingTransition();
 
   const load = useCallback(() => {
     setItems(null);
@@ -188,77 +222,77 @@ function ApplicationsSection({ tenantId }: { tenantId: string }) {
 
   useEffect(load, [load]);
 
-  const transition = async (stubId: string, to: string) => {
-    const note = promptNote(to);
-    if (note === null) return;
+  const confirm = async (values: { note?: string }) => {
+    if (!pending) return;
+    setBusy(true);
     try {
-      await AdminApi.applicationTransition(tenantId, stubId, { to, ...(note ? { note } : {}) });
-      toast.push(`${stubId} → ${to.replace(/_/g, ' ')}`);
+      await AdminApi.applicationTransition(tenantId, pending.id, {
+        to: pending.to,
+        ...(values.note ? { note: values.note } : {}),
+      });
+      toast.push(`Status updated → ${pending.to.replace(/_/g, ' ')}`);
+      setPending(null);
       load();
     } catch (err) {
       toast.push(errorMessage(err), 'error');
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <section className="card">
-      <div className="card-head">
-        <h3 className="card-title">eGov applications</h3>
+    <>
+      <div className="save-bar" style={{ marginBottom: 14 }}>
         <FilterChips statuses={APPLICATION_STATUSES} value={filter} onChange={setFilter} />
       </div>
-      <div className="table-scroll">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Stub</th>
-              <th>Service</th>
-              <th>Group</th>
-              <th>Total fees</th>
-              <th>Window</th>
-              <th>Ready ETA</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!items ? (
-              <tr>
-                <td colSpan={8} className="empty">
-                  Loading…
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="empty">
-                  No applications{filter ? ` with status ${filter}` : ''}.
-                </td>
-              </tr>
-            ) : (
-              items.map((a) => (
-                <tr key={a.stub_id}>
-                  <td className="mono">{a.stub_id}</td>
-                  <td>{a.service?.name}</td>
-                  <td>{a.service?.group}</td>
-                  <td>{a.fees ? a.fees.total.toLocaleString() : '—'}</td>
-                  <td>{a.window_no ?? '—'}</td>
-                  <td className="muted">{fmt(a.ready_eta)}</td>
-                  <td>
-                    <StatusChip status={a.status} />
-                  </td>
-                  <td>
-                    <TransitionButtons
-                      status={a.status}
-                      nextMap={APPLICATION_NEXT}
-                      onTransition={(to) => void transition(a.stub_id, to)}
-                    />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="table-card">
+        <div className="trow trow-head cols-apps">
+          <span>Stub</span>
+          <span>Service</span>
+          <span>Fees</span>
+          <span>Window</span>
+          <span>Status</span>
+          <span style={{ textAlign: 'right' }}>Action</span>
+        </div>
+        {!items ? (
+          <div className="empty">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="empty">No applications{filter ? ` with status ${filter.replace(/_/g, ' ')}` : ''}.</div>
+        ) : (
+          items.map((a) => (
+            <div key={a.stub_id} className="trow cols-apps">
+              <span className="cell-mono-id">{a.stub_id}</span>
+              <span>
+                <span className="cell-name" style={{ fontSize: 13 }}>
+                  {a.service?.name}
+                </span>
+                <span className="cell-meta" style={{ display: 'block', fontSize: 11.5 }}>
+                  {a.service?.group}
+                </span>
+              </span>
+              <span className="cell-mono-id">{a.fees ? `₱${a.fees.total.toLocaleString()}` : '—'}</span>
+              <span className="cell-meta">{a.window_no ?? '—'}</span>
+              <span>
+                <StatusChip status={a.status} />
+              </span>
+              <TransitionButtons
+                status={a.status}
+                nextMap={APPLICATION_NEXT}
+                onPick={(to) => open(a.stub_id, to)}
+              />
+            </div>
+          ))
+        )}
       </div>
-    </section>
+      {pending && (
+        <TransitionDialog
+          request={pending.request}
+          busy={busy}
+          onCancel={() => setPending(null)}
+          onConfirm={(v) => void confirm(v)}
+        />
+      )}
+    </>
   );
 }
 
@@ -266,6 +300,7 @@ function AssistanceSection({ tenantId }: { tenantId: string }) {
   const toast = useToast();
   const [filter, setFilter] = useState('');
   const [items, setItems] = useState<AssistanceRequest[] | null>(null);
+  const { pending, setPending, busy, setBusy, open } = usePendingTransition();
 
   const load = useCallback(() => {
     setItems(null);
@@ -280,101 +315,149 @@ function AssistanceSection({ tenantId }: { tenantId: string }) {
 
   useEffect(load, [load]);
 
-  const transition = async (requestId: string, to: string) => {
-    const body: { to: string; note?: string; claim_schedule?: string; claim_location?: string } = { to };
-    if (to === 'APPROVED') {
-      const schedule = window.prompt('Claim schedule (YYYY-MM-DD):', '');
-      if (!schedule) return;
-      const location = window.prompt('Claim location:', '');
-      if (!location) return;
-      body.claim_schedule = schedule.trim();
-      body.claim_location = location.trim();
+  const confirm = async (values: {
+    note?: string;
+    claim_schedule?: string;
+    claim_location?: string;
+  }) => {
+    if (!pending) return;
+    if (pending.to === 'APPROVED' && (!values.claim_schedule || !values.claim_location)) {
+      toast.push('Claim date and location are required to approve', 'error');
+      return;
     }
-    const note = promptNote(to);
-    if (note === null) return;
-    if (note) body.note = note;
+    setBusy(true);
     try {
-      await AdminApi.assistanceTransition(tenantId, requestId, body);
-      toast.push(`${requestId} → ${to.replace(/_/g, ' ')}`);
+      await AdminApi.assistanceTransition(tenantId, pending.id, {
+        to: pending.to,
+        ...(values.note ? { note: values.note } : {}),
+        ...(values.claim_schedule ? { claim_schedule: values.claim_schedule } : {}),
+        ...(values.claim_location ? { claim_location: values.claim_location } : {}),
+      });
+      toast.push(`Status updated → ${pending.to.replace(/_/g, ' ')}`);
+      setPending(null);
       load();
     } catch (err) {
       toast.push(errorMessage(err), 'error');
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <section className="card">
-      <div className="card-head">
-        <h3 className="card-title">Assistance requests</h3>
+    <>
+      <div className="save-bar" style={{ marginBottom: 14 }}>
         <FilterChips statuses={ASSISTANCE_STATUSES} value={filter} onChange={setFilter} />
       </div>
-      <div className="table-scroll">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Request</th>
-              <th>Program</th>
-              <th>Office</th>
-              <th>Checklist</th>
-              <th>Claim</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!items ? (
-              <tr>
-                <td colSpan={7} className="empty">
-                  Loading…
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="empty">
-                  No assistance requests{filter ? ` with status ${filter}` : ''}.
-                </td>
-              </tr>
-            ) : (
-              items.map((a) => {
-                const provided = a.checklist?.filter((c) => c.provided).length ?? 0;
-                return (
-                  <tr key={a.request_id}>
-                    <td className="mono">{a.request_id}</td>
-                    <td>{a.program?.name}</td>
-                    <td>{a.office}</td>
-                    <td>
-                      {provided}/{a.checklist?.length ?? 0} provided
-                    </td>
-                    <td className="muted">
-                      {a.claim_schedule ? `${a.claim_schedule} · ${a.claim_location ?? ''}` : '—'}
-                    </td>
-                    <td>
-                      <StatusChip status={a.status} />
-                    </td>
-                    <td>
-                      <TransitionButtons
-                        status={a.status}
-                        nextMap={ASSISTANCE_NEXT}
-                        onTransition={(to) => void transition(a.request_id, to)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+      <div className="table-card">
+        <div className="trow trow-head cols-assist">
+          <span>Request</span>
+          <span>Program</span>
+          <span>Office</span>
+          <span>Claim</span>
+          <span>Status</span>
+          <span style={{ textAlign: 'right' }}>Action</span>
+        </div>
+        {!items ? (
+          <div className="empty">Loading…</div>
+        ) : items.length === 0 ? (
+          <div className="empty">
+            No assistance requests{filter ? ` with status ${filter.replace(/_/g, ' ')}` : ''}.
+          </div>
+        ) : (
+          items.map((a) => {
+            const provided = a.checklist?.filter((c) => c.provided).length ?? 0;
+            return (
+              <div key={a.request_id} className="trow cols-assist">
+                <span className="cell-mono-id">{a.request_id}</span>
+                <span>
+                  <span className="cell-name" style={{ fontSize: 13 }}>
+                    {a.program?.name}
+                  </span>
+                  <span className="cell-meta" style={{ display: 'block', fontSize: 11.5 }}>
+                    {provided}/{a.checklist?.length ?? 0} requirements provided
+                  </span>
+                </span>
+                <span className="cell-meta cell-clip">{a.office}</span>
+                <span className="cell-mono-time">
+                  {a.claim_schedule ? `${fmtDate(a.claim_schedule)} · ${a.claim_location ?? ''}` : '—'}
+                </span>
+                <span>
+                  <StatusChip status={a.status} />
+                </span>
+                <TransitionButtons
+                  status={a.status}
+                  nextMap={ASSISTANCE_NEXT}
+                  onPick={(to) => open(a.request_id, to, to === 'APPROVED')}
+                />
+              </div>
+            );
+          })
+        )}
       </div>
-    </section>
+      {pending && (
+        <TransitionDialog
+          request={pending.request}
+          busy={busy}
+          onCancel={() => setPending(null)}
+          onConfirm={(v) => void confirm(v)}
+        />
+      )}
+    </>
   );
 }
 
+const DOMAINS = [
+  { key: 'reports', label: '311 Reports' },
+  { key: 'apps', label: 'e-Gov Applications' },
+  { key: 'assist', label: 'Assistance' },
+] as const;
+
+type DomainKey = (typeof DOMAINS)[number]['key'];
+
 export default function OperationsTab({ tenantId }: { tenantId: string }) {
+  const [domain, setDomain] = useState<DomainKey>('reports');
+  const [counts, setCounts] = useState<Record<DomainKey, number | null>>({
+    reports: null,
+    apps: null,
+    assist: null,
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    AdminApi.reports(tenantId)
+      .then((r) => !cancelled && setCounts((c) => ({ ...c, reports: r.length })))
+      .catch(() => undefined);
+    AdminApi.applications(tenantId)
+      .then((r) => !cancelled && setCounts((c) => ({ ...c, apps: r.length })))
+      .catch(() => undefined);
+    AdminApi.assistance(tenantId)
+      .then((r) => !cancelled && setCounts((c) => ({ ...c, assist: r.length })))
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [tenantId]);
+
   return (
-    <div className="stack">
-      <ReportsSection tenantId={tenantId} />
-      <ApplicationsSection tenantId={tenantId} />
-      <AssistanceSection tenantId={tenantId} />
+    <div>
+      <div className="seg-row">
+        {DOMAINS.map((d) => (
+          <button
+            key={d.key}
+            className={domain === d.key ? 'seg-pill active' : 'seg-pill'}
+            data-ops-domain={d.key}
+            onClick={() => setDomain(d.key)}
+          >
+            {d.label}
+            {counts[d.key] !== null && <span className="seg-count">{counts[d.key]}</span>}
+          </button>
+        ))}
+      </div>
+      <div className="tab-pane" key={domain}>
+        {domain === 'reports' && <ReportsSection tenantId={tenantId} />}
+        {domain === 'apps' && <ApplicationsSection tenantId={tenantId} />}
+        {domain === 'assist' && <AssistanceSection tenantId={tenantId} />}
+      </div>
     </div>
   );
 }

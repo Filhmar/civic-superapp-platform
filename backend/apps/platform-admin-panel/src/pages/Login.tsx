@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminApi, errorMessage, setTokens } from '../lib/api';
+import { Icon, LogoMark } from '../components/Icons';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,19 +27,23 @@ export default function Login() {
   };
 
   return (
-    <div className="center-screen login-screen">
-      <form className="card login-card" onSubmit={(e) => void submit(e)}>
+    <div className="login-screen">
+      <div className="login-grid-overlay" aria-hidden />
+      <form className="login-card" onSubmit={(e) => void submit(e)}>
         <div className="login-brand">
-          <span className="sidebar-mark" aria-hidden>
-            ◆
+          <span className="login-tile" aria-hidden>
+            <LogoMark size={19} />
           </span>
-          <h1 className="login-title">Civic Platform Console</h1>
+          <div>
+            <h1 className="login-title">Civic Platform Console</h1>
+            <div className="login-sub">Operator administration</div>
+          </div>
         </div>
-        <p className="muted login-sub">Sign in with your administrator account</p>
-        <label className="field">
+        <div className="login-divider" />
+        <label className="login-field">
           <span className="field-label">Email</span>
           <input
-            className="input"
+            className="login-input"
             type="email"
             name="email"
             autoComplete="username"
@@ -47,10 +52,10 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </label>
-        <label className="field">
+        <label className="login-field">
           <span className="field-label">Password</span>
           <input
-            className="input"
+            className="login-input"
             type="password"
             name="password"
             autoComplete="current-password"
@@ -59,10 +64,16 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        {error && <div className="form-error">{error}</div>}
-        <button className="btn btn-primary btn-block" type="submit" disabled={busy}>
+        {error && (
+          <div className="form-error">
+            <Icon name="alert" />
+            <span>{error}</span>
+          </div>
+        )}
+        <button className="login-submit" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
+        <div className="login-caption">Protected area · authorized operators only</div>
       </form>
     </div>
   );

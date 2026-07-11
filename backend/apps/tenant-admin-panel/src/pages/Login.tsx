@@ -26,10 +26,16 @@ export function Login() {
 
   return (
     <div className="center-screen login-screen">
-      <form className="panel login-panel" onSubmit={(e) => void handleSubmit(e)}>
-        <div className="login-mark">◆</div>
-        <h1 className="login-title">City Console</h1>
-        <p className="login-sub">Sign in with your LGU administrator account</p>
+      <div className="login-grid-overlay" aria-hidden />
+      <form className="login-panel" onSubmit={(e) => void handleSubmit(e)}>
+        <div className="login-brand">
+          <div className="login-mark">◆</div>
+          <div>
+            <h1 className="login-title">City Console</h1>
+            <p className="login-sub">LGU administration</p>
+          </div>
+        </div>
+        <div className="login-divider" />
         <label>
           <span className="field-label">Email</span>
           <input
@@ -60,6 +66,7 @@ export function Login() {
         <button className="btn btn-primary btn-block" type="submit" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
+        <div className="login-caption">Protected area · authorized LGU administrators only</div>
       </form>
     </div>
   );

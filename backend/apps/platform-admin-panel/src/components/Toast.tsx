@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { Icon } from './Icons';
 
 type ToastKind = 'success' | 'error';
 
@@ -26,9 +27,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const push = useCallback((message: string, kind: ToastKind = 'success') => {
     const id = ++nextId.current;
     setToasts((ts) => [...ts, { id, message, kind }]);
-    window.setTimeout(() => {
-      setToasts((ts) => ts.filter((t) => t.id !== id));
-    }, 4500);
+    window.setTimeout(
+      () => {
+        setToasts((ts) => ts.filter((t) => t.id !== id));
+      },
+      kind === 'error' ? 4200 : 2200,
+    );
   }, []);
 
   return (
@@ -37,6 +41,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div className="toast-stack" aria-live="polite">
         {toasts.map((t) => (
           <div key={t.id} className={`toast toast-${t.kind}`}>
+            <span className="toast-tile">
+              <Icon name={t.kind === 'error' ? 'alert' : 'check'} strokeWidth={3} />
+            </span>
             {t.message}
           </div>
         ))}

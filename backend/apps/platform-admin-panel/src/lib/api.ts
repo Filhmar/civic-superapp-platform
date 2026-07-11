@@ -165,6 +165,13 @@ export const AdminApi = {
   me: () => api<Admin>('/admin/me'),
 
   tenants: () => api<Tenant[]>('/admin/tenants'),
+  createTenant: (body: {
+    id: string;
+    kind: string;
+    bundle_id: string;
+    name: string;
+    config: Record<string, unknown>;
+  }) => api<{ id: string }>('/admin/tenants', { method: 'POST', body }),
   config: (tenantId: string) => api<ConfigResponse>(`/admin/tenants/${tenantId}/config`),
   configHistory: (tenantId: string) => api<ConfigHistoryEntry[]>(`/admin/tenants/${tenantId}/config/history`),
   patchBranding: (tenantId: string, branding: Record<string, unknown>) =>
