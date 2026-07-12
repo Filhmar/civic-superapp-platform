@@ -10,24 +10,16 @@ import { Pressable, Text, View } from "react-native";
 
 import { useToast } from "@/components/ui/toast";
 import { palette } from "@/constants/colors";
-import {
-  MODULE_ROUTES,
-  TONE_COLORS,
-  type ModuleTone,
-} from "@/constants/modules";
+import { MODULE_ROUTES } from "@/constants/modules";
 import { tileShadow } from "@/constants/shadows";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
-import { deriveModuleTiles } from "@/lib/modules";
-
-function toneColors(
-  tone: ModuleTone,
-  primary: string,
-  tint: string,
-): { bg: string; icon: string } {
-  if (tone === "brand") return { bg: tint, icon: primary };
-  return TONE_COLORS[tone];
-}
+import { useThemeMode } from "@/contexts/theme-context";
+import {
+  DISABLED_TILE,
+  deriveModuleTiles,
+  resolveToneColors,
+} from "@/lib/modules";
 
 function Tile({
   label,
@@ -55,7 +47,7 @@ function Tile({
       className="w-[23%] items-center py-1.5 active:opacity-70"
     >
       <View
-        style={[tileShadow, { backgroundColor: bg, opacity: dimmed ? 0.45 : 1 }]}
+        style={[tileShadow, { backgroundColor: bg }]}
         className="h-[52px] w-[52px] items-center justify-center rounded-2xl"
       >
         <Icon size={22} color={iconColor} strokeWidth={1.9} />
@@ -63,15 +55,17 @@ function Tile({
       <View className="mt-[7px] flex-row items-center gap-1">
         <Text
           className={`text-[10.5px] font-semibold text-fg dark:text-fg-dark ${
-            dimmed ? "opacity-50" : ""
+            dimmed ? "opacity-60" : ""
           }`}
           numberOfLines={1}
         >
           {label}
         </Text>
         {dimmed && (
-          <View className="rounded-full bg-line px-1.5 py-0.5">
-            <Text className="text-[8px] font-bold text-fg-2">Soon</Text>
+          <View className="rounded-full bg-line px-1.5 py-0.5 dark:bg-line-dark">
+            <Text className="text-[8px] font-bold text-fg-2 dark:text-fg-2-dark">
+              Soon
+            </Text>
           </View>
         )}
       </View>
@@ -84,6 +78,7 @@ export function ModuleGrid() {
   const toast = useToast();
   const { config } = useTenantConfig();
   const { status } = useAuth();
+  const { scheme } = useThemeMode();
 
   const primary = config?.brand.colors.primary ?? palette.brand;
   const tint = config?.brand.colors.tint ?? palette.tint;
@@ -102,7 +97,9 @@ export function ModuleGrid() {
   return (
     <View className="flex-row flex-wrap justify-between">
       {tiles.map((tile) => {
-        const colors = toneColors(tile.tone, primary, tint);
+        const colors = tile.enabled
+          ? resolveToneColors(tile.tone, scheme, primary, tint)
+          : DISABLED_TILE[scheme];
         return (
           <Tile
             key={tile.key}
@@ -119,15 +116,15 @@ export function ModuleGrid() {
       {/* Platform utility tiles (same for every tenant) */}
       <Tile
         label="Hotlines"
-        bg={TONE_COLORS.blue.bg}
-        iconColor={TONE_COLORS.blue.icon}
+        bg={resolveToneColors("blue", scheme, primary, tint).bg}
+        iconColor={resolveToneColors("blue", scheme, primary, tint).icon}
         icon={PhoneCall}
         onPress={() => router.push("/hotlines" as never)}
       />
       <Tile
         label="Digital ID"
-        bg={tint}
-        iconColor={primary}
+        bg={resolveToneColors("brand", scheme, primary, tint).bg}
+        iconColor={resolveToneColors("brand", scheme, primary, tint).icon}
         icon={IdCard}
         onPress={() =>
           status === "resident"

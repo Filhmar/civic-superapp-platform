@@ -96,14 +96,14 @@ export default function Login() {
         <View
           className="items-center justify-center rounded-full"
           style={{
-            width: 116,
-            height: 116,
+            width: 148,
+            height: 148,
             backgroundColor: "rgba(255,255,255,0.16)",
           }}
         >
           <AssetImage
             uri={config?.brand.logo.assets.seal}
-            style={{ width: 84, height: 84, borderRadius: 42 }}
+            style={{ width: 122, height: 122, borderRadius: 61 }}
             resizeMode="contain"
             accessibilityLabel="City seal"
             fallback={

@@ -23,6 +23,7 @@ import { primaryGlow, searchShadow, sosGlow } from "@/constants/shadows";
 import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import { useUnreadCountQuery } from "@/hooks/queries/use-notifications";
+import { isRenderableAssetUrl } from "@/lib/asset-url";
 import { lightenHex } from "@/lib/theme";
 
 function greetingForHour(hour: number): string {
@@ -69,6 +70,10 @@ export default function Home() {
   const primaryDark = brand.colors.primaryDark;
   const displayName = isResident ? (user?.name ?? "Resident") : "Guest";
   const seal = brand.logo.assets.seal;
+  // Decorative watermark = the admin-set watermark asset ONLY. The seal is a
+  // logo, not a watermark — opaque seal art shows as an ugly square patch.
+  const watermark = brand.logo.assets.watermark;
+  const hasWatermark = isRenderableAssetUrl(watermark);
 
   return (
     <View className="flex-1 bg-bg dark:bg-bg-dark">
@@ -96,26 +101,28 @@ export default function Home() {
           }}
         >
           {/* Watermark */}
-          <View
-            pointerEvents="none"
-            style={{ position: "absolute", right: -20, top: -10, opacity: 0.14 }}
-          >
-            <AssetImage
-              uri={seal}
-              style={{ width: 150, height: 150 }}
-              resizeMode="contain"
-            />
-          </View>
+          {hasWatermark && (
+            <View
+              pointerEvents="none"
+              style={{ position: "absolute", right: -20, top: -10, opacity: 0.14 }}
+            >
+              <AssetImage
+                uri={watermark}
+                style={{ width: 150, height: 150 }}
+                resizeMode="contain"
+              />
+            </View>
+          )}
 
           <View className="flex-row items-center gap-3">
             {/* Logo badge */}
             <View
-              className="h-10 w-10 items-center justify-center overflow-hidden rounded-xl"
+              className="h-11 w-11 items-center justify-center overflow-hidden rounded-xl"
               style={{ backgroundColor: "rgba(255,255,255,0.14)" }}
             >
               <AssetImage
                 uri={seal}
-                style={{ width: 30, height: 30 }}
+                style={{ width: 38, height: 38 }}
                 resizeMode="contain"
                 fallback={
                   <Text className="text-sm font-extrabold text-white">
@@ -193,7 +200,7 @@ export default function Home() {
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push("/sos" as never)}
-          style={sosGlow}
+          style={[sosGlow, { borderRadius: 18, backgroundColor: "#C62828" }]}
           className="mx-5 mt-5 active:opacity-90"
         >
           <GradientBox
@@ -237,21 +244,23 @@ export default function Home() {
             className="mx-5 mt-4"
             style={{ borderRadius: 18, padding: 14, paddingHorizontal: 16 }}
           >
-            <View
-              pointerEvents="none"
-              style={{
-                position: "absolute",
-                right: -16,
-                bottom: -18,
-                opacity: 0.14,
-              }}
-            >
-              <AssetImage
-                uri={seal}
-                style={{ width: 110, height: 110 }}
-                resizeMode="contain"
-              />
-            </View>
+            {hasWatermark && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: "absolute",
+                  right: -16,
+                  bottom: -18,
+                  opacity: 0.14,
+                }}
+              >
+                <AssetImage
+                  uri={watermark}
+                  style={{ width: 110, height: 110 }}
+                  resizeMode="contain"
+                />
+              </View>
+            )}
             <View className="flex-row items-center gap-3.5">
               <View
                 className="h-16 w-16 items-center justify-center overflow-hidden rounded-full"
@@ -353,7 +362,10 @@ export default function Home() {
                 ? router.push("/digital-id")
                 : router.push("/(auth)/login")
             }
-            style={primaryGlow(primary)}
+            style={[
+              primaryGlow(primary),
+              { borderRadius: 22, backgroundColor: primary },
+            ]}
             className="mx-5 mt-6 active:opacity-90"
           >
             <GradientBox
@@ -365,21 +377,23 @@ export default function Home() {
               end={{ x: 1, y: 0.6 }}
               style={{ borderRadius: 22, padding: 20, minHeight: 148 }}
             >
-              <View
-                pointerEvents="none"
-                style={{
-                  position: "absolute",
-                  right: -10,
-                  top: -6,
-                  opacity: 0.18,
-                }}
-              >
-                <AssetImage
-                  uri={seal}
-                  style={{ width: 130, height: 130 }}
-                  resizeMode="contain"
-                />
-              </View>
+              {hasWatermark && (
+                <View
+                  pointerEvents="none"
+                  style={{
+                    position: "absolute",
+                    right: -10,
+                    top: -6,
+                    opacity: 0.18,
+                  }}
+                >
+                  <AssetImage
+                    uri={watermark}
+                    style={{ width: 130, height: 130 }}
+                    resizeMode="contain"
+                  />
+                </View>
+              )}
               <Text className="text-[10px] font-extrabold uppercase tracking-kicker text-white/70">
                 Digital City ID
               </Text>

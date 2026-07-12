@@ -36,7 +36,7 @@ export default function NotificationsScreen() {
               disabled={markAll.isPending}
               className="px-2 py-1"
             >
-              <Text className="text-xs font-semibold text-brand">
+              <Text className="text-xs font-semibold text-white">
                 Mark all read
               </Text>
             </Pressable>

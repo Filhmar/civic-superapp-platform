@@ -70,8 +70,8 @@ export default function PlaceDetail() {
             >
               <Heart
                 size={22}
-                color={place.favorite ? "#E11D48" : palette["fg-2"]}
-                fill={place.favorite ? "#E11D48" : "transparent"}
+                color={place.favorite ? "#FF8FA3" : "#FFFFFF"}
+                fill={place.favorite ? "#FF8FA3" : "transparent"}
               />
             </Pressable>
           ) : undefined

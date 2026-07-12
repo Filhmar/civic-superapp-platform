@@ -92,6 +92,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     "expo-router",
     [
+      // Immersive mode: system nav bar hidden, swipe from the bottom edge
+      // reveals it transiently. Behavior must be set here (build-time) — the
+      // runtime setBehaviorAsync is a no-op with edgeToEdgeEnabled.
+      "expo-navigation-bar",
+      {
+        visibility: "hidden",
+        behavior: "overlay-swipe",
+      },
+    ],
+    [
       "expo-splash-screen",
       {
         image: "./assets/icons/icon-512.png",

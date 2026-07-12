@@ -25,14 +25,32 @@ import type { ModuleKey } from "@/types/config";
  */
 export type ModuleTone = "brand" | "red" | "gold" | "blue" | "purple";
 
+export interface ToneChip {
+  bg: string;
+  icon: string;
+}
+
+/** Every chip has a dark-mode sibling (single-palette theming rule). */
 export const TONE_COLORS: Record<
   Exclude<ModuleTone, "brand">,
-  { bg: string; icon: string }
+  { light: ToneChip; dark: ToneChip }
 > = {
-  red: { bg: "#FDEDEC", icon: "#E53935" },
-  gold: { bg: "#FEF3D9", icon: "#D4A017" },
-  blue: { bg: "#E8F1FA", icon: "#2274A5" },
-  purple: { bg: "#F1ECFA", icon: "#7E57C2" },
+  red: {
+    light: { bg: "#FDEDEC", icon: "#E53935" },
+    dark: { bg: "#3B1D1E", icon: "#FF8A80" },
+  },
+  gold: {
+    light: { bg: "#FEF3D9", icon: "#D4A017" },
+    dark: { bg: "#3A2F17", icon: "#FFD54F" },
+  },
+  blue: {
+    light: { bg: "#E8F1FA", icon: "#2274A5" },
+    dark: { bg: "#16293B", icon: "#82B6DD" },
+  },
+  purple: {
+    light: { bg: "#F1ECFA", icon: "#7E57C2" },
+    dark: { bg: "#2A2140", icon: "#B39DDB" },
+  },
 };
 
 export interface ModuleMeta {

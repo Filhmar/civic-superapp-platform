@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
+  StyleSheet,
   Text,
   useWindowDimensions,
   View,
@@ -15,6 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AssetImage } from "@/components/ui/asset-image";
 import { AppText } from "@/components/ui/typography";
 import { palette } from "@/constants/colors";
+import { isRenderableAssetUrl } from "@/lib/asset-url";
 import { primaryGlow } from "@/constants/shadows";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import type { OnboardingSlide } from "@/types/config";
@@ -29,8 +31,9 @@ export default function Onboarding() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  // Photo area = viewport minus the bottom sheet (~280px incl. insets).
-  const slideHeight = Math.max(height - 300, 320);
+  // Photo fills the whole screen; the sheet floats over it. Its measured
+  // height keeps the glass circle centered in the visible photo area.
+  const [sheetHeight, setSheetHeight] = useState(300);
   const { config } = useTenantConfig();
   const listRef = useRef<FlatList<OnboardingSlide>>(null);
   const [index, setIndex] = useState(0);
@@ -71,8 +74,10 @@ export default function Onboarding() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: activeSlide?.bg }}>
-      {/* Slides: photo (when a real asset) under a duotone brand overlay */}
+      {/* Slides: full-screen photo (when a real asset) under a duotone brand
+          overlay; the bottom sheet floats above it. */}
       <FlatList
+        style={StyleSheet.absoluteFill}
         ref={listRef}
         data={slides}
         keyExtractor={(item) => item.title}
@@ -83,31 +88,37 @@ export default function Onboarding() {
         viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
         getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
         renderItem={({ item }) => (
-          <View style={{ width, height: slideHeight, backgroundColor: item.bg }}>
-            <AssetImage
-              uri={item.image}
-              style={{
-                position: "absolute",
-                width,
-                height: "100%",
-                opacity: 0.35,
-              }}
-              resizeMode="cover"
-              accessibilityLabel={item.title}
-            />
-            {/* Glass circle mark */}
-            <View className="flex-1 items-center justify-center">
+          <View style={{ width, height, backgroundColor: item.bg }}>
+            {/* Decorative photo — absent asset renders nothing, not a placeholder */}
+            {isRenderableAssetUrl(item.image) && (
+              <AssetImage
+                uri={item.image}
+                style={{
+                  position: "absolute",
+                  width,
+                  height,
+                  opacity: 0.35,
+                }}
+                resizeMode="cover"
+                accessibilityLabel={item.title}
+              />
+            )}
+            {/* Glass circle mark — centered in the area above the sheet */}
+            <View
+              className="flex-1 items-center justify-center"
+              style={{ paddingBottom: sheetHeight }}
+            >
               <View
                 className="items-center justify-center rounded-full"
                 style={{
-                  width: 150,
-                  height: 150,
+                  width: 190,
+                  height: 190,
                   backgroundColor: "rgba(255,255,255,0.18)",
                 }}
               >
                 <AssetImage
                   uri={seal}
-                  style={{ width: 96, height: 96, borderRadius: 48 }}
+                  style={{ width: 156, height: 156, borderRadius: 78 }}
                   resizeMode="contain"
                   fallback={
                     <Text className="text-3xl font-extrabold text-white">
@@ -131,9 +142,10 @@ export default function Onboarding() {
         <Text className="text-[13px] font-semibold text-white">Skip</Text>
       </Pressable>
 
-      {/* Bottom white sheet */}
+      {/* Bottom white sheet — floats over the full-bleed photo */}
       <View
-        className="bg-surface px-6 pt-7 dark:bg-surface-dark"
+        onLayout={(e) => setSheetHeight(Math.round(e.nativeEvent.layout.height))}
+        className="absolute inset-x-0 bottom-0 bg-surface px-6 pt-7 dark:bg-surface-dark"
         style={{
           borderTopLeftRadius: 28,
           borderTopRightRadius: 28,

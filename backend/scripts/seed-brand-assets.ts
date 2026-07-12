@@ -10,10 +10,18 @@
  * running. Run: npx ts-node -P tsconfig.scripts.json scripts/seed-brand-assets.ts
  */
 import "dotenv/config";
+import { setDefaultResultOrder } from "node:dns";
 import axios from "axios";
 import sharp from "sharp";
 
-const BASE = process.env.SEED_BASE_URL ?? "http://localhost:3005/v1";
+// Host-side runs on Windows: Node ≥17 resolves localhost to ::1 first while
+// docker port maps bind 127.0.0.1 only. Connect via 127.0.0.1 but preserve
+// the original Host header — the S3 presigned signature covers Host.
+setDefaultResultOrder("ipv4first");
+const ipv4 = (url: string): string =>
+  url.replace(/^(https?:\/\/)localhost([:/])/, "$1127.0.0.1$2");
+
+const BASE = ipv4(process.env.SEED_BASE_URL ?? "http://localhost:3005/v1");
 const ADMIN_EMAIL = process.env.ADMIN_SEED_EMAIL ?? "admin@platform.local";
 const ADMIN_PASSWORD = process.env.ADMIN_SEED_PASSWORD ?? "PlatformAdmin!2026";
 const BUNDLES = ["com.dasmarinas.app", "com.sorsogon.app", "com.legazpi.app"];
@@ -72,8 +80,9 @@ async function main(): Promise<void> {
       tenant_id: tenantId,
     });
     const { media_id, upload_url } = pre.data.data as { media_id: string; upload_url: string };
-    const put = await axios.put(upload_url, bytes, {
-      headers: { "Content-Type": contentType },
+    const signedHost = new URL(upload_url).host;
+    const put = await axios.put(ipv4(upload_url), bytes, {
+      headers: { "Content-Type": contentType, Host: signedHost },
       validateStatus: () => true,
       maxBodyLength: Infinity,
     });

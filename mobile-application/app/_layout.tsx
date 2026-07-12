@@ -14,10 +14,12 @@ import {
   ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import * as NavigationBar from "expo-navigation-bar";
 import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { AppState, Platform } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 
@@ -84,6 +86,19 @@ function ThemedRoot() {
       router.replace("/(auth)/login");
     });
   }, [router]);
+
+  // Immersive mode: keep the system nav bar hidden (Android only). The system
+  // re-shows it after some interactions (keyboard, app switch) — re-hide on
+  // foreground. Swipe-up still reveals it transiently (behavior set at build
+  // time in app.config.ts; runtime setBehaviorAsync is a no-op edge-to-edge).
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    void NavigationBar.setVisibilityAsync("hidden");
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") void NavigationBar.setVisibilityAsync("hidden");
+    });
+    return () => sub.remove();
+  }, []);
 
   const navTheme = {
     ...(isDark ? DarkTheme : DefaultTheme),
