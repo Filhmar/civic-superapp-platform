@@ -55,6 +55,11 @@ export class IdentityController {
     return this.profile.update(p.tenant, p.data.user_id, p.data.update);
   }
 
+  @MessagePattern({ cmd: 'identity.phone.resolve' })
+  resolvePhone(@Payload() p: TenantScoped<{ user_id: string }>) {
+    return this.profile.resolvePhone(p.tenant, p.data.user_id);
+  }
+
   @MessagePattern({ cmd: 'identity.digitalid.get' })
   digitalIdGet(@Payload() p: TenantScoped<{ user_id: string }>) {
     return this.digitalId.get(p.tenant, p.data.user_id);
