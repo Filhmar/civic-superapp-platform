@@ -44,6 +44,10 @@ apiClient.interceptors.request.use(async (config) => {
   const tenantId = getTenantId();
   if (tenantId) config.headers["X-Tenant-ID"] = tenantId;
 
+  // Dev-only: skip ngrok's free-tier browser interstitial when the gateway is
+  // tunneled to a physical device. Stripped from production builds (__DEV__).
+  if (__DEV__) config.headers["ngrok-skip-browser-warning"] = "true";
+
   if (!isPublicPath(config.url)) {
     const token = await tokenRefreshManager.refreshIfNeeded();
     if (token) config.headers.Authorization = `Bearer ${token}`;
