@@ -63,6 +63,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: variant.easSlug || "civic-app",
   ...(variant.easOwner ? { owner: variant.easOwner } : {}),
   version: "1.0.0",
+  // EAS Update: channels in eas.json require a runtimeVersion. Same policy for
+  // every tenant (code, not tenant data); the per-tenant updates URL is derived
+  // automatically from extra.eas.projectId.
+  runtimeVersion: { policy: "appVersion" },
   orientation: "portrait",
   icon: "./assets/icons/icon-512.png",
   scheme: variantKey,
