@@ -24,6 +24,8 @@ export class TenancyService {
       ticketPrefix: tenant.ticketPrefix,
       residentIdPrefix: tenant.residentIdPrefix,
       modules: config.modules as Record<ModuleName, boolean>,
+      // Fail-closed default for configs stored before this field existed.
+      pushChannel: config.integrations?.push ?? 'none',
       configVersion: latest.version,
     };
   }
