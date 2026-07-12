@@ -17,9 +17,9 @@ export class UsappDriver {
   constructor(private readonly config: AppConfigService) {}
 
   async send(phone: string, content: string): Promise<void> {
-    const base = this.config.require('USAPP_BASE_URL').replace(/\/+$/, '');
     let response: Response;
     try {
+      const base = this.config.require('USAPP_BASE_URL').replace(/\/+$/, '');
       response = await fetch(`${base}/api/v1/messages/send`, {
         method: 'POST',
         headers: {

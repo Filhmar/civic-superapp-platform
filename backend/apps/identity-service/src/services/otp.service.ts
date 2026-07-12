@@ -45,7 +45,7 @@ export class OtpService {
         expiresAt: new Date(Date.now() + expiryMinutes * 60_000),
       },
     });
-    const isDev = this.config.get('NODE_ENV') !== 'production';
+    const isDev = ['development', 'test'].includes(this.config.get('NODE_ENV'));
     return {
       requested: true,
       expires_in_seconds: expiryMinutes * 60,
