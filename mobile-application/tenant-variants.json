@@ -1,5 +1,23 @@
 {
-  "dasmarinas": { "bundleId": "com.dasmarinas.app", "appName": "MyDasma" },
-  "sorsogon": { "bundleId": "com.sorsogon.app", "appName": "MySorsogon" },
-  "legazpi": { "bundleId": "com.legazpi.app", "appName": "MyLegazpi" }
+  "dasmarinas": {
+    "bundleId": "com.dasmarinas.app",
+    "appName": "MyDasma",
+    "easProjectId": "71ed4ff4-3633-43bd-9a4b-f184412750e5",
+    "easOwner": "civic-super-applications",
+    "easSlug": "mydasma"
+  },
+  "sorsogon": {
+    "bundleId": "com.sorsogon.app",
+    "appName": "MySorsogon",
+    "easProjectId": "c6947d82-1a33-4251-b252-7dd36be71651",
+    "easOwner": "civic-super-applications",
+    "easSlug": "mysorsogoncity"
+  },
+  "legazpi": {
+    "bundleId": "com.legazpi.app",
+    "appName": "MyLegazpi",
+    "easProjectId": "53d70d18-f4c7-4ff8-b254-e4352ebd5c57",
+    "easOwner": "civic-super-applications",
+    "easSlug": "mylegazpi"
+  }
 }

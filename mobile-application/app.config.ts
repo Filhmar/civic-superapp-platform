@@ -10,7 +10,16 @@ import variants from "./tenant-variants.json";
  * back to the first variant declared in that data file (never a hardcoded
  * tenant name in code).
  */
-type TenantVariant = { bundleId: string; appName: string };
+type TenantVariant = {
+  bundleId: string;
+  appName: string;
+  /** EAS project id (Expo dashboard). Per-tenant DATA — one EAS app per bundle id. */
+  easProjectId?: string;
+  /** EAS account/owner that owns easProjectId. */
+  easOwner?: string;
+  /** EAS project slug (must match the slug of easProjectId on the Expo server). */
+  easSlug?: string;
+};
 
 const variantMap = variants as Record<string, TenantVariant>;
 const variantKey = process.env.APP_VARIANT ?? Object.keys(variantMap)[0];
@@ -22,41 +31,66 @@ if (!variant) {
   );
 }
 
+/**
+ * Build ENVIRONMENT axis (orthogonal to tenant). Same for every tenant, so it
+ * is code, not tenant data. `APP_ENV` (set per build profile in eas.json) gives
+ * dev/preview builds a suffixed applicationId + name so all three install
+ * side-by-side on one device. The suffix must be stripped back to the base
+ * bundle id for X-Tenant-ID — see lib/tenant.ts (TENANT_ID_ENV_SUFFIXES).
+ */
+const ENV_BUNDLE_SUFFIX: Record<string, string> = {
+  development: ".dev",
+  preview: ".preview",
+  production: "",
+};
+const ENV_NAME_SUFFIX: Record<string, string> = {
+  development: " (Dev)",
+  preview: " (Preview)",
+  production: "",
+};
+const appEnv = process.env.APP_ENV ?? "production";
+if (!(appEnv in ENV_BUNDLE_SUFFIX)) {
+  throw new Error(
+    `Unknown APP_ENV "${appEnv}". Expected one of: ${Object.keys(ENV_BUNDLE_SUFFIX).join(", ")}`,
+  );
+}
+const bundleId = `${variant.bundleId}${ENV_BUNDLE_SUFFIX[appEnv]}`;
+const appName = `${variant.appName}${ENV_NAME_SUFFIX[appEnv]}`;
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: variant.appName,
-  slug: "civic-app",
+  name: appName,
+  slug: variant.easSlug || "civic-app",
+  ...(variant.easOwner ? { owner: variant.easOwner } : {}),
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./assets/icons/icon-512.png",
   scheme: variantKey,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: variant.bundleId,
+    bundleIdentifier: bundleId,
   },
   android: {
-    package: variant.bundleId,
+    package: bundleId,
     adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
-      foregroundImage: "./assets/images/android-icon-foreground.png",
-      backgroundImage: "./assets/images/android-icon-background.png",
-      monochromeImage: "./assets/images/android-icon-monochrome.png",
+      foregroundImage: "./assets/icons/icon-512-maskable.png",
+      backgroundColor: "#FFFFFF",
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
   },
   web: {
     output: "static",
-    favicon: "./assets/images/favicon.png",
+    favicon: "./assets/icons/favicon-48.png",
   },
   plugins: [
     "expo-router",
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
+        image: "./assets/icons/icon-512.png",
         imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#ffffff",
@@ -71,5 +105,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     tenantBundleId: variant.bundleId,
+    ...(variant.easProjectId
+      ? { eas: { projectId: variant.easProjectId } }
+      : {}),
   },
 });

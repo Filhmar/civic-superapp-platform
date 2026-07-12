@@ -1,0 +1,45 @@
+{
+  "cli": {
+    "version": ">= 20.5.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "development",
+      "env": { "APP_ENV": "development" },
+      "android": { "buildType": "apk" }
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview",
+      "env": { "APP_ENV": "preview" },
+      "android": { "buildType": "apk" }
+    },
+    "production": {
+      "autoIncrement": true,
+      "distribution": "store",
+      "channel": "production",
+      "env": { "APP_ENV": "production" },
+      "android": { "buildType": "app-bundle" }
+    },
+
+    "dasmarinas-development": { "extends": "development", "env": { "APP_VARIANT": "dasmarinas" } },
+    "dasmarinas-preview":     { "extends": "preview",     "env": { "APP_VARIANT": "dasmarinas" } },
+    "dasmarinas-production":  { "extends": "production",  "env": { "APP_VARIANT": "dasmarinas" } },
+
+    "sorsogon-development": { "extends": "development", "env": { "APP_VARIANT": "sorsogon" } },
+    "sorsogon-preview":     { "extends": "preview",     "env": { "APP_VARIANT": "sorsogon" } },
+    "sorsogon-production":  { "extends": "production",  "env": { "APP_VARIANT": "sorsogon" } },
+
+    "legazpi-development": { "extends": "development", "env": { "APP_VARIANT": "legazpi" } },
+    "legazpi-preview":     { "extends": "preview",     "env": { "APP_VARIANT": "legazpi" } },
+    "legazpi-production":  { "extends": "production",  "env": { "APP_VARIANT": "legazpi" } }
+  },
+  "submit": {
+    "dasmarinas": {},
+    "sorsogon": {},
+    "legazpi": {}
+  }
+}
