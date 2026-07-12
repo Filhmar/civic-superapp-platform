@@ -77,3 +77,15 @@ export async function logout(): Promise<void> {
     // ignore
   }
 }
+
+/**
+ * Maps an OTP delivery error to user copy. A 409 means the number holds no Usapp
+ * account (Usapp is the OTP channel) — actionable, not a generic failure.
+ */
+export function otpErrorMessage(err: unknown): string {
+  const e = err as { status?: number; message?: string };
+  if (e?.status === 409) {
+    return "That number isn't on Usapp yet. Install Usapp, register this number, then request your code.";
+  }
+  return e?.message ?? "Something went wrong. Please try again.";
+}

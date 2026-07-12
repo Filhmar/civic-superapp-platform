@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Param, Post, Req } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { IsIn, IsString } from 'class-validator';
+import { IsIn } from 'class-validator';
 import { SERVICE_CLIENT } from '../clients/clients.module';
 import { callService } from '../clients/call-service';
 import { TenantRequest } from '../tenant/tenant.types';

@@ -14,6 +14,7 @@ const tenant: TenantContext = {
   ticketPrefix: 'TST',
   residentIdPrefix: 'TST',
   modules: {} as TenantContext['modules'],
+  pushChannel: 'none',
   configVersion: 1,
 };
 

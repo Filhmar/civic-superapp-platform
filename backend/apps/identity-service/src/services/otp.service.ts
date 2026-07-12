@@ -4,7 +4,7 @@ import { randomInt } from 'node:crypto';
 import { AppConfigService, TenantContext, rpcError } from '@app/common';
 import { RedisService } from '@app/redis';
 import { PrismaService } from '../prisma.service';
-import { SmsProvider } from './sms.provider';
+import { OtpDelivery } from './otp-delivery';
 
 const PH_MOBILE = /^\+639\d{9}$/;
 
@@ -14,14 +14,14 @@ export class OtpService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly config: AppConfigService,
-    private readonly sms: SmsProvider,
+    private readonly otpDelivery: OtpDelivery,
   ) {}
 
   async request(
     tenant: TenantContext,
     phoneNumber: string,
     ip: string | undefined,
-    smsProvider: string,
+    _smsProvider: string,
   ): Promise<{ requested: true; expires_in_seconds: number; dev_code?: string }> {
     if (!PH_MOBILE.test(phoneNumber)) {
       rpcError(400, 'Phone number must be in +639XXXXXXXXX format');
@@ -33,6 +33,9 @@ export class OtpService {
       '0',
     );
     const expiryMinutes = this.config.get('OTP_EXPIRY_MINUTES');
+    // Deliver first (send-before-persist): if delivery throws (e.g. Usapp 404 →
+    // 409), we persist nothing, so no dead code is stored for an unreachable user.
+    await this.otpDelivery.send(phoneNumber, code);
     await this.prisma.otpRequest.create({
       data: {
         tenantId: tenant.tenantId,
@@ -42,8 +45,7 @@ export class OtpService {
         expiresAt: new Date(Date.now() + expiryMinutes * 60_000),
       },
     });
-    await this.sms.sendOtp(phoneNumber, code, smsProvider);
-    const isDev = this.config.get('NODE_ENV') !== 'production';
+    const isDev = ['development', 'test'].includes(this.config.get('NODE_ENV'));
     return {
       requested: true,
       expires_in_seconds: expiryMinutes * 60,

@@ -104,7 +104,7 @@ export const MYDASMA: SeedTenant = {
       health: false,
       jobs: false,
     },
-    integrations: { weather: 'openweather', sms: 'semaphore', payments: ['gcash', 'card'] },
+    integrations: { weather: 'openweather', sms: 'semaphore', payments: ['gcash', 'card'], push: 'none' },
   },
 };
 
@@ -198,7 +198,7 @@ export const MYSORSOGON: SeedTenant = {
       health: false,
       jobs: false,
     },
-    integrations: { weather: 'openweather', sms: 'semaphore', payments: ['gcash', 'card'] },
+    integrations: { weather: 'openweather', sms: 'semaphore', payments: ['gcash', 'card'], push: 'none' },
   },
 };
 

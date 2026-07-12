@@ -46,4 +46,13 @@ export class ProfileService {
     });
     return this.auth.publicUser(user);
   }
+
+  /** Minimal lookup for outbound delivery: the resident's phone, or null (guest). */
+  async resolvePhone(tenant: TenantContext, userId: string): Promise<{ phone_number: string | null }> {
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId, tenantId: tenant.tenantId },
+      select: { phoneNumber: true },
+    });
+    return { phone_number: user?.phoneNumber ?? null };
+  }
 }

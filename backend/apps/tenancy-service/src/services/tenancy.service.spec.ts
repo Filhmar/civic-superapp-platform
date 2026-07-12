@@ -38,6 +38,7 @@ describe('TenancyService.resolve', () => {
     expect(ctx.modules.reports311).toBe(true);
     expect(ctx.modules.health).toBe(false);
     expect(ctx.configVersion).toBe(3);
+    expect(ctx.pushChannel).toBe('none');
   });
 
   it('rejects unknown tenants with 404', async () => {

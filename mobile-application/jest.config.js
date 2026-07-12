@@ -8,6 +8,13 @@ module.exports = {
       testMatch: [
         "<rootDir>/lib/__tests__/**/*.test.{ts,tsx}",
         "<rootDir>/components/__tests__/**/*.test.{ts,tsx}",
+        // No <rootDir> prefix: on Windows, Jest's glob-path normalization
+        // leaves a literal "\" before a dot-segment in the resolved absolute
+        // pattern (e.g. a checkout path containing "\.claude\worktrees\..."),
+        // which silently breaks matching for <rootDir>-anchored patterns. An
+        // unanchored "**/" pattern matches against the (correctly
+        // forward-slashed) candidate file path instead, sidestepping the bug.
+        "**/__tests__/*.test.{ts,tsx}",
       ],
     },
     {

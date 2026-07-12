@@ -54,6 +54,9 @@ export const tenantConfigSchema = z.object({
     weather: z.string(),
     sms: z.string(),
     payments: z.array(z.enum(['gcash', 'card'])).min(1),
+    // Push channel for outbound notification fan-out. Defaulted so older stored
+    // configs (provisioned before this field) validate as 'none'.
+    push: z.enum(['usapp', 'none']).default('none'),
   }),
 });
 

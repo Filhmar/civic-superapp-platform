@@ -9,4 +9,5 @@ export * from './metrics/metrics.server';
 export * from './interceptors/response.interceptor';
 export * from './interceptors/correlation-id.interceptor';
 export * from './ids/tenant-ids';
+export * from './util/mask-phone';
 export * from './content/post-categories';

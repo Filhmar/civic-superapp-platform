@@ -1,15 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 import { Model } from 'mongoose';
 import { TenantContext, rpcError } from '@app/common';
 import { Notification } from './schemas/notification.schema';
 import { AuditEvent } from './schemas/audit-event.schema';
 
+export const INTEGRATION_CLIENT = 'INTEGRATION_CLIENT';
+export const IDENTITY_CLIENT = 'IDENTITY_CLIENT';
+
 @Injectable()
 export class NotificationService {
+  private readonly logger = new Logger(NotificationService.name);
+
   constructor(
     @InjectModel(Notification.name) private readonly notifications: Model<Notification>,
     @InjectModel(AuditEvent.name) private readonly auditEvents: Model<AuditEvent>,
+    @Inject(INTEGRATION_CLIENT) private readonly integration: ClientProxy,
+    @Inject(IDENTITY_CLIENT) private readonly identity: ClientProxy,
   ) {}
 
   async list(tenant: TenantContext, userId: string, limit = 20, before?: string) {
@@ -79,6 +88,8 @@ export class NotificationService {
     await this.auditEvents
       .create({ tenantId: tenant.tenantId, category, title, userId, data })
       .catch(() => undefined);
+    // Best-effort outbound fan-out. Never fails or delays the in-app write.
+    void this.maybePush(tenant, userId, title, body);
     return { id: String(doc._id) };
   }
 
@@ -98,5 +109,35 @@ export class NotificationService {
       data: d.data ?? null,
       at: (d as { createdAt?: Date }).createdAt,
     }));
+  }
+
+  /** Fan a notification out to the citizen's Usapp account, if the tenant opts in. */
+  private async maybePush(
+    tenant: TenantContext,
+    userId: string,
+    title: string,
+    body: string,
+  ): Promise<void> {
+    if (tenant.pushChannel !== 'usapp') return;
+    try {
+      const { phone_number } = await firstValueFrom(
+        this.identity.send<{ phone_number: string | null }>(
+          { cmd: 'identity.phone.resolve' },
+          { tenant, data: { user_id: userId } },
+        ),
+      );
+      if (!phone_number) return; // guest / no phone on file
+      await firstValueFrom(
+        this.integration.send(
+          { cmd: 'integration.usapp.send' },
+          { phone: phone_number, content: `${title}\n${body}` },
+        ),
+      );
+    } catch (e) {
+      const msg = (e as { error?: { message?: string }; message?: string })?.error?.message
+        ?? (e as { message?: string })?.message
+        ?? String(e);
+      this.logger.warn(`Usapp push skipped: ${msg}`);
+    }
   }
 }

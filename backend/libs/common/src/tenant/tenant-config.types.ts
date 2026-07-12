@@ -49,7 +49,7 @@ export interface TenantConfig {
   onboarding: { title: string; body: string; bg: string; image: string }[];
   home: { mayors_corner: boolean; digital_id_promo: boolean };
   modules: Record<ModuleName, boolean>;
-  integrations: { weather: string; sms: string; payments: string[] };
+  integrations: { weather: string; sms: string; payments: string[]; push: 'usapp' | 'none' };
 }
 
 /** Tenant context resolved by the gateway and forwarded to every domain service. */
@@ -60,6 +60,7 @@ export interface TenantContext {
   ticketPrefix: string;
   residentIdPrefix: string;
   modules: Record<ModuleName, boolean>;
+  pushChannel: 'usapp' | 'none';
   configVersion: number;
 }
 
