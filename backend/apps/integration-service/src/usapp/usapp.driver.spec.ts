@@ -1,4 +1,5 @@
 import { AppConfigService } from '@app/common';
+import { Logger } from '@nestjs/common';
 import { UsappDriver } from './usapp.driver';
 import {
   DeliveryRateLimitedError,
@@ -65,7 +66,7 @@ describe('UsappDriver', () => {
 
   it('never passes the message content to the logger', async () => {
     fetchMock.mockResolvedValue({ ok: false, status: 500 });
-    const spy = jest.spyOn(require('@nestjs/common').Logger.prototype, 'error').mockImplementation(() => undefined);
+    const spy = jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
     await expect(new UsappDriver(makeConfig()).send('+639171234567', 'SECRET-CODE-99')).rejects.toThrow();
     for (const call of spy.mock.calls) {
       expect(String(call[0])).not.toContain('SECRET-CODE-99');
