@@ -12,6 +12,18 @@ clean, `expo export --platform web` builds 36 routes. Grep audits: zero tenant
 strings in app/platform code (tenant data lives only in seeds, config rows, and
 test inputs).
 
+**Usapp OTP + push (2026-07-12):** OTP delivery (row 3) and notification push
+fan-out (rows 5/25/57) now route through Usapp via the `integration.usapp.send`
+RPC (design: `docs/superpowers/specs/2026-07-12-usapp-integration-design.md`).
+OTP channel is env-selected (`OTP_DELIVERY_DRIVER`: `mock` in dev, `usapp` in
+staging/prod); push is per-tenant config data (`integrations.push`, seeded
+`none`) surfaced as `TenantContext.pushChannel` — zero per-tenant code branches.
+Verified locally on the **mock** path: backend 30/30 jest (9 suites),
+mobile 25/25 (6 suites), `tsc --noEmit` + eslint clean both sides,
+`expo export --platform web` builds. **Live Usapp delivery is not verifiable
+locally** (no allowlisted egress IP / test Usapp account) — it is a staging/prod
+smoke test with a real `USAPP_API_KEY` + registered IP, outside the local gate.
+
 | # | Prototype screen / element | Backend endpoint(s) / event(s) | Mobile route / component | Status |
 |---|---|---|---|---|
 | 1 | Splash (logo, slogan, loading) | `GET /v1/config` (brand) | `app/index.tsx` startup gate (cached, never blocks on network) | 🔁 |
