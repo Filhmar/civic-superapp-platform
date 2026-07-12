@@ -84,6 +84,14 @@ export const configSchema = z.object({
   MAX_OTP_REQUESTS_PER_IP_PER_HOUR: z.coerce.number().default(20),
   SMS_PROVIDER: z.enum(['mock', 'semaphore']).default('mock'),
 
+  // OTP delivery driver (global, not per-tenant). mock = dev/log; usapp = via integration-service.
+  OTP_DELIVERY_DRIVER: z.enum(['mock', 'usapp']).default('mock'),
+
+  // Usapp (integration-service only). Secret; never committed.
+  USAPP_BASE_URL: z.url().optional(),
+  USAPP_API_KEY: z.string().optional(),
+  USAPP_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
+
   // Object storage
   S3_ENDPOINT: z.url().optional(),
   S3_ACCESS_KEY: z.string().optional(),
@@ -105,6 +113,24 @@ export const configSchema = z.object({
 
   // Socket.io
   SOCKET_IO_ADAPTER: z.enum(['memory', 'redis']).default('memory'),
+}).superRefine((env, ctx) => {
+  // No silent no-op OTP channel in production.
+  if (env.NODE_ENV === 'production' && env.OTP_DELIVERY_DRIVER === 'mock') {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['OTP_DELIVERY_DRIVER'],
+      message: 'must not be `mock` in production — it logs codes and delivers none.',
+    });
+  }
+  // The usapp driver needs its credentials.
+  if (env.OTP_DELIVERY_DRIVER === 'usapp') {
+    if (!env.USAPP_BASE_URL) {
+      ctx.addIssue({ code: 'custom', path: ['USAPP_BASE_URL'], message: 'required when OTP_DELIVERY_DRIVER=usapp' });
+    }
+    if (!env.USAPP_API_KEY) {
+      ctx.addIssue({ code: 'custom', path: ['USAPP_API_KEY'], message: 'required when OTP_DELIVERY_DRIVER=usapp' });
+    }
+  }
 });
 
 export type ConfigSchema = z.infer<typeof configSchema>;
