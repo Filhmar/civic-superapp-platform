@@ -97,8 +97,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         image: "./assets/icons/icon-512.png",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#ffffff",
-        dark: { backgroundColor: "#000000" },
+        // Match palette.bg / bg-dark (constants/colors.ts) EXACTLY so hiding the
+        // splash shows no color step into the app's first paint.
+        backgroundColor: "#F6F8F6",
+        dark: { backgroundColor: "#0B1120" },
       },
     ],
     "expo-secure-store",

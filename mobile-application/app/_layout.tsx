@@ -15,6 +15,7 @@ import {
 } from "@react-navigation/native";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack, useRouter } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -32,6 +33,14 @@ import { ThemeModeProvider, useThemeMode } from "@/contexts/theme-context";
 import { authEvents } from "@/lib/auth-events";
 import { persistOptions, queryClient } from "@/lib/query-client";
 
+// Hold the native splash (bg from app.config.ts) until fonts are ready, then
+// hide it — so the splash dissolves into the app instead of an abrupt cut / blank
+// flash while we gate on the bundled font load. `fade` is iOS-only (v54); on
+// Android the splash simply hides after `duration`. Generic + white-label-safe:
+// no tenant branding runs here (config isn't loaded yet at splash time).
+SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({ duration: 400, fade: true });
+
 // Provider tree per STACK_BASIS §16 (outer → inner). ThemeModeProvider owns the
 // effective light/dark scheme (single source of truth) and gates first paint on
 // the restored preference; ThemedRoot consumes it for the whole tree.
@@ -44,6 +53,11 @@ export default function RootLayout() {
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
   });
+
+  // Reveal the app (fade out the held native splash) once fonts have loaded.
+  useEffect(() => {
+    if (fontsLoaded) void SplashScreen.hideAsync();
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) return null; // bundled font load — local, never network
 
