@@ -26,56 +26,101 @@ const PRESIGN_TTL_SECONDS = 600;
 export class MediaService implements OnModuleInit {
   private readonly logger = new Logger(MediaService.name);
   private readonly s3: S3Client;
+  /** Signs presigned URLs against the browser-reachable host — separate from
+   *  s3 because the client executing the URL (phone/browser) can't resolve the
+   *  docker-internal S3_ENDPOINT, and SigV4 signs the host so it can't be
+   *  swapped after signing. Server-side object ops keep using s3. */
+  private readonly s3Public: S3Client;
   private readonly bucket: string;
+  /** Flips true after the bucket is confirmed/created + policy applied, so the
+   *  presign hot path skips the round-trip once storage is known-good. */
+  private bucketReady = false;
 
   constructor(
     @InjectModel(Media.name) private readonly media: Model<Media>,
     private readonly config: AppConfigService,
   ) {
     this.bucket = config.get('S3_BUCKET');
+    const credentials = {
+      accessKeyId: config.require('S3_ACCESS_KEY'),
+      secretAccessKey: config.require('S3_SECRET_KEY'),
+    };
+    const region = config.get('S3_REGION');
+    const forcePathStyle = config.get('S3_FORCE_PATH_STYLE');
     this.s3 = new S3Client({
       endpoint: config.require('S3_ENDPOINT'),
-      region: config.get('S3_REGION'),
-      forcePathStyle: config.get('S3_FORCE_PATH_STYLE'),
-      credentials: {
-        accessKeyId: config.require('S3_ACCESS_KEY'),
-        secretAccessKey: config.require('S3_SECRET_KEY'),
-      },
+      region,
+      forcePathStyle,
+      credentials,
+    });
+    // Same store, but signed with the host the client actually hits. Falls back
+    // to S3_ENDPOINT when public == internal (single-host / real S3 deploys).
+    this.s3Public = new S3Client({
+      endpoint: config.get('S3_PUBLIC_ENDPOINT') ?? config.require('S3_ENDPOINT'),
+      region,
+      forcePathStyle,
+      credentials,
     });
   }
 
+  // Fail loud at boot: if object storage is unreachable or the bucket can't be
+  // created, the service must NOT report healthy — a "started" media-service
+  // with no bucket silently hands out presigned URLs that 404 on upload.
   async onModuleInit(): Promise<void> {
-    try {
-      await this.s3.send(new HeadBucketCommand({ Bucket: this.bucket }));
-    } catch {
-      await this.s3
-        .send(new CreateBucketCommand({ Bucket: this.bucket }))
-        .then(() => this.logger.log(`Created bucket ${this.bucket}`))
-        .catch((e: Error) => this.logger.warn(`Bucket check failed: ${e.message}`));
+    await this.ensureBucket();
+  }
+
+  /** Idempotent: confirm the shared bucket exists (create if missing) and apply
+   *  the download-only public-read policy. Throws on any non-benign S3 error so
+   *  callers surface the failure instead of swallowing it. Cached after success. */
+  private async ensureBucket(): Promise<void> {
+    if (this.bucketReady) return;
+
+    const exists = await this.s3
+      .send(new HeadBucketCommand({ Bucket: this.bucket }))
+      .then(() => true)
+      .catch(() => false);
+
+    if (!exists) {
+      try {
+        await this.s3.send(new CreateBucketCommand({ Bucket: this.bucket }));
+        this.logger.log(`Created bucket ${this.bucket}`);
+      } catch (e) {
+        // Concurrent create by another media-service instance — benign. Any
+        // other error (unreachable MinIO, bad creds) is fatal: rethrow.
+        const name = (e as { name?: string }).name;
+        if (name !== 'BucketAlreadyOwnedByYou' && name !== 'BucketAlreadyExists') {
+          throw e;
+        }
+      }
     }
+
     // Objects are rendered directly by the apps (report photos, CMS heroes,
     // POI images) — download-only public policy; writes stay presigned.
-    await this.s3
-      .send(
-        new PutBucketPolicyCommand({
-          Bucket: this.bucket,
-          Policy: JSON.stringify({
-            Version: '2012-10-17',
-            Statement: [
-              {
-                Effect: 'Allow',
-                Principal: { AWS: ['*'] },
-                Action: ['s3:GetObject'],
-                Resource: [`arn:aws:s3:::${this.bucket}/*`],
-              },
-            ],
-          }),
+    await this.s3.send(
+      new PutBucketPolicyCommand({
+        Bucket: this.bucket,
+        Policy: JSON.stringify({
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Principal: { AWS: ['*'] },
+              Action: ['s3:GetObject'],
+              Resource: [`arn:aws:s3:::${this.bucket}/*`],
+            },
+          ],
         }),
-      )
-      .catch((e: Error) => this.logger.warn(`Bucket policy failed: ${e.message}`));
+      }),
+    );
+
+    this.bucketReady = true;
   }
 
   async presign(tenant: TenantContext, userId: string, contentType: string, kind: MediaKind) {
+    // Self-heal: if the bucket vanished (fresh MinIO volume, wiped data) after
+    // boot, recreate it now rather than issue a URL that 404s on PUT. No-op once ready.
+    await this.ensureBucket();
     const allowed = kind === 'brand' ? BRAND_ALLOWED_TYPES : ALLOWED_TYPES;
     if (!allowed.includes(contentType)) {
       rpcError(400, `Unsupported content type: ${contentType}`);
@@ -91,7 +136,7 @@ export class MediaService implements OnModuleInit {
       status: 'pending',
     });
     const uploadUrl = await getSignedUrl(
-      this.s3,
+      this.s3Public,
       new PutObjectCommand({ Bucket: this.bucket, Key: key, ContentType: contentType }),
       { expiresIn: PRESIGN_TTL_SECONDS },
     );
