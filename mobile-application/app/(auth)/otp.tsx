@@ -16,6 +16,7 @@ import {
   useRequestOtpMutation,
   useVerifyOtpMutation,
 } from "@/hooks/mutations/use-auth-mutations";
+import { otpErrorMessage } from "@/services/auth";
 
 const CODE_LENGTH = 6;
 
@@ -83,7 +84,7 @@ export default function Otp() {
       },
       onError: (err) => {
         toast.show(
-          (err as { message?: string })?.message ?? "Could not resend the code.",
+          otpErrorMessage(err),
         );
       },
     });
@@ -98,7 +99,7 @@ export default function Otp() {
         Enter the code
       </AppText>
       <AppText variant="caption" className="mt-2 text-center">
-        We sent a {CODE_LENGTH}-digit code to {phone}
+        We sent a {CODE_LENGTH}-digit code to your Usapp app for {phone}
       </AppText>
 
       {/* Code boxes over a single hidden input */}

@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useTenantConfig } from "@/contexts/tenant-config-context";
 import { useRequestOtpMutation } from "@/hooks/mutations/use-auth-mutations";
 import { lightenHex } from "@/lib/theme";
+import { otpErrorMessage } from "@/services/auth";
 
 const PH_PREFIX = "+63";
 
@@ -51,7 +52,7 @@ export default function Login() {
       },
       onError: (err) => {
         toast.show(
-          (err as { message?: string })?.message ?? "Could not send the code.",
+          otpErrorMessage(err),
         );
       },
     });
