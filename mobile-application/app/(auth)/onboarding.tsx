@@ -116,9 +116,10 @@ export default function Onboarding() {
                   backgroundColor: "rgba(255,255,255,0.18)",
                 }}
               >
+                {/* No borderRadius: clipping mangles non-circular seal art */}
                 <AssetImage
                   uri={seal}
-                  style={{ width: 156, height: 156, borderRadius: 78 }}
+                  style={{ width: 156, height: 156 }}
                   resizeMode="contain"
                   fallback={
                     <Text className="text-3xl font-extrabold text-white">

@@ -101,9 +101,10 @@ export default function Login() {
             backgroundColor: "rgba(255,255,255,0.16)",
           }}
         >
+          {/* No borderRadius: clipping mangles non-circular seal art */}
           <AssetImage
             uri={config?.brand.logo.assets.seal}
-            style={{ width: 122, height: 122, borderRadius: 61 }}
+            style={{ width: 122, height: 122 }}
             resizeMode="contain"
             accessibilityLabel="City seal"
             fallback={

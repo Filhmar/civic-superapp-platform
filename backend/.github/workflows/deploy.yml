@@ -1,0 +1,29 @@
+name: Deploy (production)
+
+# Manual production deploy. Trigger from the Actions tab (Run workflow) on the
+# master branch only. Runs on the self-hosted runner labeled `production` (same
+# box as staging, isolated by compose project name + base host ports).
+# Build-on-box: the runner builds every image from source and runs it.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Production deploys ONLY from master, even though dispatch is manual.
+    if: github.ref == 'refs/heads/master'
+    runs-on: [self-hosted, production]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy production
+        run: |
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh

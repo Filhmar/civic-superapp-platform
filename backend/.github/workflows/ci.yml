@@ -1,0 +1,46 @@
+name: CI
+
+# Simple source-side checks: lint + typecheck + unit tests.
+# Runs on GitHub-hosted runners for every PR and push to master/develop.
+# No build/deploy here — that lives in deploy-staging.yml and deploy.yml.
+
+on:
+  pull_request:
+    branches: [master, develop]
+  push:
+    branches: [master, develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      # Prisma clients are imported by the TS sources, so typecheck/test need them
+      # generated first (there is no postinstall hook that does this).
+      - name: Generate Prisma clients
+        run: npm run prisma:generate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test

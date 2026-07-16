@@ -56,9 +56,11 @@ export default function DigitalIdScreen() {
   const primaryDark = config?.brand.colors.primaryDark ?? palette["brand-dark"];
   const accentDeep = config?.brand.colors.accentDeep ?? palette["accent-deep"];
   const assets = config?.brand.logo.assets;
-  const watermarkUri = [assets?.watermark, assets?.seal].find(
-    isRenderableAssetUrl,
-  );
+  // Watermark = the admin-set watermark asset ONLY (never the seal — opaque
+  // seal art shows as a square patch on the gradient).
+  const watermarkUri = isRenderableAssetUrl(assets?.watermark)
+    ? assets?.watermark
+    : undefined;
 
   const onSignOut = async () => {
     await signOut();

@@ -1,7 +1,10 @@
 # Service overlay: docker compose -f docker-compose.yml -f docker-compose.services.yml up
 # Hosts are compose service DNS names (never localhost inside containers — STACK.md §9).
 x-service-env: &service-env
-  NODE_ENV: development
+  # Set by the deploy scripts (staging|production); defaults to development for
+  # local `up`. This `environment` value overrides any NODE_ENV in the env_file,
+  # so NODE_ENV is controlled here, not in .env.staging/.env.production.
+  NODE_ENV: ${NODE_ENV:-development}
   REDIS_HOST: redis
   TENANCY_SERVICE_TCP_HOST: tenancy-service
   IDENTITY_SERVICE_TCP_HOST: identity-service
@@ -27,13 +30,18 @@ x-service-env: &service-env
   MONGODB_NOTIFICATION_URI: mongodb://mongo:27017/notification
   MONGODB_MEDIA_URI: mongodb://mongo:27017/media
   S3_ENDPOINT: http://minio:9000
-  S3_PUBLIC_ENDPOINT: http://localhost:9000
+  # Host baked into presigned + public media URLs the mobile app fetches. This
+  # `environment` value overrides env_file, so it's interpolated: deploy scripts
+  # lift the real media subdomain out of the env file. Dev keeps localhost.
+  S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:9000}
 
 x-service-defaults: &service-defaults
   build:
     context: .
   restart: unless-stopped
-  env_file: .env.development
+  # Interpolated so deploy scripts can point services at .env.staging / .env.production
+  # on the box. Dev (no ENV_FILE set) keeps the committed .env.development default.
+  env_file: ${ENV_FILE:-.env.development}
   depends_on:
     postgres:
       condition: service_healthy
@@ -54,7 +62,7 @@ services:
     environment:
       <<: *service-env
     ports:
-      - "3005:3005"
+      - "127.0.0.1:${GATEWAY_HOST_PORT:-3005}:3005"
 
   tenancy-service:
     <<: *service-defaults
@@ -66,7 +74,7 @@ services:
       <<: *service-env
     ports:
       # control-plane TCP for staff tooling (scripts/toggle-module.ts etc.)
-      - "3006:3006"
+      - "127.0.0.1:${TENANCY_HOST_PORT:-3006}:3006"
 
   identity-service:
     <<: *service-defaults
@@ -171,9 +179,13 @@ services:
     image: civic/platform-admin-panel
     build:
       context: apps/platform-admin-panel
+      args:
+        # Empty => same-origin: the SPA fetches /v1/... on its own host, which
+        # nginx (see apps/platform-admin-panel/nginx.conf) proxies to the gateway.
+        VITE_API_URL: ""
     restart: unless-stopped
     ports:
-      - "8090:80"
+      - "127.0.0.1:${PLATFORM_ADMIN_HOST_PORT:-8090}:80"
     depends_on:
       - api-gateway
 
@@ -181,8 +193,12 @@ services:
     image: civic/tenant-admin-panel
     build:
       context: apps/tenant-admin-panel
+      args:
+        # Empty => same-origin: the SPA fetches /v1/... on its own host, which
+        # nginx (see apps/tenant-admin-panel/nginx.conf) proxies to the gateway.
+        VITE_API_URL: ""
     restart: unless-stopped
     ports:
-      - "8091:80"
+      - "127.0.0.1:${TENANT_ADMIN_HOST_PORT:-8091}:80"
     depends_on:
       - api-gateway

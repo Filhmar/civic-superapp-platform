@@ -119,6 +119,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     typedRoutes: true,
     reactCompiler: true,
   },
+  // EAS Update endpoint — per-tenant DATA (derived from the variant's EAS
+  // project id); `eas update` requires it explicitly on dynamic configs.
+  ...(variant.easProjectId
+    ? { updates: { url: `https://u.expo.dev/${variant.easProjectId}` } }
+    : {}),
   extra: {
     tenantBundleId: variant.bundleId,
     ...(variant.easProjectId

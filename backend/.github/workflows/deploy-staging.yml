@@ -1,0 +1,30 @@
+name: Deploy (staging)
+
+# Auto-deploy staging on every push to develop. Runs on the self-hosted runner
+# labeled `staging`, which lives on the on-prem/VPS box. Build-on-box: the runner
+# builds every image from source with `docker compose build` and runs it — no
+# registry, no image signing. Staging is isolated from production by compose
+# project name + remapped host ports (see scripts/deploy-staging.sh).
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, staging]
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy staging
+        run: |
+          chmod +x scripts/deploy-staging.sh
+          ./scripts/deploy-staging.sh
