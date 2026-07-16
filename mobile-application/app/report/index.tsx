@@ -36,6 +36,12 @@ import { getReportCategoryIcon } from "@/utils/report-icons";
 
 import { StatusChip } from "@/components/reports/status-chip";
 import { formatDate } from "@/utils/format-date";
+import { CivicMap } from "@/components/geo/civic-map";
+import {
+  useBoundaryQuery,
+  useGeoFeaturesQuery,
+  useLocateQuery,
+} from "@/hooks/queries/use-geo";
 
 type Step =
   | { kind: "pick" }
@@ -206,9 +212,20 @@ function ReportForm({
   const latNum = Number.parseFloat(lat);
   const lngNum = Number.parseFloat(lng);
   const geoValid = Number.isFinite(latNum) && Number.isFinite(lngNum);
+
+  // Self-hosted map: the tenant's own boundary + overlays, tapped pin, and a
+  // reverse-geocoded barangay — all from the geo-service, no third-party API.
+  const boundaryQuery = useBoundaryQuery();
+  const boundary = boundaryQuery.data;
+  const featuresQuery = useGeoFeaturesQuery(boundary?.bbox ?? null);
+  const pin = geoValid ? { lat: latNum, lng: lngNum } : null;
+  const locateQuery = useLocateQuery(pin, { enabled: !!boundary && geoValid });
+  const outsideBoundary = locateQuery.data ? locateQuery.data.inside === false : false;
+
   const canSubmit =
     description.trim().length >= 5 &&
     geoValid &&
+    !outsideBoundary &&
     uploadProgress === null &&
     !createReport.isPending;
 
@@ -365,6 +382,27 @@ function ReportForm({
       <AppText variant="subtitle" className="mt-5 text-sm">
         Location
       </AppText>
+      {boundary ? (
+        <View className="mt-2">
+          <CivicMap
+            boundary={boundary}
+            features={featuresQuery.data}
+            pin={pin}
+            onPickPin={(la, ln) => {
+              setLat(la.toFixed(6));
+              setLng(ln.toFixed(6));
+            }}
+            height={180}
+          />
+          <Text className="mt-1.5 text-xs text-fg-2 dark:text-fg-2-dark">
+            {outsideBoundary
+              ? "⚠︎ Pin is outside the city — move it inside to submit."
+              : locateQuery.data?.unit
+                ? `Barangay ${locateQuery.data.unit} · tap the map to adjust`
+                : "Tap the map to drop the report pin"}
+          </Text>
+        </View>
+      ) : null}
       <Pressable
         accessibilityRole="button"
         onPress={useMyLocation}

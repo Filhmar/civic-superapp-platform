@@ -26,6 +26,8 @@ import { EmergencyGatewayController } from './protected/emergency.controller';
 import { SosGateway } from './gateways/sos.gateway';
 import { PlacesGatewayController, TransportGatewayController } from './public/places.controller';
 import { SearchGatewayController } from './public/search.controller';
+import { GeoGatewayController } from './public/geo.controller';
+import { AdminGeoController } from './admin/admin-geo.controller';
 import { AdminAuthController } from './admin/admin-auth.controller';
 import { AdminTenantsController } from './admin/admin-tenants.controller';
 import { AdminAssetsController } from './admin/admin-assets.controller';
@@ -62,10 +64,12 @@ import { AdminJwtGuard } from './admin/admin-jwt.guard';
     PlacesGatewayController,
     TransportGatewayController,
     SearchGatewayController,
+    GeoGatewayController,
     AdminAuthController,
     AdminTenantsController,
     AdminAssetsController,
     AdminOpsController,
+    AdminGeoController,
   ],
   providers: [
     SosGateway,

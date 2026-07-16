@@ -36,6 +36,8 @@ export const configSchema = z.object({
   INTEGRATION_SERVICE_TCP_PORT: tcpPort(3017),
   ADMIN_SERVICE_TCP_HOST: host,
   ADMIN_SERVICE_TCP_PORT: tcpPort(3018),
+  GEO_SERVICE_TCP_HOST: host,
+  GEO_SERVICE_TCP_PORT: tcpPort(3019),
 
   // TCP client reconnection
   TCP_CONNECTION_MAX_RETRIES: z.coerce.number().default(50),
@@ -59,6 +61,7 @@ export const configSchema = z.object({
   MONGODB_PLACES_URI: z.url().optional(),
   MONGODB_NOTIFICATION_URI: z.url().optional(),
   MONGODB_MEDIA_URI: z.url().optional(),
+  MONGODB_GEO_URI: z.url().optional(),
 
   // Redis
   REDIS_HOST: host,
@@ -103,6 +106,7 @@ export const configSchema = z.object({
     .default('true')
     .transform((v) => v === 'true'),
   S3_PUBLIC_ENDPOINT: z.url().optional(),
+  GEO_BASEMAP_KEY: z.string().default('basemap/ph.pmtiles'),
 
   // Integrations
   WEATHER_PROVIDER: z.enum(['mock', 'openweather']).default('mock'),

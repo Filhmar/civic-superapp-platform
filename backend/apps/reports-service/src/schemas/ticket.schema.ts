@@ -63,6 +63,10 @@ export class Ticket {
   @Prop()
   address?: string;
 
+  /** Barangay from the tenant's own gazetteer (geo-service reverse-geocode). */
+  @Prop()
+  unit?: string;
+
   @Prop({ type: String, required: true, enum: TICKET_STATUSES, default: 'SUBMITTED' })
   status!: TicketStatus;
 
