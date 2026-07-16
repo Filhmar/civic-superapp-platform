@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Inject, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+  Req,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Type } from 'class-transformer';
 import {
@@ -58,7 +68,10 @@ export class CreateReportDto {
 @Controller('reports')
 @RequiresModule('reports311')
 export class ReportsGatewayController {
-  constructor(@Inject(SERVICE_CLIENT('reports')) private readonly reports: ClientProxy) {}
+  constructor(
+    @Inject(SERVICE_CLIENT('reports')) private readonly reports: ClientProxy,
+    @Inject(SERVICE_CLIENT('geo')) private readonly geo: ClientProxy,
+  ) {}
 
   @Public()
   @Get('categories')
@@ -71,10 +84,35 @@ export class ReportsGatewayController {
 
   @ResidentOnly()
   @Post()
-  create(@Req() req: TenantRequest, @CurrentUser() user: AuthUser, @Body() dto: CreateReportDto) {
+  async create(
+    @Req() req: TenantRequest,
+    @CurrentUser() user: AuthUser,
+    @Body() dto: CreateReportDto,
+  ) {
+    // Self-hosted boundary gate: a pin must fall inside THIS tenant's own
+    // territory. `configured:false` (no boundary loaded) never blocks a write;
+    // we also enrich the ticket with the resolved barangay from the tenant's
+    // own gazetteer — no external geocoder, so no per-request billing.
+    const loc = await callService<{
+      inside: boolean;
+      unit: string | null;
+    }>(this.geo, 'geo.locate', {
+      tenant: req.tenant,
+      data: { lat: dto.geo.lat, lng: dto.geo.lng },
+    }).catch(() => null);
+    const check = await callService<{ inside: boolean; configured: boolean }>(
+      this.geo,
+      'geo.validate',
+      { tenant: req.tenant, data: { lat: dto.geo.lat, lng: dto.geo.lng } },
+    ).catch(() => ({ inside: true, configured: false }));
+    if (check.configured && !check.inside) {
+      throw new UnprocessableEntityException(
+        'Pinned location is outside the city boundary. Move the pin inside the city.',
+      );
+    }
     return callService(this.reports, 'reports.ticket.create', {
       tenant: req.tenant,
-      data: { ...dto, user_id: user.userId },
+      data: { ...dto, user_id: user.userId, unit: loc?.unit ?? undefined },
     });
   }
 

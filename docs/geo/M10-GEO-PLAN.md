@@ -53,3 +53,46 @@ with `$near`. Add write-time `$geoWithin` boundary validation to reports & POIs.
 resolves a real barangay, report pin outside the polygon → 400, features bbox
 returns only that tenant's data, tiles object serves bytes. Mobile: MapLibre
 map on report (tap-to-pin) + tourism + a city map; tsc/jest/expo-export gates.
+
+## Status (built)
+
+**Backend — shipped.** `geo-service` (TCP 3019, Mongo `2dsphere`) with
+`geo.boundary/validate/locate/features.bbox/import`; gateway public routes
+`GET /v1/geo/{style.json,boundary,locate,features}` + admin
+`POST/GET /v1/admin/tenants/:id/geo/{import,boundary}` (tenant-scoped via
+`resolveTenantScope`). Report create now calls the geo-service to (a) reject a
+pin outside the tenant boundary — **422** (semantically "well-formed but
+unprocessable"; the plan said 400) — and (b) enrich the ticket with the
+barangay resolved from the tenant's OWN gazetteer (no external geocoder).
+Registered in `nest-cli.json`, `build:all`, `docker-compose.services.yml`
+(target `geo-service`), and `seed:all` (`seed-geo.ts`).
+
+**Self-hosted tiles — proven end-to-end.** `scripts/geo/build-admin-basemap.ts`
+reads every tenant's own `geo_features`, slices MVTs (`geojson-vt` → `vt-pbf`),
+and packs them into a **PMTiles v3** archive via an in-repo writer
+(`apps/geo-service/src/pmtiles/pmtiles-archive.ts`), uploaded as one static
+object to MinIO. The writer is validated by round-tripping through the official
+`pmtiles` reader (header, metadata, per-tile bytes) in
+`pmtiles-archive.spec.ts` — so the no-per-request-billing serving path is real,
+not just planned. The production streets basemap (Planetiler/OSM) is the one
+documented manual ops step, `scripts/geo/build-basemap.sh` (OSM egress is
+blocked in-sandbox).
+
+**Mobile — deviation, deliberate.** The in-app map is a **cross-platform
+`react-native-svg` renderer** (`components/geo/civic-map.tsx`) that draws the
+tenant's OWN boundary/barangays/facilities/pins fetched from the geo-service —
+identical on iOS, Android, and `expo export` web, with no native module. This
+was chosen over `@maplibre/maplibre-react-native` because the native SDK forces
+an EAS dev build and breaks the managed-workflow web-export gate; the
+MapLibre-style + PMTiles raster path is fully built server-side and remains the
+production renderer upgrade. Wired into report tap-to-pin (with live
+reverse-geocoded barangay + outside-boundary guard) and the tourism detail map.
+
+**Verification run here:** backend `build:all` (16 apps) + `typecheck` + `lint`
+green; `jest` 41/41 incl. 11 new geo tests (7 service tenant-isolation/spatial,
+4 PMTiles round-trip); mobile `tsc --noEmit` green across the new geo
+service/hooks/component + report/tourism integration; `verify-e2e.ts` extended
+with a per-tenant geo block (boundary≈centroid, locate→barangay, null-island
+outside, style.json pmtiles://, in-city features non-empty, foreign-city bbox
+empty, outside-pin report 422). The live `verify-e2e` gate runs against the
+containerized stack.

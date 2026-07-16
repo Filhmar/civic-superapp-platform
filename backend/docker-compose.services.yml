@@ -15,6 +15,7 @@ x-service-env: &service-env
   MEDIA_SERVICE_TCP_HOST: media-service
   INTEGRATION_SERVICE_TCP_HOST: integration-service
   ADMIN_SERVICE_TCP_HOST: admin-service
+  GEO_SERVICE_TCP_HOST: geo-service
   ADMIN_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/admin
   TENANCY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/tenancy
   IDENTITY_SERVICE_DATABASE_URL: postgresql://civic:civic_dev_password@postgres:5432/identity
@@ -26,6 +27,7 @@ x-service-env: &service-env
   MONGODB_PLACES_URI: mongodb://mongo:27017/places
   MONGODB_NOTIFICATION_URI: mongodb://mongo:27017/notification
   MONGODB_MEDIA_URI: mongodb://mongo:27017/media
+  MONGODB_GEO_URI: mongodb://mongo:27017/geo
   S3_ENDPOINT: http://minio:9000
   S3_PUBLIC_ENDPOINT: http://localhost:9000
 
@@ -128,6 +130,15 @@ services:
     build:
       context: .
       target: places-service
+    environment:
+      <<: *service-env
+
+  geo-service:
+    <<: *service-defaults
+    image: civic/geo-service
+    build:
+      context: .
+      target: geo-service
     environment:
       <<: *service-env
 

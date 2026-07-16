@@ -157,6 +157,42 @@ async function verifyTenant(t: TenantSpec): Promise<void> {
   check(`ticket id ${t.prefix}-######`, new RegExp(`^${t.prefix}-\\d{6}$`).test(ticket.ticket_id), ticket.ticket_id);
   check('timeline[0] audited SUBMITTED', ticket.timeline[0].to === 'SUBMITTED' && !!ticket.timeline[0].actor && !!ticket.timeline[0].at);
 
+  // M10: self-hosted geo — own basemap + tenant-scoped overlays, no per-request billing
+  const [clat, clng] = cfg.config.geo.centroid as [number, number];
+  const boundary = (await anon.get('/geo/boundary')).data.data;
+  check('geo: tenant boundary configured', !!boundary?.geometry && Array.isArray(boundary?.bbox), boundary?.name);
+  check(
+    'geo: boundary center ≈ config centroid',
+    Math.abs(boundary.center.lat - clat) < 0.05 && Math.abs(boundary.center.lng - clng) < 0.05,
+    boundary.center,
+  );
+  const loc = (await anon.get(`/geo/locate?lat=${clat}&lng=${clng}`)).data.data;
+  check('geo: centroid resolves inside + a barangay (own gazetteer)', loc.inside === true && typeof loc.unit === 'string', loc);
+  const nullIsland = (await anon.get('/geo/locate?lat=0&lng=0')).data.data;
+  check('geo: point outside city is not inside', nullIsland.inside === false, nullIsland);
+  const style = (await anon.get('/geo/style.json')).data;
+  check(
+    'geo: style.json is MapLibre v8 over self-hosted pmtiles',
+    style.version === 8 && String(style.sources?.basemap?.url ?? '').startsWith('pmtiles://'),
+    style.sources?.basemap?.url,
+  );
+  // Tenant isolation: our own geometry is served; a viewport over ANOTHER city is empty.
+  const d = 0.05;
+  const mine = (await anon.get(`/geo/features?bbox=${clng - d},${clat - d},${clng + d},${clat + d}`)).data.data;
+  check('geo: in-city features returned (FeatureCollection)', mine.type === 'FeatureCollection' && mine.features.length > 0, mine.features?.length);
+  const otherCfg = (await client(other.bundle).get('/config')).data.data;
+  const [olat, olng] = otherCfg.config.geo.centroid as [number, number];
+  const foreign = (await anon.get(`/geo/features?bbox=${olng - d},${olat - d},${olng + d},${olat + d}`)).data.data;
+  check('geo: no foreign geometry over another city (isolation)', foreign.features.length === 0, foreign.features?.length);
+  // Write-time boundary gate: a pin in another city is rejected 422.
+  const outside = await me.post('/reports', {
+    category_key: 'pothole',
+    description: 'Out-of-bounds pin — should be rejected.',
+    geo: { lat: olat, lng: olng },
+  });
+  check('geo: report pinned outside boundary rejected 422', outside.status === 422, outside.status);
+  check('geo: in-city ticket enriched with barangay unit', typeof ticket.unit === 'string' && ticket.unit.length > 0, ticket.unit);
+
   // Rows 14,15: e-gov flow with fees + ₱20 and payments
   const catalog = (await anon.get('/services')).data.data;
   const ctc = catalog.flatMap((g: { services: { code: string; fee: number }[] }) => g.services).find((s: { code: string }) => s.code === 'CTC');

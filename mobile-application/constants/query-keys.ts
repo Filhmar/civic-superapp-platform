@@ -68,4 +68,11 @@ export const queryKeys = {
     all: ["faq"] as const,
     list: (locale: string) => ["faq", "list", locale] as const,
   },
+  geo: {
+    all: ["geo"] as const,
+    boundary: () => ["geo", "boundary"] as const,
+    features: (bbox: string, layer?: string) =>
+      ["geo", "features", bbox, layer ?? "all"] as const,
+    locate: (lat: number, lng: number) => ["geo", "locate", lat, lng] as const,
+  },
 } as const;

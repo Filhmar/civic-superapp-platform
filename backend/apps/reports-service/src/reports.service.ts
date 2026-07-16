@@ -20,6 +20,8 @@ export interface CreateTicketInput {
   photos?: string[];
   geo: { lat: number; lng: number };
   address?: string;
+  /** Barangay resolved from the tenant's own gazetteer by the geo-service. */
+  unit?: string;
 }
 
 @Injectable()
@@ -65,6 +67,7 @@ export class ReportsService {
       photos: input.photos ?? [],
       geo: input.geo,
       address: input.address,
+      unit: input.unit,
       status: 'SUBMITTED',
       transitions: [{ from: null, to: 'SUBMITTED', actor: `user:${input.user_id}`, at: now }],
     });
@@ -155,6 +158,7 @@ export class ReportsService {
       photos: d.photos,
       geo: d.geo,
       address: d.address ?? null,
+      unit: d.unit ?? null,
       status: d.status,
       timeline: transitions,
       created_at: (d as { createdAt?: Date }).createdAt,

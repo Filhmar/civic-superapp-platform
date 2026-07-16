@@ -94,3 +94,21 @@ smoke test with a real `USAPP_API_KEY` + registered IP, outside the local gate.
 | Full regression across THREE tenants | scripts/verify-e2e.ts: 166 passed, 0 failed vs container stack | 🔁 |
 | Platform Console restyled to its Claude Design prototype (indigo operator system, JetBrains Mono machine strings, provision-tenant drawer wired to POST /v1/admin/tenants, designed transition dialogs) | docs/designs/extracted-console/ (spec + 25 screens) vs backend/apps/platform-admin-panel/design-check/ — visual loop; smoke 14/14; containerized smoke :8090 | 🔁 |
 | City Console restyled to its Claude Design prototype with ALL tenant colors derived at runtime from config.brand.colors (prototype's own darken/tint formulas) | docs/designs/extracted-city-console/ (spec + 22 screens) vs backend/apps/tenant-admin-panel/design-check/ — Legazpi 1:1 match AND same build renders MyDasma green (20-dasma-dashboard.png); smoke 10/10; containerized smoke :8091 | 🔁 |
+
+## M10 — Self-hosted geo (maps without per-request API cost)
+
+Status legend as above. Verified here via backend `build:all`+`typecheck`+`lint`
+(green), `jest` 41/41 (11 new geo), mobile `tsc --noEmit` (green); the live
+`verify-e2e.ts` geo block runs against the containerized stack across all tenants.
+
+| Proof | Evidence | Status |
+|---|---|---|
+| Basemap is a self-hosted static object — no tile server, no per-request billing | `scripts/geo/build-admin-basemap.ts` bakes tenants' own GeoJSON → PMTiles v3 on MinIO; `pmtiles-archive.spec.ts` round-trips header/metadata/tiles through the official reader | 🟡 |
+| Production streets basemap is a documented one-time ops bake (OSM egress blocked in-sandbox) | `scripts/geo/build-basemap.sh` (Planetiler → PH `.pmtiles` → MinIO) | 🟡 |
+| New `geo-service` (Mongo `2dsphere`) fronted by the gateway → inherits tenant resolution + module flags | `apps/geo-service/*`; gateway `public/geo.controller.ts` + `admin/admin-geo.controller.ts`; TCP 3019; compose target `geo-service` | 🟡 |
+| Every geo query is tenant-scoped — no foreign geometry can be returned | `geo.service.spec.ts` asserts `tenantId` on every model filter; `verify-e2e` bbox over another city → 0 features | 🟡 |
+| Accurate pins: report tap-to-pin, reverse-geocode to the tenant's OWN barangay gazetteer (no external geocoder) | `geo.locate` `$geoIntersects`+`$near`; report create enriches `unit`; mobile `civic-map.tsx` + `report/index.tsx` | 🟡 |
+| Write-time boundary gate: a report pinned outside the city is rejected (422); missing boundary never blocks | `reports.controller.ts` → `geo.validate {inside,configured}`; `geo.service.spec.ts`; `verify-e2e` outside-pin → 422 | 🟡 |
+| MapLibre style is self-hosted (pmtiles:// on MinIO) + tenant opening view | `GET /v1/geo/style.json`; `verify-e2e` asserts `version:8` + `pmtiles://` source | 🟡 |
+| In-app map is data-driven and cross-platform (no per-tenant code, web-export-safe) | `components/geo/civic-map.tsx` (react-native-svg) renders only geo-service data; wired into report + tourism; mobile `tsc` green | 🟡 |
+| Adding an LGU's geography touches only DATA | `scripts/seed-geo.ts` (3 tenants) + `POST /v1/admin/tenants/:id/geo/import` — zero platform-code branch | 🟡 |
