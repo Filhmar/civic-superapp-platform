@@ -52,6 +52,7 @@ export const SERVICE_ENV_PREFIX = {
   media: 'MEDIA_SERVICE',
   integration: 'INTEGRATION_SERVICE',
   admin: 'ADMIN_SERVICE',
+  geo: 'GEO_SERVICE',
 } as const;
 
 export type ServiceName = keyof typeof SERVICE_ENV_PREFIX;

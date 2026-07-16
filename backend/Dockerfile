@@ -122,6 +122,12 @@ USER appuser
 EXPOSE 3017
 CMD ["node", "dist/apps/integration-service/main.js"]
 
+FROM runtime-base AS geo-service
+COPY --from=build /app/dist/apps/geo-service ./dist/apps/geo-service
+USER appuser
+EXPOSE 3019
+CMD ["node", "dist/apps/geo-service/main.js"]
+
 FROM runtime-base AS admin-service
 COPY --from=build /app/dist/apps/admin-service ./dist/apps/admin-service
 COPY --from=prod-deps /app/apps/admin-service ./apps/admin-service

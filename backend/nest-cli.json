@@ -153,6 +153,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/admin-service/tsconfig.app.json"
       }
+    },
+    "geo-service": {
+      "type": "application",
+      "root": "apps/geo-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/geo-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/geo-service/tsconfig.app.json"
+      }
     }
   }
 }

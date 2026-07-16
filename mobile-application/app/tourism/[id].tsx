@@ -12,6 +12,8 @@ import { palette } from "@/constants/colors";
 import { useAuth } from "@/contexts/auth-context";
 import { useFavoriteMutation } from "@/hooks/mutations/use-favorite-mutation";
 import { usePlaceQuery } from "@/hooks/queries/use-places";
+import { useBoundaryQuery, useGeoFeaturesQuery } from "@/hooks/queries/use-geo";
+import { CivicMap } from "@/components/geo/civic-map";
 import { resolveAssetUrl } from "@/utils/asset-url";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -22,6 +24,8 @@ export default function PlaceDetail() {
   const { status } = useAuth();
   const { data: place, isPending, isError } = usePlaceQuery(id ?? "");
   const favorite = useFavoriteMutation(id ?? "");
+  const { data: boundary } = useBoundaryQuery();
+  const { data: geoFeatures } = useGeoFeaturesQuery(boundary?.bbox ?? null);
 
   const toggleFavorite = () => {
     if (!place) return;
@@ -118,6 +122,18 @@ export default function PlaceDetail() {
           <AppText variant="body" className="mt-4 leading-6">
             {place.description}
           </AppText>
+
+          {/* Self-hosted city map — place pinned within the tenant boundary. */}
+          {boundary && place.geo ? (
+            <View className="mt-5">
+              <CivicMap
+                boundary={boundary}
+                features={geoFeatures}
+                pin={{ lat: place.geo.lat, lng: place.geo.lng }}
+                height={160}
+              />
+            </View>
+          ) : null}
 
           {/* Actions */}
           <View className="mt-5 flex-row gap-3">
